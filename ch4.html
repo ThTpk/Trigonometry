@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>บทที่ 4 · เอกลักษณ์ตรีโกณ — ตรีโกณมิติเห็นภาพ</title>
+<meta name="description" content="เอกลักษณ์พีทาโกรัส สูตรผลบวกมุมพร้อมการพิสูจน์ด้วยรูป สูตรมุมสองเท่า มุมครึ่ง และการรวมคลื่นเป็น R sin(x+α)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d4ed8'/%3E%3Cpath d='M6 25 L26 25 L26 8 Z' fill='none' stroke='white' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=IBM+Plex+Sans+Thai:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar"></aside>
+<main>
+
+  <div class="eyebrow">บทที่ 4</div>
+  <h1>เอกลักษณ์ตรีโกณ</h1>
+  <p class="lead">
+    บทนี้คือจุดที่นักเรียนหลุดมากที่สุด เพราะดูเหมือนกองสูตรมหาศาลที่ต้องท่อง
+    ความจริงคือมีสูตร <strong>แม่</strong> อยู่แค่สองกลุ่ม ที่เหลือทั้งหมดอนุมานออกมาได้ภายในไม่กี่บรรทัด
+  </p>
+
+  <h2 id="what">4.1 เอกลักษณ์ต่างจากสมการอย่างไร</h2>
+  <p>
+    <strong>สมการ</strong> <span class="en">(equation)</span> เป็นจริงเฉพาะบางค่าของตัวแปร เช่น $2x=6$ จริงเมื่อ $x=3$ เท่านั้น
+    ส่วน <strong>เอกลักษณ์</strong> <span class="en">(identity)</span> เป็นจริง <em>ทุกค่า</em> ที่นิยามไว้ เช่น $(x+1)^2=x^2+2x+1$
+  </p>
+  <p>
+    ความต่างนี้สำคัญต่อวิธีทำโจทย์ — สมการเราต้อง “แก้หาค่า x” แต่เอกลักษณ์เราต้อง “พิสูจน์ว่าสองข้างเท่ากันเสมอ”
+    ซึ่งทำโดยการจัดรูปข้างหนึ่งให้กลายเป็นอีกข้างหนึ่ง <strong>ห้ามย้ายข้างข้ามเครื่องหมายเท่ากับ</strong>
+  </p>
+
+  <h2 id="pythag">4.2 เอกลักษณ์พีทาโกรัส</h2>
+  <p>
+    บนวงกลมหนึ่งหน่วย จุด $(\cos\theta,\sin\theta)$ อยู่ห่างจากจุดกำเนิด 1 หน่วยเสมอ
+    ทฤษฎีบทพีทาโกรัสจึงให้ผลลัพธ์นี้ทันที และเป็นจริงทุกมุมโดยไม่มีข้อยกเว้น
+  </p>
+
+  <div class="widget" id="w-pythag"></div>
+
+  <div class="box key">
+    <div class="box-title">สามพี่น้องพีทาโกรัส</div>
+    $$\sin^{2}\theta+\cos^{2}\theta = 1$$
+    <p style="margin:.6em 0 .3em">หารตลอดด้วย $\cos^2\theta$ จะได้ตัวที่สอง และหารด้วย $\sin^2\theta$ จะได้ตัวที่สาม</p>
+    $$1+\tan^{2}\theta=\sec^{2}\theta \qquad\qquad 1+\cot^{2}\theta=\csc^{2}\theta$$
+    <p style="margin:.6em 0 0">
+      <strong>ไม่ต้องท่องสองอันหลัง</strong> — จำแค่อันแรกแล้วหารเอาตอนสอบใช้เวลาไม่ถึงสิบวินาที
+    </p>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 1</h4>
+    <p class="q">กำหนด $\sin\theta = \dfrac{3}{5}$ และ θ อยู่ในควอดรันต์ที่ 2 จงหา $\cos\theta$ และ $\tan\theta$</p>
+    <ol class="steps">
+      <li>ใช้เอกลักษณ์พีทาโกรัส
+        $$\cos^{2}\theta = 1-\sin^{2}\theta = 1-\frac{9}{25}=\frac{16}{25}
+        \;\Rightarrow\; \cos\theta=\pm\frac{4}{5}$$</li>
+      <li><strong>เลือกเครื่องหมายจากควอดรันต์</strong> — ควอดรันต์ที่ 2 มี cos เป็นลบ (ASTC จากบทที่ 2)
+        $$\cos\theta=-\frac{4}{5}$$</li>
+      <li>หา tan จากอัตราส่วน
+        $$\tan\theta=\frac{\sin\theta}{\cos\theta}=\frac{3/5}{-4/5}=-\frac{3}{4}$$</li>
+    </ol>
+    <div class="ans">ตอบ $\cos\theta=-\dfrac{4}{5}$ และ $\tan\theta=-\dfrac{3}{4}$</div>
+  </div>
+
+  <div class="box warn">
+    <div class="box-title">อย่าลืมขั้นตอนเลือกเครื่องหมาย</div>
+    <p style="margin:0">
+      การถอดรากให้ผลได้สองค่าเสมอ ถ้าตอบ $\cos\theta = \tfrac45$ โดยไม่ดูควอดรันต์ จะผิดทั้งข้อ
+      โจทย์ที่บอกควอดรันต์มาให้ แปลว่าเขาตั้งใจทดสอบตรงจุดนี้
+    </p>
+  </div>
+
+  <h2 id="sum">4.3 สูตรผลบวกมุม — สูตรแม่ของทุกอย่าง</h2>
+  <p>
+    ข้อผิดพลาดอันดับหนึ่งของนักเรียนคือคิดว่า $\sin(A+B)=\sin A+\sin B$ ซึ่ง <strong>ไม่จริง</strong>
+    ลองแทน $A=B=30^\circ$ ดู จะได้ข้างซ้าย $\sin 60^\circ \approx 0.866$ แต่ข้างขวา $0.5+0.5=1$ ไม่เท่ากัน
+  </p>
+  <p>
+    สูตรที่ถูกต้องมาจากรูปเดียวข้างล่างนี้ — ความสูงของจุด P คือ $\sin(A+B)$ และรูปแสดงให้เห็นว่ามันถูกแบ่งเป็นสองท่อนพอดี
+    ลองปรับมุม A และ B แล้วดูตัวเลขทั้งสามในแถบด้านล่างพร้อมกัน
+  </p>
+
+  <div class="widget" id="w-anglesum"></div>
+
+  <div class="box key">
+    <div class="box-title">สูตรผลบวก–ผลต่างมุม</div>
+    $$\sin(A\pm B)=\sin A\cos B \pm \cos A\sin B$$
+    $$\cos(A\pm B)=\cos A\cos B \mp \sin A\sin B$$
+    $$\tan(A\pm B)=\frac{\tan A\pm\tan B}{1\mp\tan A\tan B}$$
+    <p style="margin:.6em 0 0">
+      สังเกตเครื่องหมายของ cos ว่า <strong>สลับกับข้างซ้าย</strong> (บวกกลายเป็นลบ) ซึ่งเป็นจุดที่พลาดกันมาก
+      เหตุผลเชิงรูปคือระยะในแนวนอน “หดสั้นลง” เมื่อหมุนมุมเพิ่ม
+    </p>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 2</h4>
+    <p class="q">จงหาค่าที่แน่นอนของ $\sin 75^\circ$ โดยไม่ใช้เครื่องคิดเลข</p>
+    <ol class="steps">
+      <li>แยก 75° ให้เป็นผลบวกของมุมพิเศษสองมุม: $75^\circ = 45^\circ + 30^\circ$</li>
+      <li>ใช้สูตรผลบวกมุม
+        $$\sin 75^\circ=\sin 45^\circ\cos 30^\circ+\cos 45^\circ\sin 30^\circ$$</li>
+      <li>แทนค่ามุมพิเศษจากบทที่ 1
+        $$=\frac{\sqrt2}{2}\cdot\frac{\sqrt3}{2}+\frac{\sqrt2}{2}\cdot\frac{1}{2}
+        =\frac{\sqrt6}{4}+\frac{\sqrt2}{4}$$</li>
+      <li>รวมเศษส่วน $=\dfrac{\sqrt6+\sqrt2}{4}$</li>
+      <li>ตรวจด้วยค่าประมาณ: $\dfrac{2.449+1.414}{4}\approx 0.966$ ซึ่งใกล้ 1 สมเหตุสมผลเพราะ 75° ใกล้ 90° ✓</li>
+    </ol>
+    <div class="ans">ตอบ $\sin 75^\circ = \dfrac{\sqrt6+\sqrt2}{4}\approx 0.9659$</div>
+  </div>
+
+  <h2 id="double">4.4 สูตรมุมสองเท่าและมุมครึ่ง</h2>
+  <p>
+    สูตรกลุ่มนี้ <strong>ไม่ใช่สูตรใหม่</strong> — ได้จากการแทน $B=A$ ลงในสูตรผลบวกมุมเท่านั้น ลองทำตามทีละบรรทัด
+  </p>
+  $$\sin 2A=\sin(A+A)=\sin A\cos A+\cos A\sin A = 2\sin A\cos A$$
+  $$\cos 2A=\cos(A+A)=\cos A\cos A-\sin A\sin A = \cos^{2}A-\sin^{2}A$$
+  <p>
+    สำหรับ $\cos 2A$ ยังเขียนได้อีกสองแบบ โดยใช้ $\sin^2A+\cos^2A=1$ แทนทีละตัว
+  </p>
+  $$\cos 2A = 1-2\sin^{2}A = 2\cos^{2}A-1$$
+
+  <div class="box key">
+    <div class="box-title">สูตรลดกำลัง — ตัวที่ใช้บ่อยที่สุดตอนขึ้นแคลคูลัส</div>
+    <p style="margin:0 0 .3em">ย้ายข้างจากสองรูปสุดท้ายด้านบน จะได้วิธีกำจัดเลขยกกำลังสองออกไป</p>
+    $$\sin^{2}A=\frac{1-\cos 2A}{2} \qquad\qquad \cos^{2}A=\frac{1+\cos 2A}{2}$$
+    <p style="margin:.5em 0 0">
+      แทน $A \to A/2$ ก็จะได้สูตรมุมครึ่งทันที
+      $$\sin\frac{A}{2}=\pm\sqrt{\frac{1-\cos A}{2}} \qquad \cos\frac{A}{2}=\pm\sqrt{\frac{1+\cos A}{2}}$$
+      เครื่องหมาย ± เลือกตามควอดรันต์ที่ $A/2$ ตกอยู่
+    </p>
+  </div>
+
+  <h2 id="verify">4.5 ตรวจสอบเอกลักษณ์ด้วยกราฟ</h2>
+  <p>
+    วิธีเช็กเร็ว ๆ ว่าสูตรที่จำมาถูกหรือไม่ คือวาดกราฟทั้งสองข้างทับกัน
+    ถ้าเป็นเอกลักษณ์จริงเส้นจะทับกันสนิททุกจุด ลองเลือกดูรายการที่มีเครื่องหมาย ⚠ เพื่อเห็นว่าสูตรผิดหน้าตาเป็นอย่างไร
+  </p>
+
+  <div class="widget" id="w-verify"></div>
+
+  <div class="box warn">
+    <div class="box-title">กราฟทับกันยังไม่ใช่การพิสูจน์</div>
+    <p style="margin:0">
+      ในข้อสอบต้องแสดงการจัดรูปทางพีชคณิตเสมอ กราฟใช้ได้แค่เป็นเครื่องมือตรวจทานว่าจำสูตรมาถูกหรือเปล่า
+      (แต่ถ้ากราฟ <em>ไม่</em> ทับกัน นั่นเป็นหลักฐานที่สมบูรณ์ว่าสูตรผิดแน่นอน)
+    </p>
+  </div>
+
+  <h2 id="prove">4.6 เทคนิคการพิสูจน์เอกลักษณ์</h2>
+  <div class="box note">
+    <div class="box-title">ลำดับที่ควรลองตามนี้</div>
+    <ol style="margin:0">
+      <li><strong>เริ่มจากข้างที่ซับซ้อนกว่า</strong> แล้วจัดรูปให้กลายเป็นข้างที่ง่ายกว่า ทำสวนทางจะยากกว่ามาก</li>
+      <li><strong>แปลงทุกอย่างให้เป็น sin กับ cos</strong> ถ้าติดขัด — วิธีนี้แก้ได้เกินครึ่งของโจทย์ทั้งหมด</li>
+      <li><strong>มองหา $\sin^2$ หรือ $\cos^2$</strong> เพราะเป็นสัญญาณให้ใช้เอกลักษณ์พีทาโกรัส</li>
+      <li><strong>ถ้ามีเศษส่วนบวกกัน ให้ทำส่วนร่วม</strong> แล้วดูว่าตัวเศษยุบได้ไหม</li>
+      <li><strong>ถ้ามี $1\pm\sin$ หรือ $1\pm\cos$ ในตัวส่วน ให้คูณด้วยคอนจูเกต</strong> เพื่อสร้างผลต่างกำลังสอง</li>
+    </ol>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 3 — พิสูจน์เอกลักษณ์</h4>
+    <p class="q">จงพิสูจน์ว่า $\;\dfrac{\cos\theta}{1-\sin\theta}=\sec\theta+\tan\theta$</p>
+    <ol class="steps">
+      <li>ข้างซ้ายมีตัวส่วนที่เป็น $1-\sin\theta$ จึงคูณทั้งเศษและส่วนด้วยคอนจูเกต $1+\sin\theta$
+        $$\frac{\cos\theta}{1-\sin\theta}\cdot\frac{1+\sin\theta}{1+\sin\theta}
+        =\frac{\cos\theta(1+\sin\theta)}{1-\sin^{2}\theta}$$</li>
+      <li>ตัวส่วนเข้าเอกลักษณ์พีทาโกรัสพอดี $1-\sin^{2}\theta=\cos^{2}\theta$
+        $$=\frac{\cos\theta(1+\sin\theta)}{\cos^{2}\theta}=\frac{1+\sin\theta}{\cos\theta}$$</li>
+      <li>แยกเศษส่วนออกเป็นสองก้อน
+        $$=\frac{1}{\cos\theta}+\frac{\sin\theta}{\cos\theta}=\sec\theta+\tan\theta$$</li>
+      <li>ได้ข้างขวาพอดี จบการพิสูจน์ ∎</li>
+    </ol>
+    <div class="ans">สังเกตว่าเราแตะเฉพาะข้างซ้ายตลอด ไม่ได้ย้ายข้างเลย — นี่คือรูปแบบที่ถูกต้องของการพิสูจน์เอกลักษณ์</div>
+  </div>
+
+  <h2 id="combine">4.7 รวมสองคลื่นเป็นคลื่นเดียว</h2>
+  <p>
+    เทคนิคนี้ต่อยอดจากสูตรผลบวกมุมโดยตรง และมีประโยชน์มหาศาลทั้งในการหาค่าสูงสุด–ต่ำสุด และการแก้สมการ
+    ผลบวกของ sin กับ cos ที่มีมุมเท่ากันจะยุบเป็นคลื่นรูปไซน์ลูกเดียวเสมอ
+  </p>
+
+  <div class="widget" id="w-combine"></div>
+
+  <div class="box key">
+    <div class="box-title">สูตรการรวม</div>
+    $$a\sin x + b\cos x = R\sin(x+\alpha)$$
+    <p style="margin:.5em 0 .3em">โดยที่</p>
+    $$R=\sqrt{a^{2}+b^{2}} \qquad\qquad \tan\alpha=\frac{b}{a}$$
+    <p style="margin:.5em 0 0">
+      <strong>ที่มา:</strong> กระจาย $R\sin(x+\alpha)=R\cos\alpha\sin x + R\sin\alpha\cos x$
+      แล้วเทียบสัมประสิทธิ์กับข้างซ้ายจะได้ $a=R\cos\alpha$ และ $b=R\sin\alpha$
+      ยกกำลังสองแล้วบวกกันได้ $R$ และหารกันได้ $\tan\alpha$
+    </p>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 4</h4>
+    <p class="q">จงหาค่าสูงสุดและค่าต่ำสุดของ $y = 3\sin x + 4\cos x$ พร้อมระบุค่า x ที่ทำให้เกิดค่าสูงสุด</p>
+    <ol class="steps">
+      <li>เทียบกับรูปมาตรฐาน ได้ $a=3$, $b=4$</li>
+      <li>หา R
+        $$R=\sqrt{3^{2}+4^{2}}=\sqrt{25}=5$$</li>
+      <li>หา α จาก $\tan\alpha=\dfrac{4}{3}$ ซึ่ง $a$ และ $b$ เป็นบวกทั้งคู่ (ควอดรันต์ที่ 1)
+        $$\alpha=\tan^{-1}\frac{4}{3}\approx 53.13^\circ$$</li>
+      <li>เขียนใหม่เป็น $y = 5\sin(x+53.13^\circ)$</li>
+      <li>เพราะ $\sin$ มีค่าอยู่ในช่วง $[-1,1]$ เสมอ ดังนั้น $y$ มีค่าอยู่ในช่วง $[-5,\,5]$</li>
+      <li>ค่าสูงสุดเกิดเมื่อ $\sin(x+53.13^\circ)=1$ นั่นคือ $x+53.13^\circ = 90^\circ \Rightarrow x \approx 36.87^\circ$</li>
+    </ol>
+    <div class="ans">ตอบ ค่าสูงสุด 5 (ที่ $x\approx 36.87^\circ$) และค่าต่ำสุด −5</div>
+  </div>
+
+  <div class="box link">
+    <div class="box-title">แผนที่สูตรทั้งหมด — จำแค่ในกรอบสีน้ำเงิน ที่เหลืออนุมานเอา</div>
+    <ul style="margin:0">
+      <li><strong>ต้องจำ:</strong> $\sin^2\theta+\cos^2\theta=1$ · สูตรผลบวกมุมของ sin และ cos</li>
+      <li><strong>อนุมานได้:</strong> $1+\tan^2=\sec^2$ (หารด้วย $\cos^2$) · สูตรมุมสองเท่า (แทน $B=A$) ·
+        สูตรลดกำลัง (ย้ายข้าง) · สูตรมุมครึ่ง (แทน $A\to A/2$) · สูตร $\tan(A\pm B)$ (หาร sin ด้วย cos) ·
+        $R\sin(x+\alpha)$ (เทียบสัมประสิทธิ์)</li>
+    </ul>
+  </div>
+
+  <h2 id="next">4.8 ไปต่อทางไหน</h2>
+  <p>
+    เมื่อผ่านสี่บทนี้แล้ว คุณมีเครื่องมือครบสำหรับหัวข้อระดับถัดไปทั้งหมด
+    เนื้อหาที่ต่อยอดโดยตรงและควรเรียนเป็นลำดับถัดไปคือ
+  </p>
+  <ol>
+    <li><strong>สมการตรีโกณและคำตอบทั่วไป</strong> — ใช้เอกลักษณ์ในบทนี้ลดรูปก่อน แล้วจึงแก้ด้วยมุมอ้างอิงจากบทที่ 2</li>
+    <li><strong>ฟังก์ชันผกผัน</strong> arcsin, arccos, arctan — ต้องเข้าใจกราฟจากบทที่ 3 เพื่อเข้าใจว่าทำไมต้องจำกัดโดเมน</li>
+    <li><strong>กฎของไซน์และกฎของโคไซน์</strong> — ขยายจากสามเหลี่ยมมุมฉากไปสู่สามเหลี่ยมใด ๆ</li>
+    <li><strong>จำนวนเชิงซ้อนและสูตรออยเลอร์</strong> — ที่ซึ่งวงกลมหนึ่งหน่วยกับสูตรผลบวกมุมมาบรรจบกันอย่างงดงาม</li>
+  </ol>
+
+  <div class="chapnav">
+    <a href="ch3.html"><div class="dir">◀ ก่อนหน้า</div><div class="ttl">บทที่ 3 · กราฟฟังก์ชันตรีโกณ</div></a>
+    <a class="next" href="index.html"><div class="dir">กลับไป ▶</div><div class="ttl">หน้าแรก</div></a>
+  </div>
+
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script src="assets/js/viz.js"></script>
+<script src="assets/js/widgets.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

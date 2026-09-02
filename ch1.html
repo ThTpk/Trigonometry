@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>บทที่ 1 · สามเหลี่ยมมุมฉาก — ตรีโกณมิติเห็นภาพ</title>
+<meta name="description" content="จุดกำเนิดของ sin cos tan จากสามเหลี่ยมคล้าย มุมพิเศษ 30-45-60 และการประยุกต์กับมุมเงยมุมก้ม">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d4ed8'/%3E%3Cpath d='M6 25 L26 25 L26 8 Z' fill='none' stroke='white' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=IBM+Plex+Sans+Thai:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar"></aside>
+<main>
+
+  <div class="eyebrow">บทที่ 1</div>
+  <h1>สามเหลี่ยมมุมฉาก</h1>
+  <p class="lead">
+    ตรีโกณมิติเกิดจากคำถามเชิงปฏิบัติ: จะวัดความสูงของภูเขาโดยไม่ต้องปีนขึ้นไปได้อย่างไร
+    คำตอบเริ่มจากข้อสังเกตข้อเดียวเกี่ยวกับสามเหลี่ยมคล้าย ซึ่งเป็นรากฐานของทุกอย่างที่ตามมา
+  </p>
+
+  <h2 id="similar">1.1 ทำไมอัตราส่วนจึงขึ้นกับมุมอย่างเดียว</h2>
+  <p>
+    ถ้าสามเหลี่ยมมุมฉากสองรูปมีมุมแหลมมุมหนึ่งเท่ากัน มุมที่เหลือย่อมเท่ากันด้วย (เพราะมุมภายในรวมกันได้ 180°)
+    สามเหลี่ยมสองรูปนั้นจึงเป็น <strong>สามเหลี่ยมคล้าย</strong> <span class="en">(similar triangles)</span>
+    และด้านที่สมนัยกันจะเป็นสัดส่วนเดียวกันทั้งหมด
+  </p>
+  <p>
+    ผลที่ตามมาคือสิ่งสำคัญที่สุดในบทนี้ — <strong>อัตราส่วนของด้านสองด้านในสามเหลี่ยมมุมฉากไม่ขึ้นกับขนาดของรูป
+    ขึ้นกับมุมเท่านั้น</strong> เราจึงตั้งชื่ออัตราส่วนนั้นเป็นฟังก์ชันของมุมได้
+  </p>
+
+  <div class="widget" id="w-similar"></div>
+
+  <div class="box key">
+    <div class="box-title">ประเด็นสำคัญ</div>
+    <p style="margin:0">
+      ลองเลื่อนมุม θ ดู จะเห็นว่าตัวเลขทางซ้ายของเครื่องหมายเท่ากับเปลี่ยนไปคนละอย่างในแต่ละรูป
+      แต่ผลหารสุดท้ายกลับเท่ากันเป๊ะทั้งสามรูป — ค่านั้นแหละที่เราเรียกว่า $\sin\theta$
+    </p>
+  </div>
+
+  <h2 id="define">1.2 นิยามของ sin, cos, tan</h2>
+  <p>
+    ในสามเหลี่ยมมุมฉาก เมื่อเล็งไปที่มุมแหลม θ มุมหนึ่ง ด้านทั้งสามจะถูกเรียกชื่อ <em>เทียบกับมุมนั้น</em> ดังนี้
+  </p>
+  <ul>
+    <li><span class="t-sin">ด้านตรงข้าม</span> <span class="en">(opposite, opp)</span> — ด้านที่อยู่ตรงข้ามมุม θ</li>
+    <li><span class="t-cos">ด้านประชิด</span> <span class="en">(adjacent, adj)</span> — ด้านที่ประกอบมุม θ และไม่ใช่ด้านตรงข้ามมุมฉาก</li>
+    <li><span class="t-hyp">ด้านตรงข้ามมุมฉาก</span> <span class="en">(hypotenuse, hyp)</span> — ด้านที่ยาวที่สุด อยู่ตรงข้ามมุม 90°</li>
+  </ul>
+
+  <div class="widget" id="w-ratios"></div>
+
+  <div class="box key">
+    <div class="box-title">นิยามหลักสามตัว</div>
+    $$\sin\theta=\frac{\text{opp}}{\text{hyp}} \qquad
+      \cos\theta=\frac{\text{adj}}{\text{hyp}} \qquad
+      \tan\theta=\frac{\text{opp}}{\text{adj}}$$
+    <p style="margin:.6em 0 0">
+      ท่องด้วยตัวย่อ <strong>SOH – CAH – TOA</strong> และสังเกตความสัมพันธ์ที่ตามมาทันที
+      $$\tan\theta=\frac{\text{opp}/\text{hyp}}{\text{adj}/\text{hyp}}=\frac{\sin\theta}{\cos\theta}$$
+    </p>
+  </div>
+
+  <h3>ฟังก์ชันส่วนกลับอีกสามตัว</h3>
+  <p>อีกสามตัวที่เหลือเป็นเพียงส่วนกลับของสามตัวแรก ไม่มีอะไรใหม่</p>
+  $$\csc\theta=\frac{1}{\sin\theta}=\frac{\text{hyp}}{\text{opp}} \qquad
+    \sec\theta=\frac{1}{\cos\theta}=\frac{\text{hyp}}{\text{adj}} \qquad
+    \cot\theta=\frac{1}{\tan\theta}=\frac{\text{adj}}{\text{opp}}$$
+
+  <div class="box warn">
+    <div class="box-title">จุดที่พลาดบ่อย</div>
+    <p style="margin:0">
+      <strong>sec คู่กับ cos ไม่ใช่ sin</strong> — สังเกตว่าตัวอักษรตัวที่สามสลับกัน (se<u>c</u> ↔ <u>c</u>os, c<u>s</u>c ↔ <u>s</u>in)
+      นักเรียนจำนวนมากเสียคะแนนเพราะจับคู่ผิดตรงนี้
+    </p>
+  </div>
+
+  <h2 id="special">1.3 มุมพิเศษ 30°, 45°, 60°</h2>
+  <p>
+    สามมุมนี้พิเศษเพราะหาค่าได้แน่นอนโดยไม่ต้องใช้เครื่องคิดเลข
+    ที่มาไม่ใช่เวทมนตร์ — มาจากการผ่าครึ่งรูปที่เรารู้จักดีอยู่แล้วสองรูปเท่านั้น
+  </p>
+
+  <div class="widget" id="w-special"></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>θ</th><th class="num">0°</th><th class="num">30°</th><th class="num">45°</th><th class="num">60°</th><th class="num">90°</th></tr></thead>
+    <tbody>
+      <tr><td><span class="t-sin">sin θ</span></td><td class="num">0</td><td class="num">1/2</td><td class="num">√2/2</td><td class="num">√3/2</td><td class="num">1</td></tr>
+      <tr><td><span class="t-cos">cos θ</span></td><td class="num">1</td><td class="num">√3/2</td><td class="num">√2/2</td><td class="num">1/2</td><td class="num">0</td></tr>
+      <tr><td><span class="t-tan">tan θ</span></td><td class="num">0</td><td class="num">1/√3</td><td class="num">1</td><td class="num">√3</td><td class="num">ไม่นิยาม</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="box note">
+    <div class="box-title">เคล็ดจำตารางแบบไม่ต้องท่อง</div>
+    <p style="margin:0">
+      เขียนแถว sin เป็น $\dfrac{\sqrt{0}}{2},\dfrac{\sqrt{1}}{2},\dfrac{\sqrt{2}}{2},\dfrac{\sqrt{3}}{2},\dfrac{\sqrt{4}}{2}$
+      สำหรับมุม 0°, 30°, 45°, 60°, 90° ตามลำดับ — แล้วแถว cos คือแถวเดิมอ่านย้อนหลัง
+      ส่วน tan คือ sin หารด้วย cos
+    </p>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 1</h4>
+    <p class="q">สามเหลี่ยมมุมฉากมีด้านตรงข้ามมุมฉากยาว 12 ซม. และมีมุมแหลมมุมหนึ่งเท่ากับ 30° จงหาความยาวด้านอีกสองด้าน</p>
+    <ol class="steps">
+      <li>วาดรูปแล้วระบุตำแหน่งของมุม 30° กับด้านที่ยาว 12 ก่อนเสมอ — 12 คือ hyp</li>
+      <li>หาด้านตรงข้ามมุม 30° ใช้ sin เพราะเกี่ยวข้องกับ opp และ hyp
+        $$\sin 30^\circ=\frac{\text{opp}}{12} \;\Rightarrow\; \text{opp}=12\cdot\frac{1}{2}=6$$</li>
+      <li>หาด้านประชิดใช้ cos
+        $$\cos 30^\circ=\frac{\text{adj}}{12} \;\Rightarrow\; \text{adj}=12\cdot\frac{\sqrt{3}}{2}=6\sqrt{3}$$</li>
+      <li>ตรวจคำตอบด้วยพีทาโกรัส $6^2+(6\sqrt3)^2=36+108=144=12^2$ ✓</li>
+    </ol>
+    <div class="ans">ตอบ ด้านตรงข้ามมุม 30° ยาว 6 ซม. และด้านประชิดยาว $6\sqrt{3}\approx 10.39$ ซม.</div>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 2</h4>
+    <p class="q">สามเหลี่ยมมุมฉากมีด้านประกอบมุมฉากยาว 5 และ 12 หน่วย จงหามุมแหลมที่อยู่ตรงข้ามด้านยาว 5</p>
+    <ol class="steps">
+      <li>สองด้านที่ให้มาคือ opp = 5 และ adj = 12 เทียบกับมุมที่ต้องการ ดังนั้นใช้ tan</li>
+      <li>$\tan\theta=\dfrac{5}{12}\approx 0.4167$</li>
+      <li>ย้อนกลับด้วยฟังก์ชันผกผัน (ปุ่ม <code>tan⁻¹</code> หรือ <code>atan</code> บนเครื่องคิดเลข)
+        $$\theta=\tan^{-1}\!\left(\frac{5}{12}\right)\approx 22.62^\circ$$</li>
+      <li>ตรวจความสมเหตุสมผล: ด้าน 5 สั้นกว่า 12 มาก มุมตรงข้ามจึงควรเล็กกว่า 45° ✓</li>
+    </ol>
+    <div class="ans">ตอบ ประมาณ 22.6°</div>
+  </div>
+
+  <div class="box warn">
+    <div class="box-title">ตั้งเครื่องคิดเลขให้ถูกโหมด</div>
+    <p style="margin:0">
+      ถ้าเครื่องอยู่โหมด RAD แล้วเราใส่ค่าเป็นองศา คำตอบจะผิดทั้งข้อ
+      ตรวจสอบเร็ว ๆ ด้วยการกด <code>sin 30</code> ถ้าได้ 0.5 แสดงว่าอยู่โหมด DEG ถูกต้อง
+      (ถ้าได้ −0.988 แปลว่ายังอยู่โหมด RAD)
+    </p>
+  </div>
+
+  <h2 id="apply">1.4 การประยุกต์: มุมเงยและมุมก้ม</h2>
+  <p>
+    <strong>มุมเงย</strong> <span class="en">(angle of elevation)</span> คือมุมระหว่างแนวสายตาที่มองขึ้นกับแนวระดับ
+    ส่วน <strong>มุมก้ม</strong> <span class="en">(angle of depression)</span> คือมุมระหว่างแนวสายตาที่มองลงกับแนวระดับ
+    ทั้งสองวัดจาก <em>แนวระดับ</em> เสมอ ไม่ใช่จากแนวดิ่ง
+  </p>
+
+  <div class="widget" id="w-elevation"></div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 3</h4>
+    <p class="q">
+      ชายคนหนึ่งสูงระดับตา 1.6 เมตร ยืนห่างจากเสาธง 24 เมตร มองยอดเสาเป็นมุมเงย 38°
+      จงหาความสูงของเสาธง
+    </p>
+    <ol class="steps">
+      <li>วาดรูป: สามเหลี่ยมมุมฉากมีฐานยาว 24 (แนวระดับจากตาไปถึงเสา) และมีมุม 38° ที่ตำแหน่งตา</li>
+      <li>ส่วนสูงที่อยู่ <em>เหนือระดับตา</em> คือด้านตรงข้ามมุม 38° และ 24 คือด้านประชิด จึงใช้ tan
+        $$\tan 38^\circ=\frac{h}{24}\;\Rightarrow\; h = 24\tan 38^\circ \approx 24(0.7813)=18.75$$</li>
+      <li>บวกความสูงระดับตากลับเข้าไป เพราะโจทย์ถามความสูงจากพื้น
+        $$\text{ความสูงเสา} = 18.75 + 1.6 = 20.35$$</li>
+    </ol>
+    <div class="ans">ตอบ เสาธงสูงประมาณ 20.4 เมตร</div>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 4 — มุมก้มจากที่สูง</h4>
+    <p class="q">
+      จากยอดผาสูง 80 เมตรเหนือระดับน้ำทะเล มองเห็นเรือลำหนึ่งเป็นมุมก้ม 25°
+      เรืออยู่ห่างจากเชิงผาเท่าใด
+    </p>
+    <ol class="steps">
+      <li>มุมก้มวัดจากแนวระดับที่ยอดผา แต่แนวระดับนั้นขนานกับผิวน้ำ
+        ดังนั้น <strong>มุมเงยจากเรือขึ้นไปหายอดผาก็เท่ากับ 25° ด้วย</strong> (มุมแย้ง)</li>
+      <li>ใช้สามเหลี่ยมที่มีมุม 25° ที่ตำแหน่งเรือ ความสูง 80 คือ opp และระยะ d คือ adj
+        $$\tan 25^\circ = \frac{80}{d} \;\Rightarrow\; d = \frac{80}{\tan 25^\circ}=\frac{80}{0.4663}$$</li>
+      <li>คำนวณ $d \approx 171.6$</li>
+    </ol>
+    <div class="ans">ตอบ เรืออยู่ห่างจากเชิงผาประมาณ 172 เมตร</div>
+  </div>
+
+  <div class="box warn">
+    <div class="box-title">กับดักของโจทย์มุมก้ม</div>
+    <p style="margin:0">
+      นักเรียนมักวาดมุมก้มไว้ระหว่างสายตากับ <em>แนวดิ่ง</em> ทำให้ได้มุม 65° แทนที่จะเป็น 25°
+      วิธีกันพลาดคือ <strong>ลากเส้นแนวระดับที่จุดสังเกตเสมอ</strong> แล้ววัดมุมจากเส้นนั้นลงมา
+    </p>
+  </div>
+
+  <h2 id="pitfall">1.5 สรุปและข้อควรระวัง</h2>
+  <div class="box link">
+    <div class="box-title">เช็กลิสต์ก่อนขึ้นบทถัดไป</div>
+    <ul style="margin:0">
+      <li>อธิบายได้ว่าทำไม $\sin\theta$ ถึงไม่ขึ้นกับขนาดสามเหลี่ยม</li>
+      <li>เลือกได้ว่าโจทย์ข้อไหนควรใช้ sin, cos หรือ tan โดยดูจากด้านที่ให้มาและด้านที่ถาม</li>
+      <li>เขียนค่ามุมพิเศษได้โดยไม่ต้องเปิดตาราง และรู้ที่มาของมัน</li>
+      <li>แก้โจทย์มุมเงย/มุมก้มได้ พร้อมวาดรูปประกอบเองทุกครั้ง</li>
+    </ul>
+  </div>
+
+  <div class="box key">
+    <div class="box-title">ข้อจำกัดที่นำเราไปสู่บทที่ 2</div>
+    <p style="margin:0">
+      นิยามในบทนี้ใช้ได้เฉพาะมุมแหลม <strong>0° ถึง 90°</strong> เท่านั้น เพราะสามเหลี่ยมมุมฉากไม่มีมุมแหลมที่เกิน 90°
+      แต่ในโลกจริงเรามีมุม 150° มุม 300° หรือแม้แต่มุมติดลบ
+      คำถามคือ $\sin 150^\circ$ ควรหมายถึงอะไร ในเมื่อวาดสามเหลี่ยมแบบนั้นไม่ได้
+      คำตอบอยู่ในบทถัดไป
+    </p>
+  </div>
+
+  <div class="chapnav">
+    <a href="index.html"><div class="dir">◀ ก่อนหน้า</div><div class="ttl">หน้าแรก</div></a>
+    <a class="next" href="ch2.html"><div class="dir">ถัดไป ▶</div><div class="ttl">บทที่ 2 · วงกลมหนึ่งหน่วย</div></a>
+  </div>
+
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script src="assets/js/viz.js"></script>
+<script src="assets/js/widgets.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

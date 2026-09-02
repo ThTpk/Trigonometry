@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>บทที่ 2 · วงกลมหนึ่งหน่วย — ตรีโกณมิติเห็นภาพ</title>
+<meta name="description" content="ขยายนิยามตรีโกณสู่มุมใด ๆ ด้วยวงกลมหนึ่งหน่วย เครื่องหมายในแต่ละควอดรันต์ มุมอ้างอิง และเรเดียน">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d4ed8'/%3E%3Cpath d='M6 25 L26 25 L26 8 Z' fill='none' stroke='white' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=IBM+Plex+Sans+Thai:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar"></aside>
+<main>
+
+  <div class="eyebrow">บทที่ 2</div>
+  <h1>วงกลมหนึ่งหน่วย</h1>
+  <p class="lead">
+    นี่คือจุดเปลี่ยนที่สำคัญที่สุดของวิชานี้ — เราจะเลิกมอง sin กับ cos ว่าเป็น “อัตราส่วนในสามเหลี่ยม”
+    แล้วเปลี่ยนไปมองว่าเป็น “พิกัดของจุดที่วิ่งรอบวงกลม” การเปลี่ยนมุมมองนี้ทำให้พูดถึงมุมกี่องศาก็ได้ รวมทั้งมุมติดลบ
+  </p>
+
+  <h2 id="why">2.1 ปัญหาของนิยามเดิม</h2>
+  <p>
+    ในบทที่แล้วเรานิยาม $\sin\theta$ จากสามเหลี่ยมมุมฉาก ซึ่งใช้ได้เฉพาะ $0^\circ &lt; \theta &lt; 90^\circ$
+    แต่โจทย์จริงมีมุมอย่าง $\sin 210^\circ$ หรือ $\cos(-45^\circ)$ ซึ่งวาดเป็นสามเหลี่ยมมุมฉากไม่ได้เลย
+  </p>
+  <p>
+    ทางออกคือหานิยามใหม่ที่ <strong>ให้ค่าเดิมทุกประการเมื่อมุมอยู่ระหว่าง 0° ถึง 90°</strong>
+    แต่ยังใช้ได้ต่อเมื่อมุมเกินช่วงนั้น นิยามใหม่นั้นคือวงกลมหนึ่งหน่วย
+  </p>
+
+  <h3>มุมในตำแหน่งมาตรฐาน</h3>
+  <p>
+    เราวางมุมในระนาบพิกัดโดยให้ <strong>จุดยอดอยู่ที่จุดกำเนิด</strong> และ
+    <strong>แขนเริ่มต้นทาบไปตามแกน x ด้านบวก</strong> เรียกว่ามุมในตำแหน่งมาตรฐาน
+    <span class="en">(standard position)</span> จากนั้น
+  </p>
+  <ul>
+    <li>หมุน <strong>ทวนเข็มนาฬิกา</strong> = มุมเป็นบวก</li>
+    <li>หมุน <strong>ตามเข็มนาฬิกา</strong> = มุมเป็นลบ</li>
+    <li>หมุนได้ไม่จำกัดรอบ มุม 400° คือหมุนครบรอบแล้วเลยไปอีก 40°</li>
+  </ul>
+
+  <h2 id="circle">2.2 นิยามใหม่บนวงกลมหนึ่งหน่วย</h2>
+  <div class="box key">
+    <div class="box-title">นิยาม</div>
+    <p style="margin:0 0 .5em">
+      ลากวงกลมรัศมี 1 หน่วยที่มีจุดศูนย์กลางที่จุดกำเนิด แล้ววางมุม θ ในตำแหน่งมาตรฐาน
+      ให้แขนสิ้นสุดตัดวงกลมที่จุด $P(x,y)$ เรานิยามว่า
+    </p>
+    $$\cos\theta = x \qquad \sin\theta = y \qquad \tan\theta=\frac{y}{x}\;(x\neq 0)$$
+  </div>
+  <p>
+    ลองลากจุดในภาพด้านล่างไปให้ครบรอบ สังเกตว่าเมื่อ θ อยู่ในควอดรันต์ที่ 1 รูปที่ได้คือสามเหลี่ยมมุมฉากแบบบทที่ 1 พอดี
+    (ด้านตรงข้ามมุมฉากยาว 1 ทำให้ $\sin\theta = \text{opp}/1 = y$) นิยามใหม่จึงไม่ได้ขัดกับของเดิม แต่ขยายออกไป
+  </p>
+
+  <div class="widget" id="w-unitcircle"></div>
+
+  <h2 id="astc">2.3 เครื่องหมายในแต่ละควอดรันต์</h2>
+  <p>
+    เมื่อ sin คือพิกัด y และ cos คือพิกัด x เครื่องหมายจึงตามเครื่องหมายของพิกัดโดยตรง — ไม่ต้องท่องอะไรเพิ่ม
+  </p>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>ควอดรันต์</th><th>ช่วงมุม</th><th class="num">sin (y)</th><th class="num">cos (x)</th><th class="num">tan (y/x)</th><th>ตัวที่เป็นบวก</th></tr></thead>
+    <tbody>
+      <tr><td>I</td><td>0°–90°</td><td class="num">+</td><td class="num">+</td><td class="num">+</td><td><strong>A</strong>ll — ทั้งหมด</td></tr>
+      <tr><td>II</td><td>90°–180°</td><td class="num">+</td><td class="num">−</td><td class="num">−</td><td><strong>S</strong>in</td></tr>
+      <tr><td>III</td><td>180°–270°</td><td class="num">−</td><td class="num">−</td><td class="num">+</td><td><strong>T</strong>an</td></tr>
+      <tr><td>IV</td><td>270°–360°</td><td class="num">−</td><td class="num">+</td><td class="num">−</td><td><strong>C</strong>os</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="box note">
+    <div class="box-title">A–S–T–C</div>
+    <p style="margin:0">
+      ไล่จากควอดรันต์ 1 ทวนเข็มไปเรื่อย ๆ จะได้ A → S → T → C
+      บางคนจำเป็นประโยค “<strong>A</strong>ll <strong>S</strong>tudents <strong>T</strong>ake <strong>C</strong>alculus”
+      แต่ถ้าเข้าใจว่ามันคือเครื่องหมายของ x กับ y ก็ไม่ต้องท่องเลย
+    </p>
+  </div>
+
+  <h2 id="ref">2.4 มุมอ้างอิง</h2>
+  <p>
+    <strong>มุมอ้างอิง</strong> <span class="en">(reference angle)</span> คือมุมแหลมที่แขนสิ้นสุดทำกับ <em>แกน x</em>
+    ค่าตรีโกณของมุมใด ๆ จะมีขนาดเท่ากับค่าของมุมอ้างอิงเสมอ ต่างกันแค่เครื่องหมาย
+    เทคนิคนี้ทำให้เราหาค่าของมุมใหญ่ ๆ ได้จากตารางมุมพิเศษเดิม
+  </p>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>θ อยู่ใน</th><th>สูตรหามุมอ้างอิง</th><th>ตัวอย่าง</th></tr></thead>
+    <tbody>
+      <tr><td>ควอดรันต์ I</td><td>$\theta$</td><td>40° → 40°</td></tr>
+      <tr><td>ควอดรันต์ II</td><td>$180^\circ-\theta$</td><td>150° → 30°</td></tr>
+      <tr><td>ควอดรันต์ III</td><td>$\theta-180^\circ$</td><td>210° → 30°</td></tr>
+      <tr><td>ควอดรันต์ IV</td><td>$360^\circ-\theta$</td><td>300° → 60°</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 1</h4>
+    <p class="q">จงหาค่าที่แน่นอนของ $\sin 210^\circ$, $\cos 210^\circ$ และ $\tan 210^\circ$</p>
+    <ol class="steps">
+      <li>ระบุควอดรันต์: 210° อยู่ระหว่าง 180° กับ 270° จึงอยู่ควอดรันต์ที่ III</li>
+      <li>หามุมอ้างอิง: $210^\circ-180^\circ=30^\circ$</li>
+      <li>เปิดค่ามุม 30° จากบทที่ 1 ได้ $\sin 30^\circ=\tfrac12$, $\cos 30^\circ=\tfrac{\sqrt3}{2}$, $\tan 30^\circ=\tfrac{1}{\sqrt3}$</li>
+      <li>ใส่เครื่องหมายตามควอดรันต์ III (มีแต่ tan ที่เป็นบวก)
+        $$\sin 210^\circ=-\tfrac12,\qquad \cos 210^\circ=-\tfrac{\sqrt3}{2},\qquad \tan 210^\circ=+\tfrac{1}{\sqrt3}$$</li>
+      <li>ตรวจกับภาพด้านบน: เลื่อนมุมไปที่ 210° จะเห็นจุดอยู่ซ้ายล่าง ทั้ง x และ y ติดลบจริง ✓</li>
+    </ol>
+    <div class="ans">ตอบ $-\dfrac12$, $-\dfrac{\sqrt3}{2}$ และ $\dfrac{\sqrt3}{3}$ ตามลำดับ</div>
+  </div>
+
+  <div class="box warn">
+    <div class="box-title">มุมอ้างอิงวัดจากแกน x เท่านั้น</div>
+    <p style="margin:0">
+      นักเรียนมักเผลอวัดจากแกน y เช่นคิดว่ามุมอ้างอิงของ 150° คือ 60° (วัดจากแกน y)
+      ซึ่งผิด — ต้องเป็น 30° เสมอ วิธีกันพลาดคือวาดวงกลมคร่าว ๆ แล้วดูว่าแขนสิ้นสุดเอียงจาก <em>แนวนอน</em> เท่าไร
+    </p>
+  </div>
+
+  <h2 id="coterminal">2.5 มุมโคเทอร์มินัล</h2>
+  <p>
+    มุมสองมุมที่มีแขนสิ้นสุดทับกันพอดีเรียกว่า <strong>มุมโคเทอร์มินัล</strong> <span class="en">(coterminal angles)</span>
+    มุมเหล่านี้ต่างกันเป็นจำนวนเต็มเท่าของหนึ่งรอบ จึงมีค่าตรีโกณเท่ากันทุกประการ
+  </p>
+  $$\theta \text{ และ } \theta + 360^\circ k \quad (k \in \mathbb{Z}) \qquad\text{หรือ}\qquad \theta + 2\pi k \text{ (เรเดียน)}$$
+  <p>
+    ตัวอย่างเช่น $\sin 400^\circ = \sin 40^\circ$ และ $\cos(-60^\circ)=\cos 300^\circ$
+    ข้อสังเกตนี้เองที่ทำให้ฟังก์ชันตรีโกณเป็น <strong>ฟังก์ชันที่มีคาบ</strong> ซึ่งเป็นหัวใจของบทที่ 3
+  </p>
+
+  <h2 id="radian">2.6 เรเดียน — หน่วยมุมที่คณิตศาสตร์ใช้จริง</h2>
+  <p>
+    การแบ่งวงกลมเป็น 360 ส่วนเป็นเรื่องของประวัติศาสตร์ (ชาวบาบิโลนใช้เลขฐาน 60) ไม่ได้มีเหตุผลทางคณิตศาสตร์
+    หน่วยที่ “เป็นธรรมชาติ” กว่าคือ <strong>เรเดียน</strong> ซึ่งวัดมุมด้วยความยาวส่วนโค้งเทียบกับรัศมี
+  </p>
+  <div class="box key">
+    <div class="box-title">นิยามเรเดียน</div>
+    <p style="margin:0 0 .4em">มุม 1 เรเดียน คือมุมที่ศูนย์กลางซึ่งรองรับส่วนโค้งยาวเท่ากับรัศมีพอดี ดังนั้น</p>
+    $$\theta \text{ (rad)} = \frac{s}{r} \qquad\Longrightarrow\qquad s = r\theta$$
+  </div>
+
+  <div class="widget" id="w-radian"></div>
+
+  <h3>การแปลงหน่วย</h3>
+  <p>เพราะหนึ่งรอบวงกลมมีส่วนโค้งยาว $2\pi r$ มุมหนึ่งรอบจึงเท่ากับ $2\pi r / r = 2\pi$ เรเดียน</p>
+  $$360^\circ = 2\pi \text{ rad} \qquad\Longrightarrow\qquad 180^\circ = \pi \text{ rad}$$
+  $$\text{องศา} \to \text{เรเดียน}: \times\frac{\pi}{180} \qquad\qquad \text{เรเดียน} \to \text{องศา}: \times\frac{180}{\pi}$$
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th class="num">องศา</th><th class="num">0°</th><th class="num">30°</th><th class="num">45°</th><th class="num">60°</th><th class="num">90°</th><th class="num">180°</th><th class="num">270°</th><th class="num">360°</th></tr></thead>
+    <tbody>
+      <tr><td class="num">เรเดียน</td><td class="num">0</td><td class="num">π/6</td><td class="num">π/4</td><td class="num">π/3</td><td class="num">π/2</td><td class="num">π</td><td class="num">3π/2</td><td class="num">2π</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="box key">
+    <div class="box-title">สองสูตรที่มาพร้อมเรเดียน</div>
+    <p style="margin:0 0 .3em">เมื่อ θ เป็นเรเดียนเท่านั้น</p>
+    $$\text{ความยาวส่วนโค้ง}\;\; s = r\theta \qquad\qquad \text{พื้นที่เซกเตอร์}\;\; A = \tfrac{1}{2}r^{2}\theta$$
+    <p style="margin:.5em 0 0">
+      สูตรพื้นที่มาจากสัดส่วน: เซกเตอร์กินสัดส่วน $\theta/2\pi$ ของวงกลมทั้งวง
+      จึงมีพื้นที่ $\dfrac{\theta}{2\pi}\cdot \pi r^{2}=\dfrac{1}{2}r^{2}\theta$
+    </p>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 2</h4>
+    <p class="q">
+      พัดลมเพดานใบหนึ่งยาว 60 ซม. หมุนไป 150° จงหาความยาวเส้นทางที่ปลายใบพัดเคลื่อนที่ และพื้นที่ที่ใบพัดกวาดผ่าน
+    </p>
+    <ol class="steps">
+      <li>แปลงมุมเป็นเรเดียนก่อน เพราะสูตรทั้งสองใช้กับเรเดียนเท่านั้น
+        $$150^\circ \times \frac{\pi}{180}=\frac{5\pi}{6}\approx 2.618 \text{ rad}$$</li>
+      <li>ความยาวส่วนโค้ง $s = r\theta = 60 \times \dfrac{5\pi}{6} = 50\pi \approx 157.1$ ซม.</li>
+      <li>พื้นที่เซกเตอร์ $A = \tfrac12 r^2\theta = \tfrac12 (60)^2 \left(\dfrac{5\pi}{6}\right) = 1500\pi \approx 4712.4$ ตร.ซม.</li>
+    </ol>
+    <div class="ans">ตอบ ปลายใบพัดเคลื่อนที่ประมาณ 157 ซม. และกวาดพื้นที่ประมาณ 4,712 ตร.ซม.</div>
+  </div>
+
+  <div class="box warn">
+    <div class="box-title">ทำไมต้องเป็นเรเดียนเท่านั้น</div>
+    <p style="margin:0">
+      ถ้าใช้องศาแทนใน $s=r\theta$ จะได้คำตอบผิดทันที เพราะสูตรนี้มาจากนิยาม $\theta=s/r$ ซึ่งเป็นนิยามของเรเดียน
+      เหตุผลเดียวกันนี้ทำให้แคลคูลัสใช้เรเดียนเสมอ — สูตร $\dfrac{d}{dx}\sin x = \cos x$ จะเป็นจริงก็ต่อเมื่อ x เป็นเรเดียน
+    </p>
+  </div>
+
+  <h2 id="unwrap">2.7 จากวงกลมสู่กราฟ</h2>
+  <p>
+    เมื่อจุดวิ่งรอบวงกลมไปเรื่อย ๆ ค่า y ของมันขึ้น ๆ ลง ๆ เป็นจังหวะซ้ำเดิมทุกรอบ
+    ถ้าเราบันทึกค่านั้นเทียบกับมุมที่หมุนไป จะได้เส้นโค้งที่คุ้นตา — นั่นคือกราฟของฟังก์ชันตรีโกณ
+    ซึ่งเป็นเนื้อหาของบทถัดไป
+  </p>
+
+  <div class="widget" id="w-unwrap"></div>
+
+  <div class="box link">
+    <div class="box-title">เช็กลิสต์ก่อนขึ้นบทถัดไป</div>
+    <ul style="margin:0">
+      <li>บอกค่า sin, cos, tan ของมุมใด ๆ ได้ โดยใช้ควอดรันต์ + มุมอ้างอิง</li>
+      <li>แปลงองศา ↔ เรเดียน ได้คล่อง และรู้ค่าเรเดียนของมุมพิเศษ</li>
+      <li>ใช้ $s=r\theta$ และ $A=\tfrac12 r^2\theta$ ได้ พร้อมรู้ว่าทำไมต้องเป็นเรเดียน</li>
+      <li>อธิบายได้ว่าทำไมฟังก์ชันตรีโกณจึงมีคาบ</li>
+    </ul>
+  </div>
+
+  <div class="chapnav">
+    <a href="ch1.html"><div class="dir">◀ ก่อนหน้า</div><div class="ttl">บทที่ 1 · สามเหลี่ยมมุมฉาก</div></a>
+    <a class="next" href="ch3.html"><div class="dir">ถัดไป ▶</div><div class="ttl">บทที่ 3 · กราฟฟังก์ชันตรีโกณ</div></a>
+  </div>
+
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script src="assets/js/viz.js"></script>
+<script src="assets/js/widgets.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

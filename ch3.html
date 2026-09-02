@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>บทที่ 3 · กราฟฟังก์ชันตรีโกณ — ตรีโกณมิติเห็นภาพ</title>
+<meta name="description" content="กราฟ sin cos tan แอมพลิจูด คาบ การเลื่อนเฟส และการประยุกต์กับปรากฏการณ์ที่เกิดซ้ำเป็นจังหวะ">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d4ed8'/%3E%3Cpath d='M6 25 L26 25 L26 8 Z' fill='none' stroke='white' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=IBM+Plex+Sans+Thai:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar"></aside>
+<main>
+
+  <div class="eyebrow">บทที่ 3</div>
+  <h1>กราฟฟังก์ชันตรีโกณ</h1>
+  <p class="lead">
+    ทุกอย่างที่เกิดซ้ำเป็นจังหวะ — คลื่นเสียง ไฟฟ้ากระแสสลับ น้ำขึ้นน้ำลง การเต้นของหัวใจ ฤดูกาล —
+    อธิบายได้ด้วยกราฟไซน์ที่ถูกยืด บีบ และเลื่อน บทนี้สอนวิธีควบคุมทั้งสามอย่างนั้น
+  </p>
+
+  <h2 id="basic">3.1 กราฟพื้นฐานของ sin และ cos</h2>
+  <p>
+    จากบทที่แล้ว เมื่อจุดวิ่งรอบวงกลมหนึ่งหน่วยครบหนึ่งรอบ ค่า y ของมันจะขึ้นจาก 0 ไป 1 ลงมา −1 แล้วกลับมา 0
+    เขียนค่านั้นเทียบกับมุมจะได้กราฟ $y=\sin x$ ซึ่งซ้ำตัวเองทุก ๆ $2\pi$
+  </p>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>สมบัติ</th><th>$y=\sin x$</th><th>$y=\cos x$</th><th>$y=\tan x$</th></tr></thead>
+    <tbody>
+      <tr><td>โดเมน</td><td>จำนวนจริงทุกจำนวน</td><td>จำนวนจริงทุกจำนวน</td><td>ทุกจำนวนยกเว้น $\tfrac{\pi}{2}+k\pi$</td></tr>
+      <tr><td>เรนจ์</td><td>$[-1,\,1]$</td><td>$[-1,\,1]$</td><td>จำนวนจริงทุกจำนวน</td></tr>
+      <tr><td>คาบ</td><td>$2\pi$</td><td>$2\pi$</td><td>$\pi$</td></tr>
+      <tr><td>ตัดแกน y ที่</td><td>0</td><td>1</td><td>0</td></tr>
+      <tr><td>สมมาตร</td><td>ฟังก์ชันคี่ $\sin(-x)=-\sin x$</td><td>ฟังก์ชันคู่ $\cos(-x)=\cos x$</td><td>ฟังก์ชันคี่</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="box note">
+    <div class="box-title">cos คือ sin ที่ถูกเลื่อน</div>
+    <p style="margin:0">
+      กราฟทั้งสองรูปร่างเหมือนกันเป๊ะ ต่างกันแค่ตำแหน่งเริ่มต้น
+      $$\cos x = \sin\!\left(x+\frac{\pi}{2}\right)$$
+      นี่คือเหตุผลที่เรามักเรียกรวม ๆ ว่า “คลื่นรูปไซน์” <span class="en">(sinusoid)</span> ไม่ว่าจะเขียนด้วย sin หรือ cos
+    </p>
+  </div>
+
+  <h2 id="transform">3.2 การแปลงกราฟด้วย A, B, C, D</h2>
+  <p>
+    กราฟไซน์ทุกกราฟในโลกนี้เขียนได้ในรูปเดียวกัน สี่ตัวแปรควบคุมสี่เรื่องที่ต่างกันโดยสิ้นเชิง
+    ลองปรับทีละตัวในภาพด้านล่าง แล้วทายก่อนว่าจะเกิดอะไรขึ้น
+  </p>
+  $$y = A\,\sin\bigl(B(x - C)\bigr) + D$$
+
+  <div class="widget" id="w-wave"></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>ตัวแปร</th><th>ชื่อ</th><th>ควบคุมอะไร</th><th>สูตร</th></tr></thead>
+    <tbody>
+      <tr><td>$A$</td><td>แอมพลิจูด <span class="en">(amplitude)</span></td><td>ความสูงจากเส้นกึ่งกลางถึงยอด ถ้า $A&lt;0$ กราฟพลิกกลับหัว</td><td>แอมพลิจูด $=|A|$</td></tr>
+      <tr><td>$B$</td><td>ตัวคูณเชิงมุม</td><td>ความถี่ — ยิ่งมากยิ่งบีบแคบ ลูกคลื่นถี่ขึ้น</td><td>คาบ $=\dfrac{2\pi}{|B|}$</td></tr>
+      <tr><td>$C$</td><td>การเลื่อนเฟส <span class="en">(phase shift)</span></td><td>เลื่อนซ้าย–ขวา ถ้า $C&gt;0$ เลื่อนไปทางขวา</td><td>เลื่อนไป $C$ หน่วย</td></tr>
+      <tr><td>$D$</td><td>การเลื่อนแนวตั้ง</td><td>ยกทั้งกราฟขึ้นลง</td><td>เส้นกึ่งกลาง $y=D$</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="box warn">
+    <div class="box-title">กับดักที่ทำให้เสียคะแนนบ่อยที่สุดในบทนี้</div>
+    <p style="margin:0 0 .4em">
+      ตำราส่วนใหญ่เขียนสมการเป็น $y=A\sin(Bx - C)+D$ ซึ่ง <strong>C ในรูปนั้นไม่ใช่ระยะเลื่อน</strong>
+      ต้องดึง B ออกมาก่อนเสมอ
+    </p>
+    $$A\sin(Bx-C)+D = A\sin\!\Bigl(B\bigl(x-\tfrac{C}{B}\bigr)\Bigr)+D
+      \quad\Rightarrow\quad \text{เลื่อนไป } \frac{C}{B} \text{ หน่วย}$$
+    <p style="margin:.4em 0 0">
+      เช่น $y=\sin(2x-\pi)$ ไม่ได้เลื่อนไป π แต่เลื่อนไป $\pi/2$ เท่านั้น
+    </p>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 1 — จากสมการไปหาสมบัติ</h4>
+    <p class="q">จงหาแอมพลิจูด คาบ การเลื่อนเฟส เส้นกึ่งกลาง และเรนจ์ ของ $y = -3\cos(4x + \pi) + 2$</p>
+    <ol class="steps">
+      <li>จัดรูปให้อยู่ในแบบมาตรฐานโดยดึง B ออก
+        $$y=-3\cos\!\bigl(4(x+\tfrac{\pi}{4})\bigr)+2 = -3\cos\!\bigl(4(x-(-\tfrac{\pi}{4}))\bigr)+2$$</li>
+      <li>อ่านค่า: $A=-3$, $B=4$, $C=-\dfrac{\pi}{4}$, $D=2$</li>
+      <li>แอมพลิจูด $=|-3|=3$ (เครื่องหมายลบไม่ทำให้แอมพลิจูดติดลบ แต่ทำให้กราฟพลิกกลับหัว)</li>
+      <li>คาบ $=\dfrac{2\pi}{4}=\dfrac{\pi}{2}$</li>
+      <li>เลื่อนเฟสไป $-\dfrac{\pi}{4}$ แปลว่าเลื่อนไปทาง <em>ซ้าย</em> $\dfrac{\pi}{4}$ หน่วย</li>
+      <li>เส้นกึ่งกลาง $y=2$ ดังนั้นค่าสูงสุด $=2+3=5$ และค่าต่ำสุด $=2-3=-1$</li>
+    </ol>
+    <div class="ans">ตอบ แอมพลิจูด 3 · คาบ $\pi/2$ · เลื่อนซ้าย $\pi/4$ · เส้นกึ่งกลาง $y=2$ · เรนจ์ $[-1,\,5]$</div>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 2 — จากกราฟไปหาสมการ</h4>
+    <p class="q">
+      กราฟรูปไซน์รูปหนึ่งมีค่าสูงสุด 7 ค่าต่ำสุด 1 มีคาบเท่ากับ 8 และมีค่าสูงสุดครั้งแรกที่ $x=2$
+      จงเขียนสมการของกราฟนี้
+    </p>
+    <ol class="steps">
+      <li>หาเส้นกึ่งกลางจากค่ากลางของสูงสุดกับต่ำสุด
+        $$D=\frac{7+1}{2}=4$$</li>
+      <li>หาแอมพลิจูดจากครึ่งหนึ่งของผลต่าง
+        $$A=\frac{7-1}{2}=3$$</li>
+      <li>หา B จากคาบ $\dfrac{2\pi}{B}=8 \Rightarrow B=\dfrac{\pi}{4}$</li>
+      <li>เลือกใช้ cos จะง่ายกว่า เพราะ cos มีค่าสูงสุดที่จุดเริ่มต้นพอดี — ต้องการให้ยอดอยู่ที่ $x=2$ จึงเลื่อนขวา 2 หน่วย ได้ $C=2$</li>
+      <li>ประกอบร่าง
+        $$y = 3\cos\!\left(\frac{\pi}{4}(x-2)\right)+4$$</li>
+      <li>ตรวจ: แทน $x=2$ ได้ $3\cos 0+4=7$ ✓ และแทน $x=6$ (ครึ่งคาบถัดไป) ได้ $3\cos\pi+4=1$ ✓</li>
+    </ol>
+    <div class="ans">ตอบ $y = 3\cos\left(\dfrac{\pi}{4}(x-2)\right)+4$ (เขียนด้วย sin ก็ได้ เป็น $y=3\sin\left(\dfrac{\pi}{4}x\right)+4$)</div>
+  </div>
+
+  <h2 id="tan">3.3 กราฟของ tan</h2>
+  <p>
+    กราฟ tan หน้าตาไม่เหมือนสองตัวแรกเลย เพราะ $\tan x = \dfrac{\sin x}{\cos x}$ จึงพุ่งไปอนันต์ทุกครั้งที่ $\cos x = 0$
+    ลองเลื่อนมุมในภาพด้านล่างเข้าใกล้ 90° แล้วดูว่าเกิดอะไรขึ้นกับความยาวของเส้นสีเขียว
+  </p>
+
+  <div class="widget" id="w-tangraph"></div>
+
+  <div class="box key">
+    <div class="box-title">สมบัติสำคัญของ tan</div>
+    <ul style="margin:0">
+      <li><strong>คาบเท่ากับ $\pi$ ไม่ใช่ $2\pi$</strong> — เพราะมุมที่ต่างกัน 180° อยู่บนเส้นตรงเดียวกัน ความชันจึงเท่ากัน</li>
+      <li><strong>มีเส้นกำกับ</strong> <span class="en">(asymptote)</span> ที่ $x=\dfrac{\pi}{2}+k\pi$ ซึ่งเป็นตำแหน่งที่ $\cos x=0$</li>
+      <li><strong>เพิ่มขึ้นเสมอ</strong>ในแต่ละช่วงระหว่างเส้นกำกับ และมีเรนจ์เป็นจำนวนจริงทั้งหมด</li>
+      <li>ความหมายเชิงเรขาคณิต: $\tan\theta$ คือ <strong>ความชันของเส้นรัศมี</strong> ที่ลากจากจุดกำเนิดไปยังจุดบนวงกลม</li>
+    </ul>
+  </div>
+
+  <h2 id="apply">3.4 การประยุกต์กับปรากฏการณ์เป็นคาบ</h2>
+  <p>
+    ขั้นตอนการสร้างแบบจำลองจากสถานการณ์จริงมีสี่ขั้นเสมอ และตรงกับ D, A, B, C พอดี
+  </p>
+  <ol>
+    <li><strong>หาเส้นกึ่งกลาง D</strong> = ค่าเฉลี่ยของค่าสูงสุดกับต่ำสุด</li>
+    <li><strong>หาแอมพลิจูด A</strong> = ครึ่งหนึ่งของผลต่างระหว่างสูงสุดกับต่ำสุด</li>
+    <li><strong>หา B จากคาบ</strong> = เวลาที่ใช้ครบหนึ่งรอบ แล้วใช้ $B=2\pi/\text{คาบ}$</li>
+    <li><strong>หา C จากจุดอ้างอิง</strong> = เวลาที่เกิดค่าสูงสุด (ถ้าใช้ cos) หรือเวลาที่ผ่านเส้นกึ่งกลางขาขึ้น (ถ้าใช้ sin)</li>
+  </ol>
+
+  <div class="widget" id="w-tide"></div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 3 — ชิงช้าสวรรค์</h4>
+    <p class="q">
+      ชิงช้าสวรรค์รัศมี 20 เมตร จุดต่ำสุดของกระเช้าอยู่สูงจากพื้น 2 เมตร หมุนครบรอบใน 4 นาที
+      ผู้โดยสารขึ้นที่จุดต่ำสุดตอนเวลา $t=0$ จงเขียนสมการความสูง $h(t)$ และหาความสูงที่เวลา 3 นาที
+    </p>
+    <ol class="steps">
+      <li>ค่าต่ำสุด = 2 ม. และค่าสูงสุด = 2 + 2(20) = 42 ม.</li>
+      <li>เส้นกึ่งกลาง $D=\dfrac{42+2}{2}=22$ และแอมพลิจูด $A=\dfrac{42-2}{2}=20$ (เท่ากับรัศมีพอดี ตามที่ควรเป็น)</li>
+      <li>คาบ 4 นาที ดังนั้น $B=\dfrac{2\pi}{4}=\dfrac{\pi}{2}$</li>
+      <li>ที่ $t=0$ อยู่ <em>ต่ำสุด</em> — ฟังก์ชันที่เริ่มจากต่ำสุดคือ $-\cos$ พอดี จึงเขียนได้ทันทีโดยไม่ต้องเลื่อนเฟส
+        $$h(t) = -20\cos\!\left(\frac{\pi}{2}t\right)+22$$</li>
+      <li>แทน $t=3$: $\;h(3)=-20\cos\left(\dfrac{3\pi}{2}\right)+22=-20(0)+22=22$</li>
+    </ol>
+    <div class="ans">ตอบ $h(t)=-20\cos\left(\dfrac{\pi}{2}t\right)+22$ และที่เวลา 3 นาที ผู้โดยสารอยู่สูง 22 เมตร (ระดับกึ่งกลางพอดี กำลังลง)</div>
+  </div>
+
+  <div class="box note">
+    <div class="box-title">เคล็ดลับ: เลือก sin หรือ cos ให้ถูก</div>
+    <ul style="margin:0">
+      <li>เริ่มที่ <strong>ค่าสูงสุด</strong> → ใช้ $+\cos$</li>
+      <li>เริ่มที่ <strong>ค่าต่ำสุด</strong> → ใช้ $-\cos$</li>
+      <li>เริ่มที่ <strong>เส้นกึ่งกลางแล้วขึ้น</strong> → ใช้ $+\sin$</li>
+      <li>เริ่มที่ <strong>เส้นกึ่งกลางแล้วลง</strong> → ใช้ $-\sin$</li>
+    </ul>
+    <p style="margin:.5em 0 0">เลือกให้ตรงกับจุดเริ่มต้น จะไม่ต้องคำนวณการเลื่อนเฟสเลย</p>
+  </div>
+
+  <div class="box link">
+    <div class="box-title">เช็กลิสต์ก่อนขึ้นบทถัดไป</div>
+    <ul style="margin:0">
+      <li>ระบุแอมพลิจูด คาบ การเลื่อนเฟส และเส้นกึ่งกลาง จากสมการใด ๆ ได้ พร้อมจัดรูปดึง B ออกก่อนเสมอ</li>
+      <li>เขียนสมการจากกราฟหรือจากสถานการณ์จริงได้</li>
+      <li>อธิบายได้ว่าทำไมกราฟ tan มีคาบ π และมีเส้นกำกับตรงไหน</li>
+      <li>วาดกราฟคร่าว ๆ ด้วยมือได้ โดยหาจุดสำคัญห้าจุดในหนึ่งคาบ</li>
+    </ul>
+  </div>
+
+  <div class="chapnav">
+    <a href="ch2.html"><div class="dir">◀ ก่อนหน้า</div><div class="ttl">บทที่ 2 · วงกลมหนึ่งหน่วย</div></a>
+    <a class="next" href="ch4.html"><div class="dir">ถัดไป ▶</div><div class="ttl">บทที่ 4 · เอกลักษณ์ตรีโกณ</div></a>
+  </div>
+
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script src="assets/js/viz.js"></script>
+<script src="assets/js/widgets.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>
