@@ -82,7 +82,74 @@
     </p>
   </div>
 
-  <h2 id="special">1.3 มุมพิเศษ 30°, 45°, 60°</h2>
+  <h2 id="memory">1.3 แผนภาพช่วยจำทั้งหกฟังก์ชัน</h2>
+  <p>
+    หกฟังก์ชันดูเยอะจนน่าท้อ แต่ถ้ามองจากมุมของ <em>จุดยอด</em> แทนที่จะมองจากสูตร จะเหลือแค่ของสามชิ้น
+    เพราะสามเหลี่ยมมีสามมุม และ <strong>แต่ละมุมเกิดจากด้านสองด้านมาบรรจบกัน</strong>
+  </p>
+  <p>
+    ด้านสองด้านที่บรรจบกันนั้นเอามาหารกันได้สองแบบ (สลับตัวเศษกับตัวส่วน) ซึ่งเป็นส่วนกลับกันพอดี
+    <strong>ทุกมุมจึงเป็นที่อยู่ของฟังก์ชันหนึ่งคู่</strong> ครบสามมุมก็ได้ครบหกตัว
+  </p>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>จุดยอด</th><th>ด้านสองด้านที่มาบรรจบกัน</th><th>คู่ฟังก์ชันที่อยู่ตรงนั้น</th></tr></thead>
+    <tbody>
+      <tr><td>มุม A (ล่างซ้าย)</td><td>ข้างเคียง + ด้านตรงข้ามมุมฉาก</td><td><span class="t-cos">cos กับ sec</span></td></tr>
+      <tr><td>มุมยอด (บน)</td><td>ข้างตรงข้าม + ด้านตรงข้ามมุมฉาก</td><td><span class="t-sin">sin กับ cosec</span></td></tr>
+      <tr><td>มุมฉาก (ล่างขวา)</td><td>ข้างตรงข้าม + ข้างเคียง</td><td><span class="t-tan">tan กับ cot</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>
+    เหลือคำถามเดียวคือ ในแต่ละคู่ ตัวไหนเป็นตัวเศษตัวไหนเป็นตัวส่วน — ลูกศรในภาพตอบให้แล้ว
+    กดปุ่ม “เน้นที่มุม” เพื่อดูทีละมุม
+  </p>
+
+  <div class="widget" id="w-mnemonic"></div>
+
+  <div class="box key">
+    <div class="box-title">กฎเดียวที่ต้องจำ</div>
+    <p style="margin:0 0 .6em">
+      <strong>ลูกศรพุ่งทะลุด้านใด ด้านนั้นคือตัวส่วน</strong> ส่วนตัวเศษคืออีกด้านหนึ่งที่ประกอบมุมนั้น
+    </p>
+    <div class="tbl-wrap" style="margin:0">
+    <table>
+      <thead><tr><th>จุดยอด</th><th>ลูกศรทะลุด้าน</th><th>ได้ฟังก์ชัน</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="2">มุม A</td><td>ด้านตรงข้ามมุมฉาก</td><td><span class="t-cos">$\cos A=\dfrac{\text{adj}}{\text{hyp}}$</span></td></tr>
+        <tr><td>ข้างเคียง</td><td><span class="t-cos">$\sec A=\dfrac{\text{hyp}}{\text{adj}}$</span></td></tr>
+        <tr><td rowspan="2">มุมยอด</td><td>ด้านตรงข้ามมุมฉาก</td><td><span class="t-sin">$\sin A=\dfrac{\text{opp}}{\text{hyp}}$</span></td></tr>
+        <tr><td>ข้างตรงข้าม</td><td><span class="t-sin">$\csc A=\dfrac{\text{hyp}}{\text{opp}}$</span></td></tr>
+        <tr><td rowspan="2">มุมฉาก</td><td>ข้างเคียง</td><td><span class="t-tan">$\tan A=\dfrac{\text{opp}}{\text{adj}}$</span></td></tr>
+        <tr><td>ข้างตรงข้าม</td><td><span class="t-tan">$\cot A=\dfrac{\text{adj}}{\text{opp}}$</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="box note">
+    <div class="box-title">ทำไมแผนภาพนี้ถึงช่วยได้จริง</div>
+    <ul style="margin:0">
+      <li><strong>จับคู่ส่วนกลับได้เอง</strong> — สองลูกศรที่ออกจากจุดยอดเดียวกันคือคู่ส่วนกลับเสมอ
+        จึงไม่มีวันจำสลับว่า sec คู่กับ sin (ซึ่งผิด)</li>
+      <li><strong>ไม่ต้องท่องว่าตัวไหนหารด้วยตัวไหน</strong> — ดูทิศลูกศรแล้วอ่านได้ทันที</li>
+      <li><strong>วาดใหม่ได้ตลอดเวลา</strong> — ในห้องสอบวาดสามเหลี่ยมกับลูกศรหกตัวใช้เวลาไม่ถึงยี่สิบวินาที
+        ปลอดภัยกว่าการพึ่งความจำล้วน ๆ</li>
+    </ul>
+  </div>
+
+  <div class="box warn">
+    <div class="box-title">ข้อควรระวังของแผนภาพนี้</div>
+    <p style="margin:0">
+      ฟังก์ชันทั้งหกในภาพเป็นของ <strong>มุม A</strong> ทั้งหมด จุดยอดเป็นเพียง “ที่จอด” ที่บอกว่าใช้ด้านคู่ไหน
+      ไม่ได้แปลว่า sin เป็นของมุมยอด — ถ้าโจทย์ถามค่าของมุมยอด ต้องสลับ opp กับ adj ก่อนเสมอ
+    </p>
+  </div>
+
+  <h2 id="special">1.4 มุมพิเศษ 30°, 45°, 60°</h2>
   <p>
     สามมุมนี้พิเศษเพราะหาค่าได้แน่นอนโดยไม่ต้องใช้เครื่องคิดเลข
     ที่มาไม่ใช่เวทมนตร์ — มาจากการผ่าครึ่งรูปที่เรารู้จักดีอยู่แล้วสองรูปเท่านั้น
@@ -107,6 +174,51 @@
       เขียนแถว sin เป็น $\dfrac{\sqrt{0}}{2},\dfrac{\sqrt{1}}{2},\dfrac{\sqrt{2}}{2},\dfrac{\sqrt{3}}{2},\dfrac{\sqrt{4}}{2}$
       สำหรับมุม 0°, 30°, 45°, 60°, 90° ตามลำดับ — แล้วแถว cos คือแถวเดิมอ่านย้อนหลัง
       ส่วน tan คือ sin หารด้วย cos
+    </p>
+  </div>
+
+  <h3>ใช้แผนภาพช่วยจำกับมุมพิเศษ</h3>
+  <p>
+    ตารางด้านบนให้แค่ sin, cos, tan แต่ถ้าเอาความยาวด้านที่แน่นอนใส่กลับเข้าไปในแผนภาพจากหัวข้อที่แล้ว
+    จะอ่านค่าได้ครบทั้งหกตัวโดยไม่ต้องท่องเพิ่มเลย — ลองสลับดูทั้งสามมุม
+  </p>
+
+  <div class="widget" id="w-mnemonic-special"></div>
+
+  <p>
+    วิธีอ่าน ยกตัวอย่างมุม 30° ซึ่งมีด้าน <code>adj = √3</code>, <code>opp = 1</code>, <code>hyp = 2</code>
+  </p>
+  <ul>
+    <li>ที่ <span class="t-cos">มุม A</span> ด้านที่ประกอบคือ √3 กับ 2 →
+      ลูกศรทะลุ hyp ได้ $\cos 30^\circ=\dfrac{\sqrt3}{2}$ · ลูกศรทะลุ adj ได้ $\sec 30^\circ=\dfrac{2}{\sqrt3}$</li>
+    <li>ที่ <span class="t-sin">มุมยอด</span> ด้านที่ประกอบคือ 1 กับ 2 →
+      $\sin 30^\circ=\dfrac{1}{2}$ · $\csc 30^\circ=\dfrac{2}{1}=2$</li>
+    <li>ที่ <span class="t-tan">มุมฉาก</span> ด้านที่ประกอบคือ 1 กับ √3 →
+      $\tan 30^\circ=\dfrac{1}{\sqrt3}$ · $\cot 30^\circ=\dfrac{\sqrt3}{1}=\sqrt3$</li>
+  </ul>
+
+  <div class="box key">
+    <div class="box-title">ของแถมจากแผนภาพ: สูตรโคฟังก์ชัน</div>
+    <p style="margin:0 0 .4em">
+      มุมยอดของสามเหลี่ยมเท่ากับ $90^\circ - A$ เสมอ (เพราะมุมภายในรวมกันได้ 180° และมุมหนึ่งเป็น 90° ไปแล้ว)
+      เมื่อสลับไปมองจากมุมยอด ด้าน opp กับ adj จะสลับที่กัน ผลคือ
+    </p>
+    $$\sin A=\cos(90^\circ-A) \qquad \tan A=\cot(90^\circ-A) \qquad \sec A=\csc(90^\circ-A)$$
+    <p style="margin:.5em 0 0">
+      ลองสลับ widget ไปมาระหว่าง 30° กับ 60° แล้วเทียบตัวเลขดู จะเห็นว่า
+      $\sin 30^\circ$ กับ $\cos 60^\circ$ เท่ากันคือ $\tfrac12$ พอดี
+      <strong>นี่คือที่มาของอักษร “co” ในชื่อ cosine, cotangent และ cosecant</strong> — มันคือฟังก์ชันของมุมประกอบ
+      <span class="en">(complementary angle)</span> นั่นเอง
+    </p>
+  </div>
+
+  <div class="box warn">
+    <div class="box-title">รูปกรณฑ์ในตัวส่วน</div>
+    <p style="margin:0">
+      ครูหลายท่านให้ทำตัวส่วนเป็นจำนวนตรรกยะก่อนตอบ
+      $$\frac{1}{\sqrt3}=\frac{1}{\sqrt3}\cdot\frac{\sqrt3}{\sqrt3}=\frac{\sqrt3}{3}
+      \qquad \frac{2}{\sqrt3}=\frac{2\sqrt3}{3}$$
+      สองรูปนี้เท่ากันทุกประการ ตอบแบบไหนก็ถูก แต่ถ้าโจทย์หรือช้อยส์เขียนแบบไหนควรตอบให้ตรงกัน
     </p>
   </div>
 
@@ -146,7 +258,7 @@
     </p>
   </div>
 
-  <h2 id="apply">1.4 การประยุกต์: มุมเงยและมุมก้ม</h2>
+  <h2 id="apply">1.5 การประยุกต์: มุมเงยและมุมก้ม</h2>
   <p>
     <strong>มุมเงย</strong> <span class="en">(angle of elevation)</span> คือมุมระหว่างแนวสายตาที่มองขึ้นกับแนวระดับ
     ส่วน <strong>มุมก้ม</strong> <span class="en">(angle of depression)</span> คือมุมระหว่างแนวสายตาที่มองลงกับแนวระดับ
@@ -195,7 +307,7 @@
     </p>
   </div>
 
-  <h2 id="pitfall">1.5 สรุปและข้อควรระวัง</h2>
+  <h2 id="pitfall">1.6 สรุปและข้อควรระวัง</h2>
   <div class="box link">
     <div class="box-title">เช็กลิสต์ก่อนขึ้นบทถัดไป</div>
     <ul style="margin:0">

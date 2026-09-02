@@ -140,7 +140,167 @@
     }
   });
 
-  /* 1.3 มุมพิเศษ 30-45-60 มาจากไหน */
+  /* ---------------------------------------------------------------------
+     แผนภาพช่วยจำหกฟังก์ชัน
+     กฎ: แต่ละมุมเกิดจากด้านสองด้าน → ให้อัตราส่วนสองแบบที่เป็นส่วนกลับกัน
+         ลูกศรพุ่งทะลุด้านใด ด้านนั้นคือ "ตัวส่วน"
+     --------------------------------------------------------------------- */
+  var MN_ITEMS = [
+    { grp: 'A',     side: 'hyp',  f: 0.30, key: 'cos',   col: C.cos },
+    { grp: 'A',     side: 'base', f: 0.30, key: 'sec',   col: C.cos },
+    { grp: 'top',   side: 'hyp',  f: 0.78, key: 'sin',   col: C.sin },
+    { grp: 'top',   side: 'vert', f: 0.74, key: 'cosec', col: C.sin },
+    { grp: 'right', side: 'vert', f: 0.26, key: 'cot',   col: C.tan },
+    { grp: 'right', side: 'base', f: 0.76, key: 'tan',   col: C.tan }
+  ];
+  var MN_GRPCOL = { A: C.cos, top: C.sin, right: C.tan };
+  var MN_SIDES = { A: ['base', 'hyp'], top: ['hyp', 'vert'], right: ['base', 'vert'] };
+
+  function drawMnemonic(p, o) {
+    var W = o.W, H = o.H;
+    var th = Math.atan2(H, W);
+    var nrm = { hyp: [-sin(th), cos(th)], base: [0, -1], vert: [1, 0] };
+    var sel = o.sel || 'all';
+    var lit = function (g) { return sel === 'all' || sel === g; };
+    var col = function (g, c) { return lit(g) ? c : '#dcd9d0'; };
+
+    p.setBounds({ xmin: -0.95, xmax: W + 1.95, ymin: -1.1, ymax: H + 0.95 });
+
+    /* ตัวสามเหลี่ยม — ด้านที่ประกอบมุมที่เลือกจะถูกเน้น */
+    var hi = MN_SIDES[sel] || [];
+    var hc = MN_GRPCOL[sel];
+    var sw = function (s) { return hi.indexOf(s) >= 0 ? 5 : 2.2; };
+    var sc = function (s) { return hi.indexOf(s) >= 0 ? hc : '#4a4842'; };
+
+    p.poly([[0, 0], [W, 0], [W, H]], { fill: 'rgba(0,0,0,.022)' });
+    p.line(0, 0, W, 0, { color: sc('base'), w: sw('base') });
+    p.line(W, 0, W, H, { color: sc('vert'), w: sw('vert') });
+    p.line(0, 0, W, H, { color: sc('hyp'), w: sw('hyp') });
+
+    /* จุดยอดทั้งสาม ระบายสีตามคู่ฟังก์ชันที่อยู่ตรงนั้น */
+    p.arc(0, 0, 0.5, 0, th, {
+      fill: lit('A') ? 'rgba(194,65,12,.13)' : null, color: col('A', C.cos), w: lit('A') ? 2.2 : 1.4
+    });
+    p.text(0.62 * cos(th / 2), 0.62 * sin(th / 2), 'A', { color: col('A', C.cos), size: 15 });
+    p.arc(W, H, 0.5, PI + th, PI * 1.5, {
+      fill: lit('top') ? 'rgba(29,78,216,.13)' : null, color: col('top', C.sin), w: lit('top') ? 2.2 : 1.4
+    });
+    p.rightAngle(W, 0, -1, 0, 0, 1, 15, col('right', C.tan));
+    p.rightAngle(W, 0, -1, 0, 0, 1, 11, col('right', C.tan));
+    if (o.topLab) {
+      /* วางไว้ในรูป ตามแนวเส้นแบ่งครึ่งมุมยอด จะได้ไม่ทับส่วนโค้งหรือลูกศร */
+      var bis = PI * 1.25 + th / 2;
+      p.text(W + 1.02 * cos(bis), H + 1.02 * sin(bis), o.topLab, {
+        color: col('top', C.sin), size: 12, bg: 'rgba(255,255,255,.85)'
+      });
+    }
+
+    /* ป้ายชื่อด้าน วางไว้ด้านในรูป กระจายตำแหน่งไม่ให้ชนกันแม้รูปจะแคบ */
+    var lb = { color: '#6b6961', size: 12, bg: 'rgba(255,255,255,.82)' };
+    p.text(W * 0.5, 0, o.sideLab.adj, Object.assign({ dy: -15 }, lb));
+    p.text(W, H * 0.62, o.sideLab.opp, Object.assign({ dx: -13, align: 'right' }, lb));
+    p.text(W * 0.42 + 0.32 * sin(th), H * 0.42 - 0.32 * cos(th), o.sideLab.hyp, lb);
+
+    /* ลูกศรหกตัว */
+    MN_ITEMS.forEach(function (it) {
+      var P = it.side === 'hyp' ? [W * it.f, H * it.f]
+            : it.side === 'base' ? [W * it.f, 0] : [W, H * it.f];
+      var n = nrm[it.side], c = col(it.grp, it.col);
+      p.arrow(P[0] - n[0] * 0.36, P[1] - n[1] * 0.36,
+              P[0] + n[0] * 0.66, P[1] + n[1] * 0.66, { color: c, w: 2.2, head: 9 });
+      p.text(P[0] + n[0] * 0.80, P[1] + n[1] * 0.80, it.key + o.suffix, {
+        dx: it.side === 'vert' ? 9 : 0,
+        dy: it.side === 'base' ? 13 : (it.side === 'hyp' ? -9 : 0),
+        align: it.side === 'vert' ? 'left' : 'center',
+        color: c, size: 13, bg: 'rgba(255,255,255,.9)'
+      });
+    });
+  }
+
+  /* 1.3 แผนภาพช่วยจำ — แบบทั่วไป */
+  TV.widget('#w-mnemonic', {
+    title: 'แผนภาพช่วยจำทั้งหกฟังก์ชัน',
+    badge: 'เลือกมุมดูได้',
+    desc: 'มุมแต่ละมุมของสามเหลี่ยมเกิดจากด้านสองด้านมาบรรจบกัน ด้านคู่นั้นสร้างอัตราส่วนได้สองแบบซึ่งเป็นส่วนกลับกันพอดี — และลูกศรพุ่งทะลุด้านใด ด้านนั้นคือ “ตัวส่วน”',
+    plot: { equal: true, ratio: 0.56, minH: 300, maxH: 430, pad: 14 },
+    controls: [
+      {
+        type: 'seg', key: 'sel', label: 'เน้นที่มุม',
+        options: [['all', 'ทั้งหมด'], ['A', 'มุม A'], ['top', 'มุมยอด'], ['right', 'มุมฉาก']], value: 'all'
+      },
+      { type: 'range', key: 'th', label: 'มุม A', min: 15, max: 60, step: 1, value: 30, fmt: degFmt }
+    ],
+    hint: 'สามคู่นี้เป็นส่วนกลับกันเสมอ: cos ↔ sec · sin ↔ cosec · tan ↔ cot — แผนภาพจึงบอกทั้งชื่อและสูตรของทั้งหกตัวพร้อมกัน',
+    draw: function (p, s, api) {
+      var th = d2r(s.th), Lh = 3.5;
+      drawMnemonic(p, {
+        W: Lh * cos(th), H: Lh * sin(th), sel: s.sel, suffix: ' A',
+        sideLab: { adj: 'adj', opp: 'opp', hyp: 'hyp' },
+        topLab: '90° − A'
+      });
+      api.stats({
+        'cos A = adj/hyp': { v: nf(cos(th), 3), color: C.cos },
+        'sec A = hyp/adj': { v: nf(1 / cos(th), 3), color: C.cos },
+        'sin A = opp/hyp': { v: nf(sin(th), 3), color: C.sin },
+        'cosec A = hyp/opp': { v: nf(1 / sin(th), 3), color: C.sin },
+        'tan A = opp/adj': { v: nf(tan(th), 3), color: C.tan },
+        'cot A = adj/opp': { v: nf(1 / tan(th), 3), color: C.tan }
+      });
+    }
+  });
+
+  /* 1.4 แผนภาพช่วยจำ — ใช้กับมุมพิเศษ */
+  var SPECIAL = {
+    '30': {
+      adj: '√3', opp: '1', hyp: '2', a: Math.sqrt(3), o: 1, h: 2, top: '60°',
+      v: { cos: '√3/2 ≈ 0.866', sec: '2/√3 ≈ 1.155', sin: '1/2 = 0.500',
+           cosec: '2', tan: '1/√3 ≈ 0.577', cot: '√3 ≈ 1.732' }
+    },
+    '45': {
+      adj: '1', opp: '1', hyp: '√2', a: 1, o: 1, h: Math.sqrt(2), top: '45°',
+      v: { cos: '√2/2 ≈ 0.707', sec: '√2 ≈ 1.414', sin: '√2/2 ≈ 0.707',
+           cosec: '√2 ≈ 1.414', tan: '1', cot: '1' }
+    },
+    '60': {
+      adj: '1', opp: '√3', hyp: '2', a: 1, o: Math.sqrt(3), h: 2, top: '30°',
+      v: { cos: '1/2 = 0.500', sec: '2', sin: '√3/2 ≈ 0.866',
+           cosec: '2/√3 ≈ 1.155', tan: '√3 ≈ 1.732', cot: '1/√3 ≈ 0.577' }
+    }
+  };
+
+  TV.widget('#w-mnemonic-special', {
+    title: 'ใช้แผนภาพกับมุม 30°, 45°, 60°',
+    badge: 'สลับมุมได้',
+    desc: 'เติมความยาวด้านที่แน่นอนลงในรูปเดิม แล้วอ่านค่าทั้งหกออกมาตามลูกศรได้ทันที โดยไม่ต้องท่องตารางเลย',
+    plot: { equal: true, ratio: 0.58, minH: 310, maxH: 440, pad: 14 },
+    controls: [
+      {
+        type: 'seg', key: 'm', label: 'มุม A',
+        options: [['30', '30°'], ['45', '45°'], ['60', '60°']], value: '30'
+      },
+      {
+        type: 'seg', key: 'sel', label: 'เน้นที่มุม',
+        options: [['all', 'ทั้งหมด'], ['A', 'มุม A'], ['top', 'มุมยอด'], ['right', 'มุมฉาก']], value: 'all'
+      }
+    ],
+    hint: 'สังเกตว่ามุมยอดคือ 90° − A เสมอ ค่าที่มุมยอดจึงเป็นค่าของมุมนั้น เช่น sin 30° = cos 60° — นี่คือที่มาของสูตรโคฟังก์ชัน',
+    draw: function (p, s, api) {
+      var d = SPECIAL[s.m], k = 3.5 / d.h;
+      drawMnemonic(p, {
+        W: d.a * k, H: d.o * k, sel: s.sel, suffix: ' ' + s.m + '°',
+        sideLab: { adj: 'adj = ' + d.adj, opp: 'opp = ' + d.opp, hyp: 'hyp = ' + d.hyp },
+        topLab: d.top
+      });
+      var out = {};
+      ['cos', 'sec', 'sin', 'cosec', 'tan', 'cot'].forEach(function (fn) {
+        var g = (fn === 'cos' || fn === 'sec') ? C.cos : (fn === 'sin' || fn === 'cosec') ? C.sin : C.tan;
+        out[fn + ' ' + s.m + '°'] = { v: d.v[fn], color: g };
+      });
+      api.stats(out);
+    }
+  });
+
+  /* 1.5 มุมพิเศษ 30-45-60 มาจากไหน */
   TV.widget('#w-special', {
     title: 'มุมพิเศษ 30°, 45°, 60° มาจากไหน',
     badge: 'สลับดูได้',
