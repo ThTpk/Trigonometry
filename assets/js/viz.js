@@ -354,6 +354,38 @@
     c.closePath(); c.fill(); c.restore();
   };
 
+  /* ---------- ลูกศรเส้นโค้ง (quadratic bézier) ----------
+     (x0,y0) จุดเริ่ม · (cx,cy) จุดควบคุมความโค้ง · (x1,y1) ปลายลูกศร */
+  Plot.prototype.curveArrow = function (x0, y0, cx, cy, x1, y1, opt) {
+    opt = opt || {};
+    var c = this.ctx;
+    var X0 = this.X(x0), Y0 = this.Y(y0);
+    var CX = this.X(cx), CY = this.Y(cy);
+    var X1 = this.X(x1), Y1 = this.Y(y1);
+    c.save();
+    c.strokeStyle = opt.color || C.ink;
+    c.lineWidth = opt.w || 2;
+    c.lineCap = 'round';
+    if (opt.dash) c.setLineDash(opt.dash);
+    c.beginPath();
+    c.moveTo(X0, Y0);
+    c.quadraticCurveTo(CX, CY, X1, Y1);
+    c.stroke();
+    c.setLineDash([]);
+    /* หัวลูกศรวางตามทิศสัมผัสที่ปลายเส้น */
+    var tx = X1 - CX, ty = Y1 - CY, m = Math.hypot(tx, ty) || 1;
+    tx /= m; ty /= m;
+    var s = opt.head || 9, w = s * 0.46;
+    c.fillStyle = opt.color || C.ink;
+    c.beginPath();
+    c.moveTo(X1, Y1);
+    c.lineTo(X1 - tx * s + ty * w, Y1 - ty * s - tx * w);
+    c.lineTo(X1 - tx * s - ty * w, Y1 - ty * s + tx * w);
+    c.closePath();
+    c.fill();
+    c.restore();
+  };
+
   /* ---------- แถบมาตราส่วนกำกับความยาว (brace แบบง่าย) ---------- */
   Plot.prototype.measure = function (x1, y1, x2, y2, off, label, color) {
     var c = this.ctx;

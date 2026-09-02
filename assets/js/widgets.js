@@ -201,14 +201,20 @@
     p.text(W, H * 0.62, o.sideLab.opp, Object.assign({ dx: -13, align: 'right' }, lb));
     p.text(W * 0.42 + 0.32 * sin(th), H * 0.42 - 0.32 * cos(th), o.sideLab.hyp, lb);
 
-    /* ลูกศรหกตัว */
+    /* ลูกศรหกตัว — โค้งออกจากจุดยอดที่มันสังกัด แล้วพุ่งทะลุด้านที่เป็นตัวส่วน */
+    var bisA = th / 2, bisT = PI * 1.25 + th / 2, bisR = PI * 0.75;
+    var start = {
+      A:     [0.68 * cos(bisA), 0.68 * sin(bisA)],
+      top:   [W + 0.68 * cos(bisT), H + 0.68 * sin(bisT)],
+      right: [W + 0.68 * cos(bisR), 0.68 * sin(bisR)]
+    };
     MN_ITEMS.forEach(function (it) {
       var P = it.side === 'hyp' ? [W * it.f, H * it.f]
             : it.side === 'base' ? [W * it.f, 0] : [W, H * it.f];
-      var n = nrm[it.side], c = col(it.grp, it.col);
-      p.arrow(P[0] - n[0] * 0.36, P[1] - n[1] * 0.36,
-              P[0] + n[0] * 0.66, P[1] + n[1] * 0.66, { color: c, w: 2.2, head: 9 });
-      p.text(P[0] + n[0] * 0.80, P[1] + n[1] * 0.80, it.key + o.suffix, {
+      var n = nrm[it.side], c = col(it.grp, it.col), S = start[it.grp];
+      p.curveArrow(S[0], S[1], P[0], P[1],
+                   P[0] + n[0] * 0.62, P[1] + n[1] * 0.62, { color: c, w: 2.2, head: 9.5 });
+      p.text(P[0] + n[0] * 0.88, P[1] + n[1] * 0.88, it.key + o.suffix, {
         dx: it.side === 'vert' ? 9 : 0,
         dy: it.side === 'base' ? 13 : (it.side === 'hyp' ? -9 : 0),
         align: it.side === 'vert' ? 'left' : 'center',
