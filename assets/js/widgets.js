@@ -146,7 +146,7 @@
          ลูกศรพุ่งทะลุด้านใด ด้านนั้นคือ "ตัวส่วน"
      --------------------------------------------------------------------- */
   /* from = ด้านตัวตั้ง (จุดเริ่มลูกศร) · to = ด้านตัวหาร (ลูกศรพุ่งทะลุออก)
-     band = เส้นในหรือเส้นนอก ทำให้ลูกศรสองเส้นที่มุมเดียวกันขนานกันโดยไม่ตัดกัน */
+     band = ส่วนโค้งวงในหรือวงนอก ทำให้ลูกศรสองเส้นที่มุมเดียวกันซ้อนกันโดยไม่ตัดกัน */
   var MN_ITEMS = [
     { grp: 'A',     key: 'cos',   col: C.cos, from: 'base', to: 'hyp',  band: 'in'  },
     { grp: 'A',     key: 'sec',   col: C.cos, from: 'hyp',  to: 'base', band: 'out' },
@@ -156,12 +156,6 @@
     { grp: 'right', key: 'tan',   col: C.tan, from: 'vert', to: 'base', band: 'out' }
   ];
 
-  /* แปลง "ระยะจากจุดยอด" เป็นพารามิเตอร์ t บนด้านนั้น (t วัดจากจุดกำเนิดของด้านเสมอ) */
-  var MN_TFROM = {
-    A:     { base: function (f) { return f; },     hyp:  function (f) { return f; } },
-    top:   { hyp:  function (f) { return 1 - f; }, vert: function (f) { return 1 - f; } },
-    right: { base: function (f) { return 1 - f; }, vert: function (f) { return f; } }
-  };
   var MN_GRPCOL = { A: C.cos, top: C.sin, right: C.tan };
   var MN_SIDES = { A: ['base', 'hyp'], top: ['hyp', 'vert'], right: ['base', 'vert'] };
 
@@ -174,11 +168,18 @@
     var col = function (g, c) { return lit(g) ? c : '#dcd9d0'; };
 
     var L = Math.hypot(W, H);
-    var LEN = { base: W, vert: H, hyp: L };
-    var F_IN = 0.16, F_OUT = 0.34;   /* สัดส่วนบนด้าน วัดจากจุดยอด — เกาะอยู่ใกล้มุม */
-    /* ระยะจากจุดยอดถึงเส้นในสุด ใช้กำหนดขนาดส่วนโค้งกับตำแหน่งป้ายกำกับมุม */
-    var near = function (a, b) { return F_IN * Math.min(LEN[a], LEN[b]); };
-    var nearA = near('base', 'hyp'), nearT = near('hyp', 'vert'), nearR = near('base', 'vert');
+    /* ส่วนโค้งทั้งหกวัดรัศมีจากจุดยอด โดยอิงด้านที่สั้นกว่าในสองด้านที่ประกอบมุมนั้น
+       ค่าน้อย ๆ นี้ทำให้ทุกเส้นเกาะอยู่ชิดมุมเสมอ ไม่ว่าสามเหลี่ยมจะแบนหรือแคบ */
+    var F_IN = 0.14, F_OUT = 0.30;
+    var RAD = { A: Math.min(W, L), top: Math.min(L, H), right: Math.min(W, H) };
+    var rad = function (g, band) { return (band === 'in' ? F_IN : F_OUT) * RAD[g]; };
+    /* จุดยอด และมุมของด้านแต่ละด้านเมื่อมองออกไปจากจุดยอดนั้น */
+    var VTX = { A: [0, 0], top: [W, H], right: [W, 0] };
+    var ANG = {
+      A:     { base: 0,      hyp: th },
+      top:   { hyp: PI + th, vert: PI * 1.5 },
+      right: { base: PI,     vert: PI * 0.5 }
+    };
 
     p.setBounds({ xmin: -1.25, xmax: W + 1.95, ymin: -1.45, ymax: H + 1.0 });
 
@@ -194,24 +195,25 @@
     p.line(0, 0, W, H, { color: sc('hyp'), w: sw('hyp') });
 
     /* จุดยอดทั้งสาม ระบายสีตามคู่ฟังก์ชันที่อยู่ตรงนั้น
-       รัศมีส่วนโค้งเล็กกว่าเส้นในสุดเสมอ จะได้ไม่ถูกลูกศรพาดทับ */
-    var rA = Math.min(0.40, 0.66 * nearA), rT = Math.min(0.40, 0.66 * nearT);
-    /* ป้ายมุมวางถัดจากลูกศรเส้นนอกออกมาเล็กน้อย จะได้อยู่ในที่ว่างและยังเกาะมุมอยู่ */
-    /* ป้ายมุม A วางกึ่งกลางระหว่างลูกศรสองเส้นพอดี (ลูกศรที่มุมนี้เป็นเส้นตั้งฉากที่ x = F*W) */
-    var axA = (F_IN + F_OUT) / 2 * W;
+       รัศมีเล็กกว่าส่วนโค้งวงในสุดเสมอ จะได้ไม่ถูกลูกศรพาดทับ */
+    var rA = 0.60 * rad('A', 'in'), rT = 0.60 * rad('top', 'in');
+    /* ป้ายมุม A วางกึ่งกลางระหว่างส่วนโค้งสองเส้นพอดี */
+    var rMidA = (rad('A', 'in') + rad('A', 'out')) / 2;
     p.arc(0, 0, rA, 0, th, {
       fill: lit('A') ? 'rgba(194,65,12,.13)' : null, color: col('A', C.cos), w: lit('A') ? 2.2 : 1.4
     });
-    p.text(axA, axA * Math.tan(th / 2), 'A', { color: col('A', C.cos), size: 15, bg: 'rgba(255,255,255,.8)' });
+    p.text(rMidA * cos(th / 2), rMidA * sin(th / 2), 'A', { color: col('A', C.cos), size: 15, bg: 'rgba(255,255,255,.8)' });
     p.arc(W, H, rT, PI + th, PI * 1.5, {
       fill: lit('top') ? 'rgba(29,78,216,.13)' : null, color: col('top', C.sin), w: lit('top') ? 2.2 : 1.4
     });
-    p.rightAngle(W, 0, -1, 0, 0, 1, 10, col('right', C.tan));
-    p.rightAngle(W, 0, -1, 0, 0, 1, 7, col('right', C.tan));
+    var rSq = clamp(p.sx * 0.52 * rad('right', 'in'), 6, 13);
+    p.rightAngle(W, 0, -1, 0, 0, 1, rSq, col('right', C.tan));
+    p.rightAngle(W, 0, -1, 0, 0, 1, rSq * 0.68, col('right', C.tan));
     if (o.topLab) {
-      /* วางเหนือจุดยอดบน ซึ่งเป็นที่ว่างเสมอไม่ว่าสามเหลี่ยมจะแบนหรือสูง */
-      p.text(W, H + 0.38, o.topLab, {
-        color: col('top', C.sin), size: 12, bg: 'rgba(255,255,255,.85)'
+      /* วางเยื้องขวาของจุดยอดบน ซึ่งเป็นที่ว่างเสมอไม่ว่าสามเหลี่ยมจะแบนหรือสูง
+         (เหนือจุดยอดตรง ๆ จะชนหางลูกศร sin เมื่อสามเหลี่ยมแบนมาก) */
+      p.text(W + 0.50, H + 0.14, o.topLab, {
+        align: 'left', color: col('top', C.sin), size: 12, bg: 'rgba(255,255,255,.85)'
       });
     }
 
@@ -222,25 +224,22 @@
     p.text(W, H * 0.5, o.sideLab.opp, Object.assign({ dx: -13, align: 'right' }, lb));
     p.text(W * 0.5 + nrm.hyp[0] * 0.30, H * 0.5 + nrm.hyp[1] * 0.30, o.sideLab.hyp, lb);
 
-    /* ลูกศรหกตัว — เส้นตรงพาดตัดมุม เริ่มบนด้านตัวตั้ง ทะลุออกที่ด้านตัวหาร
-       จุดเริ่มและจุดทะลุอยู่ที่สัดส่วน 0.16 กับ 0.34 ของด้าน วัดจากจุดยอด จึงเกาะอยู่ชิดมุม */
-    var ptOn = function (side, t) {
-      return side === 'hyp' ? [W * t, H * t] : side === 'base' ? [W * t, 0] : [W, H * t];
-    };
+    /* ลูกศรหกตัว — ส่วนโค้งอ้อมมุมจากด้านตัวตั้งไปยังด้านตัวหาร แล้วต่อด้วย
+       เส้นตรงสั้น ๆ พุ่งตั้งฉากออกจากด้านตัวหาร (เส้นสัมผัสของส่วนโค้งตรงนั้น
+       ตั้งฉากกับด้านพอดี รอยต่อจึงเรียบสนิท) */
     MN_ITEMS.forEach(function (it) {
-      var f = it.band === 'in' ? F_IN : F_OUT;
-      var S = ptOn(it.from, MN_TFROM[it.grp][it.from](f));
-      var P = ptOn(it.to, MN_TFROM[it.grp][it.to](f));
-      var ux = P[0] - S[0], uy = P[1] - S[1], m = Math.hypot(ux, uy) || 1;
-      ux /= m; uy /= m;
-      var c = col(it.grp, it.col);
-      p.arrow(S[0], S[1], P[0] + ux * 0.52, P[1] + uy * 0.52, { color: c, w: 2.2, head: 9.5 });
+      var V = VTX[it.grp], r = rad(it.grp, it.band), c = col(it.grp, it.col);
+      var a0 = ANG[it.grp][it.from], a1 = ANG[it.grp][it.to];
+      var S = [V[0] + r * cos(a0), V[1] + r * sin(a0)];
+      var P = [V[0] + r * cos(a1), V[1] + r * sin(a1)];
+      var n = nrm[it.to];
+      /* หางของมุมฉากยื่นยาวกว่า ป้ายบนด้านเดียวกันจึงอยู่คนละแถวเสมอ */
+      var ext = it.grp === 'right' ? 0.80 : 0.44;
+      p.arc(V[0], V[1], r, a0, a1, { color: c, w: 2.2 });
+      p.arrow(P[0], P[1], P[0] + n[0] * ext, P[1] + n[1] * ext, { color: c, w: 2.2, head: 9.5 });
       /* จุดกลมกำกับต้นทาง = ด้านที่เป็นตัวตั้ง */
       p.dot(S[0], S[1], { fill: c, r: 4.5, w: 2, ring: '#ffffff' });
-      /* ป้ายวางตามแนวตั้งฉากของด้านที่ถูกทะลุ และเหลื่อมระยะตามจุดยอด
-         ป้ายสองอันบนด้านเดียวกันจึงอยู่คนละแถวเสมอ แม้สามเหลี่ยมจะแคบ */
-      var n = nrm[it.to], d = it.grp === 'right' ? 1.24 : 0.86;
-      p.text(P[0] + n[0] * d, P[1] + n[1] * d, it.key + o.suffix, {
+      p.text(P[0] + n[0] * (ext + 0.42), P[1] + n[1] * (ext + 0.42), it.key + o.suffix, {
         color: c, size: 13, bg: 'rgba(255,255,255,.9)'
       });
     });
@@ -250,7 +249,7 @@
   TV.widget('#w-mnemonic', {
     title: 'แผนภาพช่วยจำทั้งหกฟังก์ชัน',
     badge: 'เลือกมุมดูได้',
-    desc: 'อ่านลูกศรเป็นสูตรได้ทั้งเส้น — เริ่มที่จุดกลมบนด้านที่เป็น “ตัวเศษ” แล้วพาดตัดมุมไปทะลุออกที่ด้านที่เป็น “ตัวส่วน”',
+    desc: 'อ่านลูกศรเป็นสูตรได้ทั้งเส้น — เริ่มที่จุดกลมบนด้านที่เป็น “ตัวเศษ” แล้วโค้งอ้อมมุมไปทะลุออกที่ด้านที่เป็น “ตัวส่วน”',
     plot: { equal: true, ratio: 0.56, minH: 300, maxH: 430, pad: 14 },
     controls: [
       {
@@ -259,7 +258,7 @@
       },
       { type: 'range', key: 'th', label: 'มุม A', min: 15, max: 60, step: 1, value: 30, fmt: degFmt }
     ],
-    hint: 'ที่มุมเดียวกันจะมีลูกศรสองเส้นขนานกันแต่ชี้สวนทาง นั่นคือคู่ส่วนกลับกันเสมอ: cos ↔ sec · sin ↔ cosec · tan ↔ cot',
+    hint: 'ที่มุมเดียวกันจะมีส่วนโค้งสองเส้นซ้อนกัน แต่กวาดสวนทางกัน นั่นคือคู่ส่วนกลับกันเสมอ: cos ↔ sec · sin ↔ cosec · tan ↔ cot',
     draw: function (p, s, api) {
       var th = d2r(s.th), Lh = 3.5;
       drawMnemonic(p, {
