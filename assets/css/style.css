@@ -351,6 +351,23 @@ footer a { color: var(--ink-soft); }
 table.mini { font-size: .82rem; }
 table.mini th, table.mini td { padding: 5px 8px; }
 
+/* กรอบเต็มความกว้าง + แถวรูปประกอบในหน้าสรุปสูตร */
+.fbox.wide { grid-column: 1 / -1; }
+.figrow {
+  display: flex; flex-wrap: wrap; gap: 18px;
+  align-items: flex-start; justify-content: center; margin: .2em 0 0;
+}
+.figrow figure { flex: 1 1 230px; margin: 0; min-width: 0; max-width: 380px; }
+.figrow figure.big { flex: 1.45 1 300px; max-width: 520px; }
+.figrow svg { display: block; width: 100%; height: auto; }
+.figrow figcaption {
+  font-size: .78rem; color: var(--ink-soft); line-height: 1.6;
+  text-align: center; margin-top: 2px;
+}
+.figrow figcaption .fc { color: var(--c-cos); }
+.figrow figcaption .fs { color: var(--c-sin); }
+.figrow figcaption .ft { color: var(--c-tan); }
+
 /* ---------- พิมพ์ ---------- */
 @media print {
   .topbar, .sidebar, footer, .no-print, .widget-controls, .hint { display: none !important; }
@@ -370,6 +387,11 @@ table.mini th, table.mini td { padding: 5px 8px; }
   .fbox .fnote { font-size: 7.6pt; margin-top: .3em; }
   table.mini { font-size: 7.6pt; }
   table.mini th, table.mini td { padding: 2px 4px; }
+  /* บนกระดาษบีบให้รูปทั้งสามอยู่แถวเดียวกัน */
+  .figrow { gap: 9px; }
+  .figrow figure { flex-basis: 175px; max-width: 260px; }
+  .figrow figure.big { flex-basis: 215px; max-width: 300px; }
+  .figrow figcaption { font-size: 7pt; line-height: 1.45; }
   a { text-decoration: none; color: #000; }
   @page { margin: 12mm; }
 }
