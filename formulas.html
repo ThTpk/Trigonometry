@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>สรุปสูตรตรีโกณมิติ — ตรีโกณมิติเห็นภาพ</title>
+<meta name="description" content="สูตรตรีโกณมิติทั้งหมดในหน้าเดียว จัดกลุ่มพร้อมพิมพ์ลงกระดาษ A4">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d4ed8'/%3E%3Cpath d='M6 25 L26 25 L26 8 Z' fill='none' stroke='white' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=IBM+Plex+Sans+Thai:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar"></aside>
+<main class="sheet-main">
+
+  <div class="eyebrow">สรุปสูตร</div>
+  <h1>สูตรตรีโกณมิติทั้งหมด</h1>
+  <p class="lead">
+    ทุกสูตรจากทั้งแปดบท จัดกลุ่มไว้ในหน้าเดียว
+    <strong>สูตรในกรอบสีน้ำเงินคือกลุ่มที่ต้องจำจริง ๆ</strong> ที่เหลืออนุมานออกมาได้ทั้งหมด
+    กด <button class="btn primary" type="button" onclick="window.print()">พิมพ์หน้านี้</button>
+    เพื่อพิมพ์ลงกระดาษ (เมนูและสารบัญจะไม่ติดไปด้วย)
+  </p>
+
+  <div class="sheet">
+
+    <section class="fbox must">
+      <h3>① นิยาม — สามเหลี่ยมมุมฉาก</h3>
+      $$\sin\theta=\frac{\text{opp}}{\text{hyp}}\quad \cos\theta=\frac{\text{adj}}{\text{hyp}}\quad \tan\theta=\frac{\text{opp}}{\text{adj}}$$
+      $$\csc\theta=\frac{1}{\sin\theta}\quad \sec\theta=\frac{1}{\cos\theta}\quad \cot\theta=\frac{1}{\tan\theta}$$
+      $$\tan\theta=\frac{\sin\theta}{\cos\theta}\qquad \cot\theta=\frac{\cos\theta}{\sin\theta}$$
+    </section>
+
+    <section class="fbox must">
+      <h3>② วงกลมหนึ่งหน่วย</h3>
+      <p class="fnote">จุดบนวงกลมรัศมี 1 ที่มุม θ คือ $(\cos\theta,\ \sin\theta)$</p>
+      $$\text{ควอดรันต์บวก: A} \to \text{S} \to \text{T} \to \text{C}$$
+      $$s=r\theta \qquad A_{\text{เซกเตอร์}}=\tfrac12 r^{2}\theta \qquad (\theta \text{ เป็นเรเดียน})$$
+      $$180^\circ=\pi \text{ rad}$$
+    </section>
+
+    <section class="fbox">
+      <h3>③ ค่ามุมพิเศษ</h3>
+      <div class="tbl-wrap" style="margin:.3em 0 0">
+      <table class="mini">
+        <thead><tr><th>θ</th><th class="num">0°</th><th class="num">30°</th><th class="num">45°</th><th class="num">60°</th><th class="num">90°</th></tr></thead>
+        <tbody>
+          <tr><td>rad</td><td class="num">0</td><td class="num">π/6</td><td class="num">π/4</td><td class="num">π/3</td><td class="num">π/2</td></tr>
+          <tr><td>sin</td><td class="num">0</td><td class="num">½</td><td class="num">√2/2</td><td class="num">√3/2</td><td class="num">1</td></tr>
+          <tr><td>cos</td><td class="num">1</td><td class="num">√3/2</td><td class="num">√2/2</td><td class="num">½</td><td class="num">0</td></tr>
+          <tr><td>tan</td><td class="num">0</td><td class="num">1/√3</td><td class="num">1</td><td class="num">√3</td><td class="num">—</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="fnote">แถว sin คือ $\tfrac{\sqrt0}{2},\tfrac{\sqrt1}{2},\tfrac{\sqrt2}{2},\tfrac{\sqrt3}{2},\tfrac{\sqrt4}{2}$ · แถว cos คืออ่านย้อนกลับ</p>
+    </section>
+
+    <section class="fbox">
+      <h3>④ มุมสัมพันธ์</h3>
+      $$\sin(-\theta)=-\sin\theta \qquad \cos(-\theta)=\cos\theta$$
+      $$\tan(-\theta)=-\tan\theta$$
+      $$\sin(90^\circ-\theta)=\cos\theta \qquad \cos(90^\circ-\theta)=\sin\theta$$
+      $$\sin(180^\circ-\theta)=\sin\theta \qquad \cos(180^\circ-\theta)=-\cos\theta$$
+      $$\sin(\theta+360^\circ k)=\sin\theta$$
+    </section>
+
+    <section class="fbox must">
+      <h3>⑤ เอกลักษณ์พีทาโกรัส</h3>
+      $$\sin^{2}\theta+\cos^{2}\theta=1$$
+      $$1+\tan^{2}\theta=\sec^{2}\theta \qquad 1+\cot^{2}\theta=\csc^{2}\theta$$
+      <p class="fnote">สองอันหลังได้จากการหารอันแรกด้วย $\cos^2\theta$ และ $\sin^2\theta$</p>
+    </section>
+
+    <section class="fbox must">
+      <h3>⑥ สูตรผลบวก–ผลต่างมุม</h3>
+      $$\sin(A\pm B)=\sin A\cos B\pm\cos A\sin B$$
+      $$\cos(A\pm B)=\cos A\cos B\mp\sin A\sin B$$
+      $$\tan(A\pm B)=\frac{\tan A\pm\tan B}{1\mp\tan A\tan B}$$
+      <p class="fnote">สังเกตเครื่องหมายของ cos ว่าสลับกับข้างซ้าย</p>
+    </section>
+
+    <section class="fbox">
+      <h3>⑦ มุมสองเท่าและมุมสามเท่า</h3>
+      $$\sin 2A=2\sin A\cos A$$
+      $$\cos 2A=\cos^{2}A-\sin^{2}A$$
+      $$=1-2\sin^{2}A=2\cos^{2}A-1$$
+      $$\tan 2A=\frac{2\tan A}{1-\tan^{2}A}$$
+      $$\sin 3A=3\sin A-4\sin^{3}A$$
+      $$\cos 3A=4\cos^{3}A-3\cos A$$
+      <p class="fnote">ทั้งหมดได้จากสูตร ⑥ โดยแทน $B=A$ หรือ $B=2A$</p>
+    </section>
+
+    <section class="fbox">
+      <h3>⑧ ลดกำลังและมุมครึ่ง</h3>
+      $$\sin^{2}A=\frac{1-\cos 2A}{2} \qquad \cos^{2}A=\frac{1+\cos 2A}{2}$$
+      $$\sin\frac{A}{2}=\pm\sqrt{\frac{1-\cos A}{2}}$$
+      $$\cos\frac{A}{2}=\pm\sqrt{\frac{1+\cos A}{2}}$$
+      $$\tan\frac{A}{2}=\frac{1-\cos A}{\sin A}=\frac{\sin A}{1+\cos A}$$
+    </section>
+
+    <section class="fbox">
+      <h3>⑨ ผลคูณ ↔ ผลบวก</h3>
+      $$2\sin A\cos B=\sin(A+B)+\sin(A-B)$$
+      $$2\cos A\cos B=\cos(A+B)+\cos(A-B)$$
+      $$2\sin A\sin B=\cos(A-B)-\cos(A+B)$$
+      $$\sin A+\sin B=2\sin\frac{A+B}{2}\cos\frac{A-B}{2}$$
+      $$\cos A+\cos B=2\cos\frac{A+B}{2}\cos\frac{A-B}{2}$$
+      $$\cos A-\cos B=-2\sin\frac{A+B}{2}\sin\frac{A-B}{2}$$
+    </section>
+
+    <section class="fbox">
+      <h3>⑩ รวมคลื่น</h3>
+      $$a\sin x+b\cos x=R\sin(x+\alpha)$$
+      $$R=\sqrt{a^{2}+b^{2}} \qquad \tan\alpha=\frac{b}{a}$$
+      <p class="fnote">ค่าสูงสุด $=R$ · ค่าต่ำสุด $=-R$ · สมการ $=c$ มีคำตอบเมื่อ $|c|\le R$</p>
+    </section>
+
+    <section class="fbox">
+      <h3>⑪ กราฟ $y=A\sin\!\big(B(x-C)\big)+D$</h3>
+      $$\text{แอมพลิจูด}=|A| \qquad \text{คาบ}=\frac{2\pi}{|B|}$$
+      $$\text{เลื่อนแนวนอน}=C \qquad \text{เส้นกึ่งกลาง}=D$$
+      <p class="fnote">รูป $A\sin(Bx-C)+D$ เลื่อนไป $C/B$ ไม่ใช่ $C$ · คาบของ tan คือ $\pi/|B|$</p>
+    </section>
+
+    <section class="fbox must">
+      <h3>⑫ คำตอบทั่วไปของสมการ</h3>
+      $$\sin x=\sin\alpha \Rightarrow x=2n\pi+\alpha \text{ หรือ } (2n+1)\pi-\alpha$$
+      $$\cos x=\cos\alpha \Rightarrow x=2n\pi\pm\alpha$$
+      $$\tan x=\tan\alpha \Rightarrow x=n\pi+\alpha$$
+      <p class="fnote">ห้ามหารทั้งสองข้างด้วยนิพจน์ที่อาจเป็นศูนย์ · $\sin Bx=k$ ใน $[0,2\pi)$ มี $2B$ คำตอบ</p>
+    </section>
+
+    <section class="fbox must">
+      <h3>⑬ สามเหลี่ยมใด ๆ</h3>
+      $$\frac{a}{\sin A}=\frac{b}{\sin B}=\frac{c}{\sin C}=2R$$
+      $$c^{2}=a^{2}+b^{2}-2ab\cos C$$
+      $$\cos C=\frac{a^{2}+b^{2}-c^{2}}{2ab}$$
+      <p class="fnote">SSA อาจได้ 0, 1 หรือ 2 รูป — เทียบ $a$ กับ $h=b\sin A$</p>
+    </section>
+
+    <section class="fbox">
+      <h3>⑭ พื้นที่</h3>
+      $$\text{พื้นที่}=\tfrac12 ab\sin C$$
+      $$\text{พื้นที่}=\sqrt{s(s-a)(s-b)(s-c)},\quad s=\frac{a+b+c}{2}$$
+      <p class="fnote">พื้นที่มากที่สุดเมื่อ $C=90^\circ$ ได้ $\tfrac12 ab$</p>
+    </section>
+
+    <section class="fbox">
+      <h3>⑮ ฟังก์ชันผกผัน</h3>
+      <div class="tbl-wrap" style="margin:.3em 0 .4em">
+      <table class="mini">
+        <thead><tr><th></th><th>โดเมน</th><th>เรนจ์</th></tr></thead>
+        <tbody>
+          <tr><td>arcsin</td><td>[−1, 1]</td><td>[−90°, 90°]</td></tr>
+          <tr><td>arccos</td><td>[−1, 1]</td><td>[0°, 180°]</td></tr>
+          <tr><td>arctan</td><td>ℝ</td><td>(−90°, 90°)</td></tr>
+        </tbody>
+      </table>
+      </div>
+      $$\arcsin x+\arccos x=\frac{\pi}{2}$$
+      $$\sin(\arccos x)=\sqrt{1-x^{2}}$$
+      <p class="fnote">$\arcsin(\sin x)=x$ เฉพาะเมื่อ $x$ อยู่ในช่วงหลัก</p>
+    </section>
+
+    <section class="fbox">
+      <h3>⑯ พิกัดเชิงขั้วและจำนวนเชิงซ้อน</h3>
+      $$x=r\cos\theta \qquad y=r\sin\theta \qquad r=\sqrt{x^{2}+y^{2}}$$
+      $$z=r(\cos\theta+i\sin\theta)=re^{i\theta}$$
+      $$z_1z_2=r_1r_2\,\text{cis}(\alpha+\beta) \qquad z^{n}=r^{n}\,\text{cis}\,n\theta$$
+      $$z^{1/n}=r^{1/n}\,\text{cis}\frac{\theta+360^\circ k}{n},\ k=0,\dots,n-1$$
+      $$e^{i\pi}+1=0$$
+    </section>
+
+  </div>
+
+  <div class="box note no-print">
+    <div class="box-title">วิธีใช้หน้านี้ให้ได้ผล</div>
+    <p style="margin:0">
+      อย่าเพิ่งพิมพ์ไปท่องทันที — <strong>กรอบที่ต้องจำจริง ๆ มีแค่ห้ากรอบ</strong> ที่มีแถบสีน้ำเงินซ้ายมือ
+      (นิยาม · วงกลมหนึ่งหน่วย · พีทาโกรัส · ผลบวกมุม · คำตอบทั่วไป · สามเหลี่ยมใด ๆ)
+      ที่เหลือให้ลองอนุมานเองก่อนแล้วค่อยเปิดดูเทียบ — จำได้นานกว่าและเสียเวลาน้อยกว่ามาก
+    </p>
+  </div>
+
+  <div class="chapnav no-print">
+    <a href="ch8.html"><div class="dir">◀ ก่อนหน้า</div><div class="ttl">บทที่ 8 · พิกัดเชิงขั้วและจำนวนเชิงซ้อน</div></a>
+    <a class="next" href="index.html"><div class="dir">กลับไป ▶</div><div class="ttl">หน้าแรก</div></a>
+  </div>
+
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

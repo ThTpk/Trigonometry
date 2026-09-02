@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>บทที่ 8 · พิกัดเชิงขั้วและจำนวนเชิงซ้อน — ตรีโกณมิติเห็นภาพ</title>
+<meta name="description" content="พิกัดเชิงขั้ว กราฟคาร์ดิออยด์และกุหลาบ จำนวนเชิงซ้อนรูปเชิงขั้ว ทฤษฎีบทเดอมัวร์ รากที่ n และสูตรออยเลอร์">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d4ed8'/%3E%3Cpath d='M6 25 L26 25 L26 8 Z' fill='none' stroke='white' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=IBM+Plex+Sans+Thai:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar"></aside>
+<main>
+
+  <div class="eyebrow">บทที่ 8</div>
+  <h1>พิกัดเชิงขั้วและจำนวนเชิงซ้อน</h1>
+  <p class="lead">
+    บทสุดท้ายคือจุดที่ทุกอย่างมาบรรจบกัน — วงกลมหนึ่งหน่วยจากบทที่ 2
+    มาเจอกับสูตรผลบวกมุมจากบทที่ 4 แล้วกลายเป็นเครื่องมือที่ทำให้การคูณจำนวนเชิงซ้อน
+    การหารากที่ n และแม้แต่สมการที่สวยที่สุดในคณิตศาสตร์ กลายเป็นเรื่องของ “การหมุน” ล้วน ๆ
+  </p>
+
+  <h2 id="polar">8.1 พิกัดเชิงขั้ว</h2>
+  <p>
+    ระบบพิกัดฉากบอกตำแหน่งด้วย “ไปทางขวาเท่าไร ขึ้นไปเท่าไร”
+    ส่วน <strong>พิกัดเชิงขั้ว</strong> <span class="en">(polar coordinates)</span>
+    บอกด้วย “หันไปทางไหน แล้วเดินไปไกลแค่ไหน” — เขียนเป็นคู่อันดับ $(r,\theta)$
+  </p>
+
+  <div class="widget" id="w-polar"></div>
+
+  <div class="box key">
+    <div class="box-title">สูตรแปลงไปกลับ</div>
+    $$x = r\cos\theta \qquad y = r\sin\theta$$
+    $$r=\sqrt{x^{2}+y^{2}} \qquad \tan\theta=\frac{y}{x}$$
+    <p style="margin:.6em 0 0">
+      สองสูตรบนคือ <strong>นิยามของ cos และ sin จากบทที่ 2 ตรง ๆ</strong> เพียงแต่ขยายรัศมีจาก 1 เป็น $r$
+      — พิกัดเชิงขั้วจึงไม่ใช่เรื่องใหม่เลย
+    </p>
+  </div>
+
+  <div class="box warn">
+    <div class="box-title">สองข้อควรระวัง</div>
+    <ul style="margin:0">
+      <li><strong>จุดหนึ่งจุดมีชื่อได้หลายชื่อ</strong> — $(2, 30^\circ)$ กับ $(2, 390^\circ)$ คือจุดเดียวกัน
+        และ $(-2, 30^\circ)$ ก็คือ $(2, 210^\circ)$ ต่างจากพิกัดฉากที่มีชื่อเดียว</li>
+      <li><strong>อย่าใช้ $\arctan(y/x)$ ตรง ๆ</strong> เพราะมันคืนค่าเฉพาะควอดรันต์ที่ 1 กับ 4
+        ต้องดูควอดรันต์จริงของจุดแล้วบวก $180^\circ$ เอง เมื่อ $x<0$</li>
+    </ul>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 1</h4>
+    <p class="q">จงเปลี่ยนจุด $(-3,\,3)$ เป็นพิกัดเชิงขั้ว</p>
+    <ol class="steps">
+      <li>หา $r$ ก่อน
+        $$r=\sqrt{(-3)^{2}+3^{2}}=\sqrt{18}=3\sqrt2$$</li>
+      <li>หามุมอ้างอิงจากค่าสัมบูรณ์
+        $$\tan\alpha=\left|\frac{3}{-3}\right|=1 \;\Rightarrow\; \alpha=45^\circ$$</li>
+      <li><strong>ดูควอดรันต์จริง</strong> — $x$ ติดลบ $y$ เป็นบวก จึงอยู่ควอดรันต์ที่ 2
+        $$\theta = 180^\circ - 45^\circ = 135^\circ$$</li>
+      <li>ตรวจกลับ $x = 3\sqrt2\cos 135^\circ = 3\sqrt2\left(-\tfrac{\sqrt2}{2}\right) = -3$ ✓</li>
+    </ol>
+    <div class="ans">ตอบ $\left(3\sqrt2,\;135^\circ\right)$ — ถ้าใช้เครื่องคิดเลขหา $\arctan(-1)$ จะได้ $-45^\circ$ ซึ่งผิดควอดรันต์</div>
+  </div>
+
+  <h2 id="curves">8.2 กราฟเชิงขั้ว</h2>
+  <p>
+    ความงามของพิกัดเชิงขั้วคือรูปที่เขียนด้วยพิกัดฉากยากมาก กลับเขียนได้สั้นนิดเดียว
+    ลองเปลี่ยนค่าในภาพดู โดยเฉพาะเปลี่ยน $k$ ระหว่างเลขคี่กับเลขคู่
+  </p>
+
+  <div class="widget" id="w-polar-graph"></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>สมการ</th><th>ชื่อ</th><th>ลักษณะ</th></tr></thead>
+    <tbody>
+      <tr><td>$r = a$</td><td>วงกลม</td><td>รัศมีคงที่ ไม่ขึ้นกับ θ</td></tr>
+      <tr><td>$r = a + a\cos\theta$</td><td>คาร์ดิออยด์ <span class="en">(cardioid)</span></td><td>รูปหัวใจ มีจุดแหลมหนึ่งจุด</td></tr>
+      <tr><td>$r = a + b\cos\theta,\; a &lt; b$</td><td>ลิมาซองมีห่วง</td><td>มีห่วงเล็กอยู่ข้างใน</td></tr>
+      <tr><td>$r = b\cos k\theta$, $k$ คี่</td><td>กุหลาบ $k$ กลีบ</td><td>กลีบครึ่งหลังทับกับครึ่งแรกพอดี</td></tr>
+      <tr><td>$r = b\cos k\theta$, $k$ คู่</td><td>กุหลาบ $2k$ กลีบ</td><td>กลีบครึ่งหลังไม่ทับ จึงได้เป็นสองเท่า</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2 id="complex">8.3 จำนวนเชิงซ้อนในรูปเชิงขั้ว</h2>
+  <p>
+    จำนวนเชิงซ้อน $z = x + yi$ วาดเป็นจุดในระนาบได้ โดยให้แกนนอนเป็นส่วนจริงและแกนตั้งเป็นส่วนจินตภาพ
+    เรียกว่า <strong>ระนาบเชิงซ้อน</strong> — เมื่อวาดเป็นจุดได้ ก็เขียนเป็นพิกัดเชิงขั้วได้ทันที
+  </p>
+  <div class="box key">
+    <div class="box-title">รูปเชิงขั้วของจำนวนเชิงซ้อน</div>
+    $$z = x+yi = r(\cos\theta + i\sin\theta)$$
+    <p style="margin:.5em 0 .3em">โดย</p>
+    <ul style="margin:0">
+      <li>$r=|z|=\sqrt{x^{2}+y^{2}}$ เรียกว่า <strong>มอดุลัส</strong> <span class="en">(modulus)</span> คือระยะจากจุดกำเนิด</li>
+      <li>$\theta = \arg z$ เรียกว่า <strong>อาร์กิวเมนต์</strong> <span class="en">(argument)</span> คือมุมที่ทำกับแกนจริง</li>
+    </ul>
+    <p style="margin:.5em 0 0">เขียนย่อว่า $r\,\text{cis}\,\theta$ หรือ $r\angle\theta$</p>
+  </div>
+
+  <h2 id="mult">8.4 คูณกัน = หมุนแล้วขยาย</h2>
+  <p>
+    นี่คือเหตุผลที่รูปเชิงขั้วมีค่ามหาศาล — การคูณในรูป $x+yi$ ต้องกระจายสี่พจน์แล้วรวม
+    แต่ในรูปเชิงขั้วกลายเป็นแค่ <em>คูณขนาด บวกมุม</em>
+  </p>
+
+  <div class="widget" id="w-complex-mult"></div>
+
+  <div class="box key">
+    <div class="box-title">ที่มา — มาจากสูตรผลบวกมุมในบทที่ 4 ตรง ๆ</div>
+    <p style="margin:0 0 .4em">กระจายผลคูณของสองจำนวนในรูปเชิงขั้ว</p>
+    $$r_1(\cos\alpha+i\sin\alpha)\cdot r_2(\cos\beta+i\sin\beta)$$
+    $$=r_1r_2\Big[(\cos\alpha\cos\beta-\sin\alpha\sin\beta)+i(\sin\alpha\cos\beta+\cos\alpha\sin\beta)\Big]$$
+    <p style="margin:.5em 0 .4em">
+      วงเล็บแรกคือ $\cos(\alpha+\beta)$ และวงเล็บหลังคือ $\sin(\alpha+\beta)$ พอดี จึงได้
+    </p>
+    $$z_1z_2 = r_1r_2\big[\cos(\alpha+\beta)+i\sin(\alpha+\beta)\big]$$
+    <p style="margin:.6em 0 0">
+      <strong>สูตรผลบวกมุมที่พิสูจน์ด้วยรูปสามเหลี่ยมในบทที่ 4 คือสิ่งเดียวกับกฎการคูณจำนวนเชิงซ้อน</strong>
+      — สองเรื่องที่ดูไม่เกี่ยวกันเลยกลับเป็นเรื่องเดียวกัน
+    </p>
+  </div>
+
+  <h2 id="demoivre">8.5 ทฤษฎีบทเดอมัวร์และรากที่ n</h2>
+  <p>
+    ถ้าคูณ $z$ กับตัวเองซ้ำ ๆ ก็คือบวกมุมซ้ำ ๆ และคูณขนาดซ้ำ ๆ ซึ่งสรุปเป็นสูตรเดียวได้
+  </p>
+  <div class="box key">
+    <div class="box-title">ทฤษฎีบทเดอมัวร์ <span class="en">(De Moivre)</span></div>
+    $$\big[r(\cos\theta+i\sin\theta)\big]^{n}=r^{n}\big(\cos n\theta+i\sin n\theta\big)$$
+  </div>
+  <p>
+    พลิกกลับด้านก็ได้สูตรหาราก — และผลลัพธ์ที่สวยคือ <strong>รากที่ $n$ มีอยู่ $n$ ตัวเสมอ
+    วางตัวห่างเท่า ๆ กันบนวงกลมเดียว</strong>
+  </p>
+
+  <div class="widget" id="w-demoivre"></div>
+
+  <div class="box key">
+    <div class="box-title">สูตรหารากที่ n</div>
+    $$z^{1/n}=r^{1/n}\left[\cos\frac{\theta+360^\circ k}{n}+i\sin\frac{\theta+360^\circ k}{n}\right],\quad k=0,1,\dots,n-1$$
+    <p style="margin:.6em 0 0">
+      เหตุผลที่ต้องบวก $360^\circ k$ ก่อนหาร คือมุมของ $z$ เขียนได้หลายแบบ (ต่างกันทีละรอบ)
+      พอหารด้วย $n$ แล้วมุมเหล่านั้นจึงแยกออกเป็น $n$ ค่าที่ต่างกันจริง — ห่างกันทีละ $\dfrac{360^\circ}{n}$
+    </p>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 2</h4>
+    <p class="q">จงหารากที่สามทั้งหมดของ $\;8i$</p>
+    <ol class="steps">
+      <li>เขียน $8i$ ในรูปเชิงขั้วก่อน — จุดนี้อยู่บนแกนจินตภาพด้านบน
+        $$r = 8,\qquad \theta = 90^\circ$$</li>
+      <li>ขนาดของรากคือ
+        $$8^{1/3}=2$$</li>
+      <li>มุมของรากตัวแรก ($k=0$)
+        $$\frac{90^\circ}{3}=30^\circ$$</li>
+      <li>อีกสองตัวห่างกันทีละ $\dfrac{360^\circ}{3}=120^\circ$
+        $$30^\circ,\quad 150^\circ,\quad 270^\circ$$</li>
+      <li>เขียนคำตอบเป็นรูป $a+bi$
+        $$2\,\text{cis}\,30^\circ = \sqrt3+i \qquad 2\,\text{cis}\,150^\circ=-\sqrt3+i \qquad 2\,\text{cis}\,270^\circ=-2i$$</li>
+      <li>ตรวจ: $(-2i)^3 = -8i^3 = -8(-i) = 8i$ ✓</li>
+    </ol>
+    <div class="ans">ตอบ $\sqrt3+i$, $-\sqrt3+i$ และ $-2i$ — สามจุดนี้เป็นสามเหลี่ยมด้านเท่าบนวงกลมรัศมี 2</div>
+  </div>
+
+  <h2 id="euler">8.6 สูตรออยเลอร์</h2>
+  <p>
+    เมื่อขยาย $e^{x}$, $\sin x$ และ $\cos x$ เป็นอนุกรมกำลัง แล้วแทน $x$ ด้วย $i\theta$
+    พจน์ต่าง ๆ จะจัดกลุ่มกันเองอย่างน่าอัศจรรย์ ผลลัพธ์คือ
+  </p>
+  <div class="box key">
+    <div class="box-title">สูตรออยเลอร์ <span class="en">(Euler)</span></div>
+    $$e^{i\theta}=\cos\theta + i\sin\theta$$
+    <p style="margin:.6em 0 0">
+      แปลว่ารูปเชิงขั้ว $r(\cos\theta+i\sin\theta)$ เขียนสั้น ๆ ได้เป็น $re^{i\theta}$
+    </p>
+  </div>
+  <p>
+    เมื่อเขียนแบบนี้ ทุกอย่างในบทนี้กลายเป็นกฎเลขยกกำลังธรรมดาที่เรียนมาตั้งแต่ ม.ต้น
+  </p>
+  $$r_1e^{i\alpha}\cdot r_2e^{i\beta}=r_1r_2e^{i(\alpha+\beta)} \qquad \left(re^{i\theta}\right)^{n}=r^{n}e^{in\theta}$$
+  <div class="box note">
+    <div class="box-title">เอกลักษณ์ของออยเลอร์</div>
+    <p style="margin:0 0 .3em">แทน $\theta = \pi$ ลงในสูตรออยเลอร์ จะได้ $e^{i\pi}=\cos\pi+i\sin\pi=-1$ นั่นคือ</p>
+    $$e^{i\pi}+1=0$$
+    <p style="margin:.5em 0 0">
+      สมการเดียวที่รวมค่าคงตัวสำคัญที่สุดห้าตัวของคณิตศาสตร์ไว้ด้วยกัน —
+      $e$ จากแคลคูลัส · $i$ จากพีชคณิต · $\pi$ จากเรขาคณิต · และ $1$ กับ $0$ จากเลขคณิต
+      หลายคนยกให้เป็นสมการที่สวยที่สุดเท่าที่มนุษย์เคยเขียน
+    </p>
+  </div>
+
+  <h2 id="wrap">8.7 สรุปทั้งเว็บ</h2>
+  <p>
+    ลองมองย้อนกลับไปตั้งแต่บทแรก จะเห็นว่าทั้งหมดคือความคิดเดียวที่ค่อย ๆ ขยายตัว
+  </p>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>บท</th><th>ความคิดหลัก</th><th>ขยายอะไรจากบทก่อน</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>อัตราส่วนด้านขึ้นกับมุมอย่างเดียว</td><td>จุดเริ่มต้น</td></tr>
+      <tr><td>2</td><td>เปลี่ยนจากสามเหลี่ยมเป็นพิกัดบนวงกลม</td><td>ขยายจากมุมแหลมเป็นมุมใด ๆ</td></tr>
+      <tr><td>3</td><td>บันทึกการหมุนเป็นกราฟ</td><td>ขยายจากค่าเดียวเป็นฟังก์ชันที่มีคาบ</td></tr>
+      <tr><td>4</td><td>ความสัมพันธ์ที่จริงทุกมุม</td><td>ขยายจากค่าเป็นโครงสร้างเชิงพีชคณิต</td></tr>
+      <tr><td>5</td><td>ย้อนกลับไปหามุมจากค่า</td><td>ขยายจากการคำนวณเป็นการแก้ปัญหา</td></tr>
+      <tr><td>6</td><td>ปลดข้อจำกัดเรื่องมุมฉาก</td><td>ขยายไปยังสามเหลี่ยมทุกรูป</td></tr>
+      <tr><td>7</td><td>ทำให้การย้อนกลับเป็นฟังก์ชันจริง ๆ</td><td>ขยายด้วยการนิยามช่วงหลัก</td></tr>
+      <tr><td>8</td><td>การหมุนคือการคูณ</td><td>ขยายจากเรขาคณิตไปสู่พีชคณิตของจำนวนเชิงซ้อน</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="box link">
+    <div class="box-title">ไปต่อทางไหน</div>
+    <p style="margin:0">
+      เนื้อหาถัดจากนี้เข้าสู่ระดับมหาวิทยาลัยแล้ว — <strong>อนุพันธ์และปริพันธ์ของฟังก์ชันตรีโกณ</strong>
+      (ซึ่งใช้ได้เฉพาะเมื่อมุมเป็นเรเดียน ตามที่บทที่ 2 เตือนไว้) ·
+      <strong>อนุกรมฟูรีเยร์</strong> ที่สลายสัญญาณใด ๆ เป็นผลรวมของ sin กับ cos ·
+      และ <strong>ฟังก์ชันไฮเพอร์โบลิก</strong> $\sinh$, $\cosh$ ที่มีสูตรคล้ายกันอย่างน่าประหลาด
+      เพราะมันคือฟังก์ชันตรีโกณของมุมจินตภาพนั่นเอง
+    </p>
+  </div>
+
+  <div class="box key">
+    <div class="box-title">อย่าลืมหน้าสรุปสูตร</div>
+    <p style="margin:0">
+      สูตรทั้งหมดจากทั้งแปดบทรวมอยู่ใน <a href="formulas.html"><strong>หน้าสรุปสูตร</strong></a> หน้าเดียว
+      จัดกลุ่มไว้พร้อม พิมพ์ลงกระดาษ A4 ไปติดโต๊ะอ่านหนังสือได้เลย
+    </p>
+  </div>
+
+  <div class="chapnav">
+    <a href="ch7.html"><div class="dir">◀ ก่อนหน้า</div><div class="ttl">บทที่ 7 · ฟังก์ชันผกผัน</div></a>
+    <a class="next" href="formulas.html"><div class="dir">ถัดไป ▶</div><div class="ttl">สรุปสูตรทั้งหมด</div></a>
+  </div>
+
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script src="assets/js/viz.js"></script>
+<script src="assets/js/widgets.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

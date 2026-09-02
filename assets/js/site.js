@@ -5,13 +5,16 @@
   'use strict';
 
   var CHAPTERS = [
-    { file: 'index.html', n: '',    title: 'หน้าแรก' },
-    { file: 'ch1.html',   n: 'บท 1', title: 'สามเหลี่ยมมุมฉาก' },
-    { file: 'ch2.html',   n: 'บท 2', title: 'วงกลมหนึ่งหน่วย' },
-    { file: 'ch3.html',   n: 'บท 3', title: 'กราฟฟังก์ชันตรีโกณ' },
-    { file: 'ch4.html',   n: 'บท 4', title: 'เอกลักษณ์ตรีโกณ' },
-    { file: 'ch5.html',   n: 'บท 5', title: 'สมการตรีโกณ' },
-    { file: 'ch6.html',   n: 'บท 6', title: 'กฎไซน์–โคไซน์' }
+    { file: 'index.html',    n: '',    title: 'หน้าแรก',              short: 'หน้าแรก' },
+    { file: 'ch1.html',      n: 'บท 1', title: 'สามเหลี่ยมมุมฉาก',      short: 'บท 1' },
+    { file: 'ch2.html',      n: 'บท 2', title: 'วงกลมหนึ่งหน่วย',       short: 'บท 2' },
+    { file: 'ch3.html',      n: 'บท 3', title: 'กราฟฟังก์ชันตรีโกณ',    short: 'บท 3' },
+    { file: 'ch4.html',      n: 'บท 4', title: 'เอกลักษณ์ตรีโกณ',       short: 'บท 4' },
+    { file: 'ch5.html',      n: 'บท 5', title: 'สมการตรีโกณ',          short: 'บท 5' },
+    { file: 'ch6.html',      n: 'บท 6', title: 'กฎไซน์–โคไซน์',        short: 'บท 6' },
+    { file: 'ch7.html',      n: 'บท 7', title: 'ฟังก์ชันผกผัน',         short: 'บท 7' },
+    { file: 'ch8.html',      n: 'บท 8', title: 'พิกัดเชิงขั้ว·เชิงซ้อน', short: 'บท 8' },
+    { file: 'formulas.html', n: '',    title: 'สรุปสูตรทั้งหมด',        short: 'สรุปสูตร' }
   ];
 
   function currentFile() {
@@ -26,8 +29,8 @@
     var bar = document.createElement('header');
     bar.className = 'topbar';
     var navHtml = CHAPTERS.slice(1).map(function (c) {
-      return '<a href="' + c.file + '"' + (c.file === here ? ' class="active"' : '') + '>' +
-             c.n + ' · ' + c.title + '</a>';
+      return '<a href="' + c.file + '"' + (c.file === here ? ' class="active"' : '') +
+             ' title="' + c.title + '">' + (c.short || c.title) + '</a>';
     }).join('');
     bar.innerHTML =
       '<button class="menu-btn" type="button" aria-label="เปิดสารบัญ">☰</button>' +

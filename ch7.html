@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>บทที่ 7 · ฟังก์ชันตรีโกณผกผัน — ตรีโกณมิติเห็นภาพ</title>
+<meta name="description" content="arcsin arccos arctan ทำไมต้องจำกัดโดเมน กราฟผกผัน กับดัก arcsin(sin x) และการคิดฟังก์ชันประกอบด้วยสามเหลี่ยม">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d4ed8'/%3E%3Cpath d='M6 25 L26 25 L26 8 Z' fill='none' stroke='white' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=IBM+Plex+Sans+Thai:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar"></aside>
+<main>
+
+  <div class="eyebrow">บทที่ 7</div>
+  <h1>ฟังก์ชันตรีโกณผกผัน</h1>
+  <p class="lead">
+    ตลอดหกบทที่ผ่านมาเรากดปุ่ม <code>sin⁻¹</code> บนเครื่องคิดเลขมานับครั้งไม่ถ้วน
+    โดยไม่เคยถามว่ามันทำงานอย่างไร — ทำไมสมการมีคำตอบไม่จำกัด แต่เครื่องคิดเลขคืนมาแค่ค่าเดียว
+    และค่าที่คืนมานั้นเลือกมาอย่างไร บทนี้ตอบคำถามนั้น
+  </p>
+
+  <h2 id="why">7.1 ปัญหา: ฟังก์ชันตรีโกณผกผันไม่ได้ตรง ๆ</h2>
+  <p>
+    ฟังก์ชันจะมีตัวผกผันได้ก็ต่อเมื่อมันเป็น <strong>ฟังก์ชันหนึ่งต่อหนึ่ง</strong>
+    <span class="en">(one-to-one)</span> คือค่าออกหนึ่งค่าต้องมาจากค่าเข้าเพียงค่าเดียว
+  </p>
+  <p>
+    ทดสอบง่าย ๆ ด้วย <strong>เส้นแนวนอน</strong> <span class="en">(horizontal line test)</span> —
+    ถ้าลากเส้นแนวนอนแล้วตัดกราฟเกินหนึ่งจุด แสดงว่าไม่ใช่หนึ่งต่อหนึ่ง
+    ซึ่ง $y=\sin x$ สอบตกทันที เพราะเส้น $y = 0.5$ ตัดกราฟไม่รู้จบ (นี่คือบทที่ 5 ทั้งบทเลย)
+  </p>
+  <div class="box key">
+    <div class="box-title">ทางออก: ตัดช่วงให้เหลือแค่ท่อนเดียว</div>
+    <p style="margin:0">
+      เราเลือกเก็บกราฟไว้เพียงช่วงเดียวที่ <strong>ผ่านการทดสอบเส้นแนวนอน</strong> และยัง
+      <strong>ให้ค่าครบทุกค่าที่เป็นไปได้</strong> ช่วงที่เลือกนี้เรียกว่า <strong>ช่วงหลัก</strong>
+      <span class="en">(principal branch)</span> — ทั้งโลกตกลงใช้ช่วงเดียวกัน เครื่องคิดเลขทุกเครื่องจึงตอบตรงกัน
+    </p>
+  </div>
+
+  <h2 id="graph">7.2 กราฟผกผันคือภาพสะท้อน</h2>
+  <p>
+    เมื่อสลับบทบาทของ $x$ กับ $y$ กราฟจะสะท้อนข้ามเส้น $y = x$ พอดี
+    ลองสลับดูทั้งสามฟังก์ชันในภาพ แล้วสังเกตว่าช่วงหลักของแต่ละตัวไม่เหมือนกัน
+  </p>
+
+  <div class="widget" id="w-inverse-graph"></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>ฟังก์ชันผกผัน</th><th>โดเมน (ค่าที่ใส่เข้าไปได้)</th><th>เรนจ์ (มุมที่ได้ออกมา)</th><th>เป็นองศา</th></tr></thead>
+    <tbody>
+      <tr><td><span class="t-sin">$\arcsin x$</span></td><td>$[-1,\,1]$</td><td>$\left[-\dfrac{\pi}{2},\,\dfrac{\pi}{2}\right]$</td><td>$-90^\circ$ ถึง $90^\circ$</td></tr>
+      <tr><td><span class="t-cos">$\arccos x$</span></td><td>$[-1,\,1]$</td><td>$[0,\,\pi]$</td><td>$0^\circ$ ถึง $180^\circ$</td></tr>
+      <tr><td><span class="t-tan">$\arctan x$</span></td><td>จำนวนจริงทุกจำนวน</td><td>$\left(-\dfrac{\pi}{2},\,\dfrac{\pi}{2}\right)$</td><td>$-90^\circ$ ถึง $90^\circ$ (ไม่รวมปลาย)</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="box note">
+    <div class="box-title">ทำไม arccos ถึงใช้ช่วงต่างจากอีกสองตัว</div>
+    <p style="margin:0">
+      ถ้า arccos ใช้ช่วง $\left[-\tfrac{\pi}{2},\tfrac{\pi}{2}\right]$ เหมือน arcsin
+      กราฟ cos ในช่วงนั้นจะขึ้นแล้วลง ไม่ผ่านการทดสอบเส้นแนวนอน
+      ต้องเลื่อนไปใช้ $[0,\pi]$ ซึ่งเป็นช่วงที่ cos ลดลงอย่างเดียวจึงจะใช้ได้
+      — ผลข้างเคียงคือ <strong>arccos ไม่มีวันให้ค่าติดลบ</strong> ต่างจาก arcsin กับ arctan
+    </p>
+  </div>
+
+  <div class="box warn">
+    <div class="box-title">สัญลักษณ์ที่ทำให้สับสน</div>
+    <p style="margin:0">
+      $\sin^{-1}x$ หมายถึง arcsin ไม่ใช่ $\dfrac{1}{\sin x}$ — เลข $-1$ ตรงนี้แปลว่า “ผกผัน” ไม่ใช่ “ยกกำลังลบหนึ่ง”
+      ส่วนส่วนกลับของ $\sin x$ ต้องเขียนว่า $\csc x$ หรือ $(\sin x)^{-1}$
+      สังเกตว่า $\sin^{2}x$ กลับหมายถึง $(\sin x)^2$ จริง ๆ — เป็นความไม่สม่ำเสมอทางสัญลักษณ์ที่ต้องจำเป็นข้อยกเว้น
+    </p>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 1</h4>
+    <p class="q">จงหาค่าที่แน่นอนของ $\;\arcsin\left(-\dfrac{1}{2}\right)$ และ $\;\arccos\left(-\dfrac{1}{2}\right)$</p>
+    <ol class="steps">
+      <li>ทั้งคู่ต้องตอบเป็นมุมที่ $\sin$ หรือ $\cos$ ให้ค่า $-\dfrac12$ และมุมนั้นต้องอยู่ในช่วงหลัก</li>
+      <li><strong>arcsin:</strong> ช่วงหลักคือ $\left[-\tfrac{\pi}{2},\tfrac{\pi}{2}\right]$ ซึ่งครอบควอดรันต์ที่ 1 และ 4
+        ค่า $\sin$ ติดลบจึงต้องอยู่ควอดรันต์ที่ 4 (มุมติดลบ)
+        $$\arcsin\left(-\tfrac12\right) = -\frac{\pi}{6} = -30^\circ$$</li>
+      <li><strong>arccos:</strong> ช่วงหลักคือ $[0,\pi]$ ซึ่งครอบควอดรันต์ที่ 1 และ 2
+        ค่า $\cos$ ติดลบจึงต้องอยู่ควอดรันต์ที่ 2
+        $$\arccos\left(-\tfrac12\right) = \pi - \frac{\pi}{3} = \frac{2\pi}{3} = 120^\circ$$</li>
+      <li>สังเกตว่าคำตอบสองข้อนี้ <strong>ไม่เท่ากันและไม่ได้ต่างกันแค่เครื่องหมาย</strong> เพราะช่วงหลักคนละช่วง</li>
+    </ol>
+    <div class="ans">ตอบ $-\dfrac{\pi}{6}$ และ $\dfrac{2\pi}{3}$ ตามลำดับ</div>
+  </div>
+
+  <h2 id="trap">7.3 กับดัก: ใส่แล้วถอดไม่ได้ค่าเดิมเสมอ</h2>
+  <p>
+    ถ้า $f$ กับ $f^{-1}$ เป็นตัวผกผันกันจริง น่าจะได้ $f^{-1}(f(x)) = x$ เสมอ
+    แต่เพราะเราตัดช่วงทิ้งไปเยอะ ข้อนี้จึงจริง <strong>เฉพาะเมื่อ $x$ อยู่ในช่วงหลัก</strong> เท่านั้น
+  </p>
+
+  <div class="widget" id="w-arcsinsin"></div>
+
+  <div class="box key">
+    <div class="box-title">สองทิศทางที่ต่างกัน</div>
+    <p style="margin:0 0 .4em"><strong>ถอดแล้วใส่ — จริงเสมอ</strong> เพราะค่าที่ถอดออกมาอยู่ในช่วงหลักอยู่แล้ว</p>
+    $$\sin(\arcsin x) = x \quad \text{สำหรับทุก } x \in [-1,1]$$
+    <p style="margin:.6em 0 .4em"><strong>ใส่แล้วถอด — จริงเฉพาะในช่วงหลัก</strong></p>
+    $$\arcsin(\sin x) = x \quad \text{เฉพาะเมื่อ } x \in \left[-\tfrac{\pi}{2},\tfrac{\pi}{2}\right]$$
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 2</h4>
+    <p class="q">จงหาค่าของ $\;\arcsin(\sin 200^\circ)$</p>
+    <ol class="steps">
+      <li><strong>อย่าตอบ 200° ทันที</strong> — ตรวจก่อนว่า 200° อยู่ในช่วงหลัก $[-90^\circ, 90^\circ]$ หรือไม่ ซึ่งไม่อยู่</li>
+      <li>หาค่า $\sin 200^\circ$ ก่อน — 200° อยู่ควอดรันต์ที่ 3 มุมอ้างอิงคือ $200^\circ-180^\circ=20^\circ$
+        และ sin เป็นลบในควอดรันต์นี้
+        $$\sin 200^\circ = -\sin 20^\circ \approx -0.342$$</li>
+      <li>หามุมในช่วงหลักที่ให้ค่า $-0.342$
+        $$\arcsin(-0.342) = -20^\circ$$</li>
+      <li>ตรวจ: $-20^\circ$ อยู่ใน $[-90^\circ,90^\circ]$ ✓ และ $\sin(-20^\circ) = -0.342$ ✓</li>
+    </ol>
+    <div class="ans">ตอบ $-20^\circ$ ไม่ใช่ $200^\circ$ — ทั้งสองมุมมีค่า sin เท่ากัน แต่มีเพียง $-20^\circ$ ที่อยู่ในช่วงหลัก</div>
+  </div>
+
+  <h2 id="composite">7.4 ฟังก์ชันประกอบ — คิดด้วยสามเหลี่ยม</h2>
+  <p>
+    นิพจน์อย่าง $\sin(\arccos x)$ ดูน่ากลัว แต่มีเทคนิคที่เปลี่ยนให้เป็นการอ่านค่าจากรูปธรรมดา
+    <strong>ตั้งชื่อมุมข้างในว่า θ แล้ววาดสามเหลี่ยมมุมฉากที่ให้ค่านั้นพอดี</strong>
+  </p>
+
+  <div class="widget" id="w-composite"></div>
+
+  <div class="box key">
+    <div class="box-title">ขั้นตอนสามข้อ</div>
+    <ol style="margin:0">
+      <li><strong>ตั้ง</strong> $\theta = \arccos x$ ซึ่งแปลว่า $\cos\theta = x = \dfrac{x}{1}$</li>
+      <li><strong>วาด</strong> สามเหลี่ยมมุมฉากที่มีข้างเคียง $=x$ และด้านตรงข้ามมุมฉาก $=1$
+        แล้วใช้พีทาโกรัสหาด้านที่เหลือได้ $\sqrt{1-x^{2}}$</li>
+      <li><strong>อ่าน</strong> ค่าที่โจทย์ถามจากรูปโดยตรง
+        $$\sin(\arccos x)=\sqrt{1-x^{2}} \qquad \tan(\arccos x)=\frac{\sqrt{1-x^{2}}}{x}$$</li>
+    </ol>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 3</h4>
+    <p class="q">จงหาค่าที่แน่นอนของ $\;\cos\left(\arcsin\dfrac{3}{5}\right)$</p>
+    <ol class="steps">
+      <li>ตั้ง $\theta = \arcsin\dfrac{3}{5}$ นั่นคือ $\sin\theta = \dfrac{3}{5}$</li>
+      <li>วาดสามเหลี่ยมมุมฉากที่มีข้างตรงข้าม $=3$ และด้านตรงข้ามมุมฉาก $=5$</li>
+      <li>ใช้พีทาโกรัสหาข้างเคียง
+        $$\text{adj}=\sqrt{5^{2}-3^{2}}=\sqrt{16}=4$$</li>
+      <li>อ่านค่า cos จากรูป
+        $$\cos\theta = \frac{\text{adj}}{\text{hyp}}=\frac{4}{5}$$</li>
+      <li>ตรวจเครื่องหมาย: $\arcsin$ ให้มุมในช่วง $\left[-\tfrac{\pi}{2},\tfrac{\pi}{2}\right]$ ซึ่ง
+        <strong>cos เป็นบวกเสมอ</strong> คำตอบเป็นบวกจึงถูกต้อง ✓</li>
+    </ol>
+    <div class="ans">ตอบ $\dfrac{4}{5}$</div>
+  </div>
+
+  <div class="box warn">
+    <div class="box-title">อย่าลืมตรวจเครื่องหมายจากช่วงหลัก</div>
+    <p style="margin:0">
+      สามเหลี่ยมวาดได้เฉพาะมุมแหลม แต่ช่วงหลักของ arcsin และ arctan ครอบมุมติดลบด้วย
+      เมื่อ $x$ ติดลบให้คำนวณด้วยค่าสัมบูรณ์ก่อน แล้วค่อยใส่เครื่องหมายจากช่วงหลัก —
+      $\cos(\arcsin x)$ เป็นบวกเสมอ ส่วน $\sin(\arccos x)$ ก็เป็นบวกเสมอเช่นกัน
+      เพราะช่วงหลักของทั้งคู่อยู่ในครึ่งบนหรือครึ่งขวาของวงกลม
+    </p>
+  </div>
+
+  <h2 id="identity">7.5 เอกลักษณ์ที่ควรรู้</h2>
+  <div class="box key">
+    <div class="box-title">สามข้อที่ใช้บ่อย</div>
+    $$\arcsin x + \arccos x = \frac{\pi}{2} \quad \text{สำหรับทุก } x\in[-1,1]$$
+    $$\arctan x + \arctan\frac{1}{x} = \frac{\pi}{2} \quad (x>0)$$
+    $$\arcsin(-x) = -\arcsin x \qquad \arccos(-x) = \pi - \arccos x$$
+    <p style="margin:.6em 0 0">
+      ข้อแรกพิสูจน์ได้จากสามเหลี่ยมมุมฉากรูปเดียว — มุมแหลมสองมุมรวมกันได้ $90^\circ$
+      และมุมหนึ่งคือ $\arcsin x$ อีกมุมคือ $\arccos x$ พอดี
+    </p>
+  </div>
+
+  <h2 id="apply">7.6 การประยุกต์</h2>
+  <p>
+    ฟังก์ชันผกผันคือเครื่องมือ <strong>ย้อนจากอัตราส่วนกลับไปหามุม</strong>
+    ซึ่งเป็นสิ่งที่เราทำมาตลอดตั้งแต่บทที่ 1 เพียงแต่ตอนนี้เข้าใจแล้วว่าเบื้องหลังทำงานอย่างไร
+  </p>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 4</h4>
+    <p class="q">
+      ทางลาดสำหรับรถเข็นต้องมีความชันไม่เกิน 1 : 12 (ขึ้น 1 หน่วยต่อระยะราบ 12 หน่วย)
+      จงหาว่ามุมเอียงสูงสุดที่ยอมรับได้เป็นเท่าไร และถ้าต้องยกสูง 0.8 เมตร ทางลาดต้องยาวอย่างน้อยเท่าไร
+    </p>
+    <ol class="steps">
+      <li>ความชันคืออัตราส่วนข้างตรงข้ามต่อข้างเคียง จึงเป็น tan ของมุมเอียง
+        $$\tan\theta = \frac{1}{12}$$</li>
+      <li>ย้อนหามุมด้วย arctan
+        $$\theta = \arctan\frac{1}{12} \approx 4.76^\circ$$</li>
+      <li>หาความยาวตามแนวราบเมื่อยกสูง 0.8 เมตร
+        $$\text{ระยะราบ} = 12 \times 0.8 = 9.6 \text{ เมตร}$$</li>
+      <li>ความยาวทางลาดจริงคือด้านตรงข้ามมุมฉาก
+        $$L=\frac{0.8}{\sin 4.76^\circ}\approx\frac{0.8}{0.0830}\approx 9.63 \text{ เมตร}$$</li>
+    </ol>
+    <div class="ans">ตอบ มุมเอียงไม่เกินประมาณ $4.8^\circ$ และทางลาดต้องยาวอย่างน้อยประมาณ 9.63 เมตร</div>
+  </div>
+
+  <h2 id="wrap">7.7 สรุป</h2>
+  <div class="box link">
+    <div class="box-title">เช็กลิสต์ก่อนไปต่อ</div>
+    <ul style="margin:0">
+      <li>อธิบายได้ว่าทำไมต้องจำกัดโดเมนก่อนจึงจะมีฟังก์ชันผกผันได้</li>
+      <li>จำช่วงหลักของทั้งสามตัวได้ และรู้ว่าทำไม arccos ถึงต่างจากอีกสองตัว</li>
+      <li>ไม่ตอบ $\arcsin(\sin x) = x$ ทันทีโดยไม่ตรวจว่า $x$ อยู่ในช่วงหลักหรือไม่</li>
+      <li>คิดฟังก์ชันประกอบด้วยการวาดสามเหลี่ยมได้ พร้อมตรวจเครื่องหมายจากช่วงหลัก</li>
+      <li>แยกออกว่า $\sin^{-1}x$ กับ $\csc x$ ไม่ใช่สิ่งเดียวกัน</li>
+    </ul>
+  </div>
+
+  <div class="chapnav">
+    <a href="ch6.html"><div class="dir">◀ ก่อนหน้า</div><div class="ttl">บทที่ 6 · กฎไซน์–โคไซน์</div></a>
+    <a class="next" href="ch8.html"><div class="dir">ถัดไป ▶</div><div class="ttl">บทที่ 8 · พิกัดเชิงขั้วและจำนวนเชิงซ้อน</div></a>
+  </div>
+
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script src="assets/js/viz.js"></script>
+<script src="assets/js/widgets.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

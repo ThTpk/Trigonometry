@@ -1649,4 +1649,413 @@
       });
     }
   });
+
+  /* =====================================================================
+     เสริมบทที่ 3 — กราฟฟังก์ชันส่วนกลับ
+     ===================================================================== */
+  TV.widget('#w-reciprocal', {
+    title: 'กราฟของ csc, sec และ cot',
+    badge: 'สลับดูได้',
+    desc: 'ฟังก์ชันส่วนกลับไม่มีอะไรใหม่ — ตรงไหนที่ตัวตั้งเป็นศูนย์ ส่วนกลับจะพุ่งไปอนันต์ และตรงไหนที่ตัวตั้งเป็น ±1 ทั้งสองกราฟจะแตะกันพอดี',
+    plot: { xmin: -TAU - 0.3, xmax: TAU + 0.3, ymin: -3.6, ymax: 3.6, ratio: 0.42, minH: 280, maxH: 360, pad: 20 },
+    controls: [
+      {
+        type: 'seg', key: 'f', label: 'ฟังก์ชัน',
+        options: [['csc', 'csc'], ['sec', 'sec'], ['cot', 'cot']], value: 'csc'
+      },
+      { type: 'check', key: 'base', label: 'แสดงฟังก์ชันตัวตั้ง', value: true }
+    ],
+    hint: 'จุดที่กราฟทั้งสองแตะกันคือจุดที่ค่าเป็น ±1 พอดี เพราะ 1/1 = 1 และ 1/(−1) = −1 — เป็นจุดยึดที่ช่วยวาดกราฟส่วนกลับด้วยมือได้เร็ว',
+    draw: function (p, s, api) {
+      var base = s.f === 'csc' ? sin : s.f === 'sec' ? cos : tan;
+      var recip = function (x) { return 1 / base(x); };
+      var baseName = s.f === 'csc' ? 'sin' : s.f === 'sec' ? 'cos' : 'tan';
+      var col = s.f === 'csc' ? C.sin : s.f === 'sec' ? C.cos : C.tan;
+
+      p.grid(PI / 4, 1, '#f4f2ec');
+      /* เส้นกำกับตรงที่ตัวตั้งเป็นศูนย์ */
+      var zeros = [];
+      var k;
+      if (s.f === 'csc' || s.f === 'cot') { for (k = -2; k <= 2; k++) zeros.push(k * PI); }
+      else { for (k = -2; k <= 2; k++) zeros.push(PI / 2 + k * PI); }
+      zeros.forEach(function (z) {
+        if (z >= -TAU - 0.3 && z <= TAU + 0.3) p.line(z, -3.6, z, 3.6, { color: '#f0b8b0', w: 1.3, dash: [5, 5] });
+      });
+      p.axes({ xStep: PI / 2, yStep: 1, xLabel: 'pi', digits: 0, xName: 'x', yName: 'y' });
+      [1, -1].forEach(function (u) { p.line(-TAU - 0.3, u, TAU + 0.3, u, { color: '#ded9cf', w: 1, dash: [3, 4] }); });
+
+      if (s.base) p.func(base, { color: '#b9b5aa', w: 1.8, dash: [7, 5], jump: 3.6 });
+      p.func(recip, { color: col, w: 2.8, jump: 3.6 });
+
+      /* จุดที่แตะกัน */
+      var touch = [];
+      if (s.f === 'csc') { for (k = -2; k <= 2; k++) touch.push(PI / 2 + k * PI); }
+      else if (s.f === 'sec') { for (k = -2; k <= 2; k++) touch.push(k * PI); }
+      else { for (k = -2; k <= 2; k++) touch.push(PI / 4 + k * PI / 2); }
+      touch.forEach(function (x) {
+        if (x < -TAU || x > TAU) return;
+        var y = base(x);
+        if (Math.abs(Math.abs(y) - 1) < 1e-6) p.dot(x, y, { fill: col, r: 5 });
+      });
+
+      p.text(TAU + 0.3, -3.6, 'y = ' + s.f + ' x', { dx: -8, dy: 16, align: 'right', color: col, size: 13 });
+      if (s.base) p.text(-TAU - 0.3, -3.6, 'เส้นประเทา = ' + baseName + ' x', { dx: 10, dy: 16, align: 'left', color: C.faint, size: 11.5 });
+
+      api.stats({
+        'ฟังก์ชัน': 'y = ' + s.f + ' x = 1 / ' + baseName + ' x',
+        'คาบ': s.f === 'cot' ? 'π' : '2π',
+        'เส้นกำกับที่': { v: s.f === 'sec' ? 'x = π/2 + kπ' : 'x = kπ', color: '#dc2626' },
+        'เรนจ์': { v: s.f === 'cot' ? 'จำนวนจริงทุกจำนวน' : '(−∞, −1] ∪ [1, ∞)', color: col }
+      });
+    }
+  });
+
+  /* =====================================================================
+     บทที่ 7 — ฟังก์ชันผกผัน
+     ===================================================================== */
+
+  var INV = {
+    sin: { f: sin, inv: Math.asin, dom: '[−1, 1]', ran: '[−π/2, π/2]', lo: -PI / 2, hi: PI / 2, col: C.sin, name: 'arcsin' },
+    cos: { f: cos, inv: Math.acos, dom: '[−1, 1]', ran: '[0, π]', lo: 0, hi: PI, col: C.cos, name: 'arccos' },
+    tan: { f: tan, inv: Math.atan, dom: 'จำนวนจริงทุกจำนวน', ran: '(−π/2, π/2)', lo: -PI / 2 + 0.001, hi: PI / 2 - 0.001, col: C.tan, name: 'arctan' }
+  };
+
+  /* 7.1 กราฟผกผันคือการสะท้อนข้ามเส้น y = x */
+  TV.widget('#w-inverse-graph', {
+    title: 'กราฟผกผันคือภาพสะท้อนข้ามเส้น y = x',
+    badge: 'ลากจุดได้',
+    desc: 'ส่วนที่เข้มคือช่วงที่เราเลือกเก็บไว้ (ช่วงหลัก) เมื่อพับกระดาษตามเส้นประ y = x ส่วนนั้นจะทับกับกราฟผกผันพอดี — ลากจุดสีเข้มดูว่าคู่ของมันไปอยู่ตรงไหน',
+    plot: { xmin: -3.5, xmax: 3.5, ymin: -3.5, ymax: 3.5, equal: true, ratio: 0.8, minH: 320, maxH: 440 },
+    controls: [
+      { type: 'seg', key: 'f', label: 'ฟังก์ชัน', options: [['sin', 'arcsin'], ['cos', 'arccos'], ['tan', 'arctan']], value: 'sin' },
+      { type: 'range', key: 't', label: 'ตำแหน่งจุด', min: 0.02, max: 0.98, step: 0.005, value: 0.68, fmt: function (v) { return nf(v, 2); } },
+      { type: 'check', key: 'full', label: 'แสดงกราฟเต็ม', value: true }
+    ],
+    hint: 'เหตุผลที่ต้องตัดช่วง: ถ้าเก็บกราฟไว้ทั้งเส้น เส้นแนวนอนเส้นเดียวจะตัดกราฟหลายจุด แปลว่าค่าหนึ่งค่าจะมีมุมตอบได้หลายมุม ซึ่งผิดนิยามของฟังก์ชัน',
+    onPointer: function (p, s, wx) {
+      var d = INV[s.f];
+      s.t = clamp((wx - d.lo) / (d.hi - d.lo), 0.02, 0.98);
+      return true;
+    },
+    draw: function (p, s, api) {
+      var d = INV[s.f];
+      var x0 = d.lo + s.t * (d.hi - d.lo), y0 = d.f(x0);
+
+      p.grid(1, 1, '#f4f2ec');
+      p.line(-3.5, -3.5, 3.5, 3.5, { color: '#c9c5bb', w: 1.5, dash: [6, 5] });
+      p.text(3.1, 3.1, 'y = x', { dx: -6, dy: -12, align: 'right', color: C.faint, size: 11.5 });
+      p.axes({ xStep: 1, yStep: 1, digits: 0, xName: 'x', yName: 'y' });
+
+      /* กราฟเต็ม (จาง) และกราฟผกผันที่ยังไม่ตัดช่วง */
+      if (s.full) {
+        p.func(d.f, { color: d.col, w: 1.6, alpha: 0.22, jump: 3.5 });
+      }
+      /* ช่วงหลักของฟังก์ชันต้นแบบ */
+      p.func(d.f, { from: d.lo, to: d.hi, color: d.col, w: 3, jump: 3.5 });
+      /* กราฟผกผัน = สะท้อนข้าม y = x */
+      var pts = [], i, n = 220;
+      for (i = 0; i <= n; i++) {
+        var u = d.lo + (d.hi - d.lo) * i / n;
+        pts.push([d.f(u), u]);
+      }
+      p.poly(pts, { close: false, color: C.hyp, w: 3 });
+
+      /* จุดคู่กัน */
+      p.line(x0, y0, y0, x0, { color: '#c9c5bb', w: 1.2, dash: [4, 4] });
+      p.dot(x0, y0, { fill: d.col, r: 7, halo: d.col });
+      p.dot(y0, x0, { fill: C.hyp, r: 7, halo: C.hyp });
+      p.text(x0, y0, '(' + nf(x0, 2) + ', ' + nf(y0, 2) + ')', { dy: -18, color: d.col, size: 11, mono: true, bg: 'rgba(255,255,255,.92)' });
+      p.text(y0, x0, '(' + nf(y0, 2) + ', ' + nf(x0, 2) + ')', { dy: 18, color: C.hyp, size: 11, mono: true, bg: 'rgba(255,255,255,.92)' });
+
+      p.text(-3.5, 3.5, 'y = ' + s.f + ' x  (ช่วงหลัก)', { dx: 10, dy: 14, align: 'left', color: d.col, size: 12.5, bg: 'rgba(255,255,255,.9)' });
+      p.text(-3.5, 3.5, 'y = ' + d.name + ' x', { dx: 10, dy: 34, align: 'left', color: C.hyp, size: 12.5, bg: 'rgba(255,255,255,.9)' });
+
+      var o = {};
+      o['ช่วงหลักของ ' + s.f] = { v: d.ran, color: d.col };
+      o['โดเมนของ ' + d.name] = { v: d.dom, color: C.hyp };
+      o['เรนจ์ของ ' + d.name] = { v: d.ran, color: C.hyp };
+      o[d.name + '(' + nf(y0, 2) + ')'] = { v: nf(x0, 4) + ' rad = ' + nf(r2d(x0), 1) + '°', color: C.accent };
+      api.stats(o);
+    }
+  });
+
+  /* 7.2 arcsin(sin x) ไม่ได้เท่ากับ x เสมอ */
+  TV.widget('#w-arcsinsin', {
+    title: 'arcsin(sin x) เท่ากับ x จริงหรือ',
+    badge: 'เลื่อนดูได้',
+    desc: 'ถ้าใส่แล้วถอดออก น่าจะได้ค่าเดิมกลับมา — แต่กราฟบอกว่าจริงเฉพาะในช่วงหลักเท่านั้น นอกจากนั้นจะถูกพับกลับเข้ามา',
+    plot: { xmin: -3 * PI - 0.3, xmax: 3 * PI + 0.3, ymin: -3.6, ymax: 3.6, ratio: 0.34, minH: 250, maxH: 320, pad: 20 },
+    controls: [
+      { type: 'seg', key: 'f', label: 'ฟังก์ชัน', options: [['sin', 'arcsin(sin x)'], ['cos', 'arccos(cos x)'], ['tan', 'arctan(tan x)']], value: 'sin' },
+      { type: 'range', key: 'x', label: 'ค่า x', min: -9.4, max: 9.4, step: 0.02, value: 4, fmt: function (v) { return nf(v, 2); } }
+    ],
+    hint: 'ข้อสอบชอบถามค่าอย่าง arcsin(sin 200°) — คำตอบไม่ใช่ 200° แต่ต้องพับกลับเข้าช่วง [−90°, 90°] ก่อน ซึ่งได้ −20°',
+    draw: function (p, s, api) {
+      var d = INV[s.f];
+      var g = function (x) { return d.inv(d.f(x)); };
+      var X = clamp(s.x, -3 * PI, 3 * PI);
+      var gy = g(X);
+
+      p.grid(PI / 2, 1, '#f4f2ec');
+      p.poly([[d.lo, -3.6], [d.hi, -3.6], [d.hi, 3.6], [d.lo, 3.6]], { fill: 'rgba(29,78,216,.05)' });
+      p.axes({ xStep: PI, yStep: 1, xLabel: 'pi', digits: 0, xName: 'x', yName: 'y' });
+      p.func(function (x) { return x; }, { color: '#c9c5bb', w: 1.6, dash: [7, 5] });
+      p.func(g, { color: C.hyp, w: 2.8, jump: 3.6 });
+
+      p.line(X, 0, X, gy, { color: C.accent, w: 1.2, dash: [4, 4] });
+      p.dot(X, gy, { fill: C.hyp, r: 7, halo: C.hyp });
+      p.dot(X, X > 3.6 || X < -3.6 ? clamp(X, -3.5, 3.5) : X, { fill: '#c9c5bb', r: 5 });
+
+      var same = Math.abs(gy - X) < 1e-6;
+      p.text(0, 3.6, same ? '✓ อยู่ในช่วงหลัก จึงได้ค่าเดิมกลับมา' : '✗ อยู่นอกช่วงหลัก ค่าถูกพับกลับเข้ามา', {
+        dy: 15, color: same ? C.tan : '#dc2626', size: 12.5, bg: 'rgba(255,255,255,.92)'
+      });
+      p.text(d.hi, -3.6, 'แถบสีฟ้า = ช่วงหลัก', { dx: 8, dy: 16, align: 'left', color: C.faint, size: 11 });
+
+      var out = {};
+      out['x'] = { v: nf(X, 3) + ' rad = ' + nf(r2d(X), 1) + '°', color: C.ink };
+      out[s.f + ' x'] = { v: nf(d.f(X), 4), color: d.col };
+      out[d.name + '(' + s.f + ' x)'] = { v: nf(gy, 3) + ' rad = ' + nf(r2d(gy), 1) + '°', color: C.hyp };
+      out['เท่ากับ x หรือไม่'] = { v: same ? 'เท่ากัน' : 'ไม่เท่า', color: same ? C.tan : '#dc2626' };
+      api.stats(out);
+    }
+  });
+
+  /* 7.3 ฟังก์ชันประกอบ — ใช้สามเหลี่ยมช่วยคิด */
+  TV.widget('#w-composite', {
+    title: 'คิด sin(arccos x) ด้วยสามเหลี่ยมรูปเดียว',
+    badge: 'เลื่อน x',
+    desc: 'ตั้งมุม θ ให้เท่ากับค่าผกผันที่โจทย์ให้มา แล้ววาดสามเหลี่ยมมุมฉากที่ให้ค่านั้นพอดี — ค่าที่เหลือทั้งหมดอ่านจากรูปได้เลย ไม่ต้องใช้เครื่องคิดเลข',
+    plot: { xmin: -1.5, xmax: 3.6, ymin: -0.6, ymax: 2.0, equal: true, ratio: 0.5, minH: 260, maxH: 340 },
+    controls: [
+      { type: 'seg', key: 'b', label: 'ตั้งจาก', options: [['cos', 'θ = arccos x'], ['sin', 'θ = arcsin x']], value: 'cos' },
+      { type: 'range', key: 'x', label: 'ค่า x', min: -0.95, max: 0.95, step: 0.01, value: 0.6, fmt: function (v) { return nf(v, 2); } }
+    ],
+    hint: 'เทคนิคนี้เปลี่ยนโจทย์ผกผันที่ดูน่ากลัวให้กลายเป็นการอ่านค่าจากสามเหลี่ยมธรรมดา ใช้ได้กับทุกฟังก์ชันประกอบ',
+    draw: function (p, s, api) {
+      var th = s.b === 'cos' ? Math.acos(s.x) : Math.asin(s.x);
+      var adj = cos(th), opp = sin(th);
+      var K = 2.4;   /* ตัวคูณให้รูปใหญ่พอมองเห็น (ด้านตรงข้ามมุมฉาก = K) */
+      var Ax = adj * K, Ay = opp * K;
+
+      p.line(-1.5, 0, 3.6, 0, { color: '#e2ded4', w: 1 });
+      p.line(0, -0.6, 0, 2.0, { color: '#e2ded4', w: 1 });
+      p.poly([[0, 0], [Ax, 0], [Ax, Ay]], { fill: 'rgba(124,58,237,.07)', color: '#4a4842', w: 2.2 });
+      p.line(0, 0, Ax, 0, { color: C.cos, w: 4 });
+      p.line(Ax, 0, Ax, Ay, { color: C.sin, w: 4 });
+      p.line(0, 0, Ax, Ay, { color: C.hyp, w: 3 });
+      if (Math.abs(Ax) > 0.08) p.rightAngle(Ax, 0, -Math.sign(Ax) || -1, 0, 0, 1, 11, C.soft);
+      p.arc(0, 0, 0.42, 0, th, { fill: 'rgba(180,83,9,.13)', color: C.accent, w: 1.8 });
+      p.text(0.72 * cos(th / 2), 0.72 * sin(th / 2), 'θ', { color: C.accent, size: 15, bg: 'rgba(255,255,255,.85)' });
+
+      p.text(Ax / 2, 0, 'ข้างเคียง = ' + nf(adj, 3), { dy: 17, color: C.cos, size: 12, bg: 'rgba(255,255,255,.9)' });
+      p.text(Ax, Ay / 2, 'ข้างตรงข้าม = ' + nf(opp, 3), { dx: 11, align: 'left', color: C.sin, size: 12, bg: 'rgba(255,255,255,.9)' });
+      p.text(Ax / 2, Ay / 2, 'ด้านตรงข้ามมุมฉาก = 1', { dx: -12, dy: -12, align: 'right', color: C.hyp, size: 12, bg: 'rgba(255,255,255,.9)' });
+
+      var given = s.b === 'cos' ? 'cos θ = x = ' + nf(s.x, 2) : 'sin θ = x = ' + nf(s.x, 2);
+      p.text(-1.5, 2.0, 'กำหนดให้ ' + given + '  →  θ = ' + nf(r2d(th), 1) + '°', {
+        dx: 10, dy: 12, align: 'left', color: C.accent, size: 12.5, bg: 'rgba(255,255,255,.9)'
+      });
+
+      var o = {};
+      o['θ'] = { v: nf(th, 3) + ' rad = ' + nf(r2d(th), 1) + '°', color: C.accent };
+      o['sin(' + (s.b === 'cos' ? 'arccos' : 'arcsin') + ' x)'] = { v: nf(opp, 4), color: C.sin };
+      o['cos(' + (s.b === 'cos' ? 'arccos' : 'arcsin') + ' x)'] = { v: nf(adj, 4), color: C.cos };
+      o['tan(' + (s.b === 'cos' ? 'arccos' : 'arcsin') + ' x)'] = { v: Math.abs(adj) < 1e-6 ? 'ไม่นิยาม' : nf(opp / adj, 4), color: C.tan };
+      o['รูปกรณฑ์'] = s.b === 'cos' ? 'sin = √(1 − x²)' : 'cos = √(1 − x²)';
+      api.stats(o);
+    }
+  });
+
+  /* =====================================================================
+     บทที่ 8 — พิกัดเชิงขั้วและจำนวนเชิงซ้อน
+     ===================================================================== */
+
+  /* วาดตารางเชิงขั้ว: วงกลมซ้อนและรัศมีทุก 30° */
+  function polarGrid(p, rmax) {
+    var i;
+    for (i = 1; i <= rmax; i++) p.circle(0, 0, i, { color: '#eeece5', w: 1 });
+    for (i = 0; i < 12; i++) {
+      var a = i * PI / 6;
+      p.line(0, 0, rmax * cos(a), rmax * sin(a), { color: '#f2f0e9', w: 1 });
+    }
+    p.line(-rmax, 0, rmax, 0, { color: C.axis, w: 1.3 });
+    p.line(0, -rmax, 0, rmax, { color: C.axis, w: 1.3 });
+  }
+
+  /* 8.1 พิกัดเชิงขั้ว */
+  TV.widget('#w-polar', {
+    title: 'พิกัดเชิงขั้ว (r, θ) กับพิกัดฉาก (x, y)',
+    badge: 'ลากจุดได้',
+    desc: 'จุดเดียวกันเรียกได้สองชื่อ — บอกเป็น “ไปทางไหน ไกลแค่ไหน” หรือบอกเป็น “ขวาเท่าไร ขึ้นเท่าไร” ลากจุดแล้วดูทั้งสองชื่อเปลี่ยนไปพร้อมกัน',
+    plot: { xmin: -3.6, xmax: 3.6, ymin: -3.6, ymax: 3.6, equal: true, ratio: 0.86, minH: 320, maxH: 440 },
+    controls: [
+      { type: 'range', key: 'r', label: 'รัศมี r', min: 0.3, max: 3, step: 0.05, value: 2.2, fmt: function (v) { return nf(v, 2); } },
+      { type: 'range', key: 'th', label: 'มุม θ', min: 0, max: 360, step: 1, value: 55, fmt: degFmt },
+      { type: 'check', key: 'proj', label: 'แสดงเส้นฉาย', value: true }
+    ],
+    hint: 'สูตรแปลง: x = r cos θ · y = r sin θ · r = √(x² + y²) · tan θ = y/x — สังเกตว่าสองสูตรแรกคือนิยาม cos กับ sin จากบทที่ 2 ตรง ๆ',
+    onPointer: function (p, s, wx, wy) {
+      var r = Math.hypot(wx, wy);
+      if (r > 3.4) return false;
+      s.r = clamp(r, 0.3, 3);
+      s.th = (r2d(Math.atan2(wy, wx)) + 360) % 360;
+      return true;
+    },
+    draw: function (p, s, api) {
+      var a = d2r(s.th), x = s.r * cos(a), y = s.r * sin(a);
+      polarGrid(p, 3.4);
+      for (var i = 1; i <= 3; i++) p.text(i, 0, String(i), { dy: 13, color: C.faint, size: 10, mono: true });
+
+      p.arc(0, 0, 0.55, 0, a, { fill: 'rgba(180,83,9,.13)', color: C.accent, w: 1.8 });
+      p.line(0, 0, x, y, { color: C.hyp, w: 3 });
+      if (s.proj) {
+        p.line(x, 0, x, y, { color: C.sin, w: 2, dash: [5, 4] });
+        p.line(0, 0, x, 0, { color: C.cos, w: 3 });
+        p.text(x / 2, 0, 'x = ' + nf(x, 2), { dy: y >= 0 ? 16 : -16, color: C.cos, size: 11.5, bg: 'rgba(255,255,255,.9)' });
+        p.text(x, y / 2, 'y = ' + nf(y, 2), { dx: x >= 0 ? 10 : -10, align: x >= 0 ? 'left' : 'right', color: C.sin, size: 11.5, bg: 'rgba(255,255,255,.9)' });
+      }
+      p.text(x / 2, y / 2, 'r = ' + nf(s.r, 2), { dx: -10, dy: -12, align: 'right', color: C.hyp, size: 12, bg: 'rgba(255,255,255,.9)' });
+      p.text(0.8 * cos(a / 2), 0.8 * sin(a / 2), nf(s.th, 0) + '°', { color: C.accent, size: 12.5, bg: 'rgba(255,255,255,.88)' });
+      p.dot(x, y, { fill: C.hyp, r: 8, halo: C.hyp });
+
+      api.stats({
+        'พิกัดเชิงขั้ว': { v: '(' + nf(s.r, 2) + ', ' + nf(s.th, 0) + '°)', color: C.hyp },
+        'พิกัดฉาก': { v: '(' + nf(x, 3) + ', ' + nf(y, 3) + ')', color: C.ink },
+        'x = r cos θ': { v: nf(x, 4), color: C.cos },
+        'y = r sin θ': { v: nf(y, 4), color: C.sin },
+        'r = √(x²+y²)': nf(Math.hypot(x, y), 4)
+      });
+    }
+  });
+
+  /* 8.2 กราฟเชิงขั้ว */
+  var POLAR_PRESET = [
+    { n: 'วงกลม  r = 2', a: 2, b: 0, k: 1 },
+    { n: 'คาร์ดิออยด์  r = 1 + cos θ', a: 1, b: 1, k: 1 },
+    { n: 'ลิมาซองมีห่วง  r = 0.6 + 1.4 cos θ', a: 0.6, b: 1.4, k: 1 },
+    { n: 'กุหลาบ 3 กลีบ  r = 2 cos 3θ', a: 0, b: 2, k: 3 },
+    { n: 'กุหลาบ 8 กลีบ  r = 2 cos 4θ', a: 0, b: 2, k: 4 }
+  ];
+
+  TV.widget('#w-polar-graph', {
+    title: 'กราฟเชิงขั้ว r = a + b cos(kθ)',
+    badge: 'ปรับสูตรได้',
+    desc: 'สมการสั้น ๆ ในพิกัดเชิงขั้วให้รูปที่เขียนด้วยพิกัดฉากได้ยากมาก — ลองเปลี่ยน k เป็นเลขคี่กับเลขคู่ดูว่าจำนวนกลีบต่างกันอย่างไร',
+    plot: { xmin: -3.4, xmax: 3.4, ymin: -3.4, ymax: 3.4, equal: true, ratio: 0.86, minH: 320, maxH: 440 },
+    controls: [
+      { type: 'select', key: 'pre', label: 'รูปสำเร็จ', wide: true, options: POLAR_PRESET.map(function (d) { return [d, d.n]; }), value: POLAR_PRESET[1],
+        onchange: function (api) { var d = api.state.pre; api.state.a = d.a; api.state.b = d.b; api.state.k = d.k; } },
+      { type: 'range', key: 'a', label: 'a', min: 0, max: 2, step: 0.1, value: 1, fmt: function (v) { return nf(v, 1); } },
+      { type: 'range', key: 'b', label: 'b', min: 0, max: 2, step: 0.1, value: 1, fmt: function (v) { return nf(v, 1); } },
+      { type: 'range', key: 'k', label: 'k', min: 1, max: 6, step: 1, value: 1, fmt: function (v) { return nf(v, 0); } }
+    ],
+    hint: 'กฎของกลีบกุหลาบ r = b cos kθ : ถ้า k เป็นเลขคี่จะได้ k กลีบ แต่ถ้าเป็นเลขคู่จะได้ 2k กลีบ เพราะกลีบครึ่งหลังไม่ทับกับครึ่งแรก',
+    draw: function (p, s, api) {
+      polarGrid(p, 3.2);
+      var pts = [], i, n = 900, rmax = 0;
+      for (i = 0; i <= n; i++) {
+        var t = i / n * TAU * 2;
+        var r = s.a + s.b * cos(s.k * t);
+        rmax = Math.max(rmax, Math.abs(r));
+        pts.push([r * cos(t), r * sin(t)]);
+      }
+      p.poly(pts, { close: false, color: C.hyp, w: 2.6 });
+      p.text(-3.4, 3.4, 'r = ' + nf(s.a, 1) + ' + ' + nf(s.b, 1) + ' cos(' + s.k + 'θ)', {
+        dx: 10, dy: 14, align: 'left', color: C.hyp, size: 13, mono: true, bg: 'rgba(255,255,255,.9)'
+      });
+
+      var petals = s.a === 0 && s.b > 0 ? (s.k % 2 === 1 ? s.k : 2 * s.k) : null;
+      api.stats({
+        'สมการ': 'r = ' + nf(s.a, 1) + ' + ' + nf(s.b, 1) + ' cos(' + s.k + 'θ)',
+        'รัศมีมากที่สุด': { v: nf(rmax, 3), color: C.hyp },
+        'ชนิดของกราฟ': { v: s.b === 0 ? 'วงกลม' : s.a === 0 ? 'กุหลาบ' : (s.a > s.b ? 'ลิมาซองไม่มีห่วง' : (Math.abs(s.a - s.b) < 1e-9 ? 'คาร์ดิออยด์' : 'ลิมาซองมีห่วง')), color: C.accent },
+        'จำนวนกลีบ': petals === null ? '—' : String(petals)
+      });
+    }
+  });
+
+  /* 8.3 คูณจำนวนเชิงซ้อน = หมุนแล้วขยาย */
+  TV.widget('#w-complex-mult', {
+    title: 'คูณจำนวนเชิงซ้อน = บวกมุมแล้วคูณขนาด',
+    badge: 'ปรับสองตัว',
+    desc: 'ในระนาบเชิงซ้อน การคูณไม่ใช่แค่การคำนวณ แต่เป็นการ “หมุนแล้วขยาย” — ปรับมุมของ z₂ แล้วดูว่าผลคูณหมุนตามอย่างไร',
+    plot: { xmin: -3.6, xmax: 3.6, ymin: -3.6, ymax: 3.6, equal: true, ratio: 0.86, minH: 320, maxH: 440 },
+    controls: [
+      { type: 'range', key: 'r1', label: 'ขนาดของ z₁', min: 0.4, max: 2, step: 0.05, value: 1.4, fmt: function (v) { return nf(v, 2); } },
+      { type: 'range', key: 't1', label: 'มุมของ z₁', min: 0, max: 350, step: 5, value: 30, fmt: degFmt },
+      { type: 'range', key: 'r2', label: 'ขนาดของ z₂', min: 0.4, max: 2, step: 0.05, value: 1.2, fmt: function (v) { return nf(v, 2); } },
+      { type: 'range', key: 't2', label: 'มุมของ z₂', min: 0, max: 350, step: 5, value: 50, fmt: degFmt }
+    ],
+    hint: 'จับหลักนี้ไว้: |z₁z₂| = |z₁||z₂| และ arg(z₁z₂) = arg z₁ + arg z₂ — ทฤษฎีบทเดอมัวร์เป็นเพียงการใช้กฎนี้ซ้ำ n ครั้ง',
+    draw: function (p, s, api) {
+      var a1 = d2r(s.t1), a2 = d2r(s.t2);
+      var R = s.r1 * s.r2, A = a1 + a2;
+      polarGrid(p, 3.4);
+      p.text(3.4, 0, 'Re', { dx: -4, dy: -12, align: 'right', color: C.faint, size: 11, italic: true });
+      p.text(0, 3.4, 'Im', { dx: 12, dy: 6, align: 'left', color: C.faint, size: 11, italic: true });
+
+      var draw1 = function (r, a, col, lab) {
+        p.arrow(0, 0, r * cos(a), r * sin(a), { color: col, w: 2.6, head: 10 });
+        p.dot(r * cos(a), r * sin(a), { fill: col, r: 6 });
+        p.text(r * cos(a), r * sin(a), lab, { dx: 12 * cos(a), dy: -12 * sin(a) - 10, color: col, size: 12.5, bg: 'rgba(255,255,255,.9)' });
+      };
+      draw1(s.r1, a1, C.sin, 'z₁');
+      draw1(s.r2, a2, C.cos, 'z₂');
+      draw1(Math.min(R, 3.3), A, C.hyp, R > 3.3 ? 'z₁z₂ (เกินกรอบ)' : 'z₁z₂');
+      p.arc(0, 0, 0.5, 0, a1, { color: C.sin, w: 1.6 });
+      p.arc(0, 0, 0.68, a1, A, { color: C.cos, w: 1.6 });
+
+      api.stats({
+        'z₁': { v: nf(s.r1, 2) + ' ∠ ' + nf(s.t1, 0) + '°', color: C.sin },
+        'z₂': { v: nf(s.r2, 2) + ' ∠ ' + nf(s.t2, 0) + '°', color: C.cos },
+        'ขนาดผลคูณ': { v: nf(s.r1, 2) + ' × ' + nf(s.r2, 2) + ' = ' + nf(R, 3), color: C.hyp },
+        'มุมผลคูณ': { v: nf(s.t1, 0) + '° + ' + nf(s.t2, 0) + '° = ' + nf((s.t1 + s.t2) % 360, 0) + '°', color: C.hyp },
+        'รูปพิกัดฉาก': nf(R * cos(A), 3) + (R * sin(A) >= 0 ? ' + ' : ' − ') + nf(Math.abs(R * sin(A)), 3) + 'i'
+      });
+    }
+  });
+
+  /* 8.4 รากที่ n จากทฤษฎีบทเดอมัวร์ */
+  TV.widget('#w-demoivre', {
+    title: 'รากที่ n กระจายตัวเท่า ๆ กันบนวงกลม',
+    badge: 'เปลี่ยน n',
+    desc: 'จำนวนเชิงซ้อนหนึ่งตัวมีรากที่ n อยู่ n ตัวเสมอ และทั้งหมดวางตัวห่างเท่า ๆ กันบนวงกลมเดียว — เป็นรูปหลายเหลี่ยมด้านเท่าพอดี',
+    plot: { xmin: -3.2, xmax: 3.2, ymin: -3.2, ymax: 3.2, equal: true, ratio: 0.86, minH: 320, maxH: 440 },
+    controls: [
+      { type: 'range', key: 'r', label: 'ขนาดของ z', min: 0.3, max: 8, step: 0.1, value: 4, fmt: function (v) { return nf(v, 1); } },
+      { type: 'range', key: 'th', label: 'มุมของ z', min: 0, max: 350, step: 5, value: 60, fmt: degFmt },
+      { type: 'range', key: 'n', label: 'หารากที่ n', min: 2, max: 8, step: 1, value: 4, fmt: function (v) { return nf(v, 0); } }
+    ],
+    hint: 'สูตร: รากตัวที่ k คือ r^(1/n) [cos((θ+360°k)/n) + i sin((θ+360°k)/n)] เมื่อ k = 0, 1, …, n−1 — มุมระหว่างรากที่ติดกันคือ 360°/n เสมอ',
+    draw: function (p, s, api) {
+      var rr = Math.pow(s.r, 1 / s.n), a0 = d2r(s.th) / s.n, step = TAU / s.n;
+      polarGrid(p, 3.0);
+      p.circle(0, 0, rr, { color: C.hyp, w: 1.8, dash: [6, 5] });
+
+      var pts = [], i;
+      for (i = 0; i < s.n; i++) {
+        var a = a0 + i * step;
+        pts.push([rr * cos(a), rr * sin(a)]);
+      }
+      p.poly(pts, { fill: 'rgba(124,58,237,.07)', color: '#c9c5bb', w: 1.4 });
+      pts.forEach(function (q, i) {
+        p.line(0, 0, q[0], q[1], { color: i === 0 ? C.accent : '#d8d4ca', w: i === 0 ? 2.2 : 1.2 });
+        p.dot(q[0], q[1], { fill: i === 0 ? C.accent : C.hyp, r: i === 0 ? 7 : 6 });
+        p.text(q[0], q[1], 'k=' + i, { dx: 14 * (q[0] >= 0 ? 1 : -1), dy: -12, align: q[0] >= 0 ? 'left' : 'right', color: i === 0 ? C.accent : C.hyp, size: 11, bg: 'rgba(255,255,255,.9)' });
+      });
+
+      p.text(-3.2, 3.2, 'z = ' + nf(s.r, 1) + ' ∠ ' + nf(s.th, 0) + '°   ·   รากที่ ' + s.n, {
+        dx: 10, dy: 14, align: 'left', color: C.ink, size: 12.5, bg: 'rgba(255,255,255,.9)'
+      });
+
+      api.stats({
+        'ขนาดของราก': { v: nf(s.r, 1) + '^(1/' + s.n + ') = ' + nf(rr, 4), color: C.hyp },
+        'มุมของรากตัวแรก': { v: nf(s.th, 0) + '° ÷ ' + s.n + ' = ' + nf(s.th / s.n, 1) + '°', color: C.accent },
+        'มุมห่างกันทีละ': { v: '360° ÷ ' + s.n + ' = ' + nf(360 / s.n, 1) + '°', color: C.tan },
+        'จำนวนราก': String(s.n),
+        'รูปที่ได้': s.n === 2 ? 'อยู่ตรงข้ามกัน' : s.n === 3 ? 'สามเหลี่ยมด้านเท่า' : s.n === 4 ? 'สี่เหลี่ยมจัตุรัส' : s.n + ' เหลี่ยมด้านเท่า'
+      });
+    }
+  });
 })();

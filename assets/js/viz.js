@@ -490,7 +490,8 @@
         });
         sl.addEventListener('change', function () {
           state[c.key] = c.options[parseInt(sl.value, 10)][0];
-          render();
+          if (c.onchange) c.onchange(api);
+          syncControls(); render();
         });
         selBox.appendChild(sl);
         if (c.wide) { selBox.style.flex = '1 1 320px'; selBox.style.minWidth = '260px'; }
