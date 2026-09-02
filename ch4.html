@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>บทที่ 4 · เอกลักษณ์ตรีโกณ — ตรีโกณมิติเห็นภาพ</title>
-<meta name="description" content="เอกลักษณ์พีทาโกรัส สูตรผลบวกมุมพร้อมการพิสูจน์ด้วยรูป สูตรมุมสองเท่า มุมครึ่ง และการรวมคลื่นเป็น R sin(x+α)">
+<meta name="description" content="เอกลักษณ์พีทาโกรัส สูตรผลบวกมุมพร้อมการพิสูจน์ด้วยรูป สูตรมุมสองเท่า มุมครึ่ง การพิสูจน์สูตรลดมุม 90°±θ และ 180°±θ ด้วยวงกลมหนึ่งหน่วย และการรวมคลื่นเป็น R sin(x+α)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d4ed8'/%3E%3Cpath d='M6 25 L26 25 L26 8 Z' fill='none' stroke='white' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -184,7 +184,9 @@
     </div>
   </div>
 
-  <h2 id="verify">4.6 ตรวจสอบเอกลักษณ์ด้วยกราฟ</h2>
+  <h2 id="verify">4.6 ตรวจสอบและพิสูจน์เอกลักษณ์</h2>
+
+  <h3>ตรวจสอบเร็ว ๆ ด้วยกราฟ</h3>
   <p>
     วิธีเช็กเร็ว ๆ ว่าสูตรที่จำมาถูกหรือไม่ คือวาดกราฟทั้งสองข้างทับกัน
     ถ้าเป็นเอกลักษณ์จริงเส้นจะทับกันสนิททุกจุด ลองเลือกดูรายการที่มีเครื่องหมาย ⚠ เพื่อเห็นว่าสูตรผิดหน้าตาเป็นอย่างไร
@@ -200,6 +202,158 @@
     </p>
   </div>
 
+  <h3>พิสูจน์เอกลักษณ์มุมสัมพันธ์ด้วยวงกลมหนึ่งหน่วย</h3>
+  <p>
+    เอกลักษณ์กลุ่ม $90^\circ\pm\theta$, $180^\circ\pm\theta$, $270^\circ\pm\theta$ และ $360^\circ-\theta$
+    (บางตำราเรียกว่า <strong>สูตรลดมุม</strong> <span class="en">(reduction formulas)</span>)
+    มีรวมกันสิบกว่าบรรทัด ถ้าท่องอย่างเดียวจะสลับเครื่องหมายกันมั่วเสมอ
+    แต่ทั้งหมดนี้ไม่ต้องท่องเลยแม้แต่บรรทัดเดียว เพราะพิสูจน์ได้ด้วยการวาดวงกลมหนึ่งหน่วยเพียงรูปเดียว
+  </p>
+  <div class="box key">
+    <div class="box-title">หลักการสามบรรทัด</div>
+    <ol style="margin:0">
+      <li>มุม $\theta$ ให้จุด $P(\cos\theta,\ \sin\theta)$ บนวงกลมหนึ่งหน่วย</li>
+      <li>มุมใหม่ให้จุด $P'$ ซึ่งเป็นเพียง <strong>ภาพสะท้อน</strong> หรือ <strong>ภาพหมุน</strong> ของ $P$ บนวงกลมวงเดิม</li>
+      <li>อ่านพิกัดของ $P'$ ออกมาตรง ๆ — พิกัด $x$ คือ $\cos$ ของมุมใหม่ และพิกัด $y$ คือ $\sin$ ของมุมใหม่</li>
+    </ol>
+    <p style="margin:.6em 0 0">
+      เพราะ $P'$ อยู่บนวงกลมรัศมี 1 เหมือนเดิม ระยะในแนวนอนและแนวตั้งของมันจึงมีขนาดเท่ากับของ $P$ เสมอ
+      สิ่งที่เปลี่ยนได้มีแค่สองอย่างคือ <strong>เครื่องหมาย</strong> และ <strong>การสลับที่กันของ $x$ กับ $y$</strong>
+    </p>
+  </div>
+
+  <div class="widget" id="w-reduce"></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>มุมใหม่</th><th>$P'$ ได้จาก $P$ โดย</th><th>พิกัดของ $P'$</th>
+        <th class="num">sin</th><th class="num">cos</th><th class="num">tan</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>$-\theta\ (=360^\circ-\theta)$</td><td>สะท้อนข้ามแกน $x$</td><td>$(\cos\theta,\ -\sin\theta)$</td>
+        <td class="num">$-\sin\theta$</td><td class="num">$\cos\theta$</td><td class="num">$-\tan\theta$</td></tr>
+      <tr><td>$180^\circ-\theta$</td><td>สะท้อนข้ามแกน $y$</td><td>$(-\cos\theta,\ \sin\theta)$</td>
+        <td class="num">$\sin\theta$</td><td class="num">$-\cos\theta$</td><td class="num">$-\tan\theta$</td></tr>
+      <tr><td>$180^\circ+\theta$</td><td>หมุนครึ่งรอบ (จุดตรงข้ามผ่านจุดกำเนิด)</td><td>$(-\cos\theta,\ -\sin\theta)$</td>
+        <td class="num">$-\sin\theta$</td><td class="num">$-\cos\theta$</td><td class="num">$\tan\theta$</td></tr>
+      <tr><td>$90^\circ-\theta$</td><td>สะท้อนข้ามเส้น $y=x$</td><td>$(\sin\theta,\ \cos\theta)$</td>
+        <td class="num">$\cos\theta$</td><td class="num">$\sin\theta$</td><td class="num">$\cot\theta$</td></tr>
+      <tr><td>$90^\circ+\theta$</td><td>หมุนทวนเข็ม $90^\circ$</td><td>$(-\sin\theta,\ \cos\theta)$</td>
+        <td class="num">$\cos\theta$</td><td class="num">$-\sin\theta$</td><td class="num">$-\cot\theta$</td></tr>
+      <tr><td>$270^\circ-\theta$</td><td>สะท้อนข้ามเส้น $y=-x$</td><td>$(-\sin\theta,\ -\cos\theta)$</td>
+        <td class="num">$-\cos\theta$</td><td class="num">$-\sin\theta$</td><td class="num">$\cot\theta$</td></tr>
+      <tr><td>$270^\circ+\theta$</td><td>หมุนตามเข็ม $90^\circ$</td><td>$(\sin\theta,\ -\cos\theta)$</td>
+        <td class="num">$-\cos\theta$</td><td class="num">$\sin\theta$</td><td class="num">$-\cot\theta$</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>
+    ตารางนี้ไม่ได้มีไว้ท่อง — มีไว้ตรวจคำตอบที่เราวาดรูปได้เอง
+    ทุกแถวสร้างใหม่ได้ในสิบวินาทีด้วยวงกลมหนึ่งหน่วยรูปเดียว
+  </p>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 4 — พิสูจน์ $\sin(180^\circ-\theta)=\sin\theta$ และ $\cos(180^\circ-\theta)=-\cos\theta$</h4>
+    <p class="q">ให้ $\theta$ เป็นมุมแหลม จงพิสูจน์เอกลักษณ์คู่นี้ด้วยวงกลมหนึ่งหน่วย</p>
+    <ol class="steps">
+      <li>วาดวงกลมหนึ่งหน่วย ให้ $P$ เป็นจุดปลายของมุม $\theta$ ดังนั้น $P=(\cos\theta,\ \sin\theta)$
+        และให้ $P'$ เป็นจุดปลายของมุม $180^\circ-\theta$</li>
+      <li>มุม $180^\circ-\theta$ อยู่ในควอดรันต์ที่ 2 และมีมุมอ้างอิงเท่ากับ $\theta$ พอดี
+        (วัดจากแกน $x$ ด้านลบเข้าหาแขนสิ้นสุด) — นี่คือนิยามของมุมอ้างอิงจากบทที่ 2 ตรง ๆ</li>
+      <li>หย่อนเส้นตั้งฉากจาก $P$ และ $P'$ ลงบนแกน $x$ ได้สามเหลี่ยมมุมฉากสองรูป
+        ทั้งสองรูปมีมุมฉากเท่ากัน มีมุมแหลม $\theta$ เท่ากัน และมีด้านตรงข้ามมุมฉากยาว 1 เท่ากัน
+        จึงเป็นสามเหลี่ยม <strong>เท่ากันทุกประการ</strong> แบบ ม–ม–ด</li>
+      <li>ด้านที่สมนัยกันจึงยาวเท่ากัน: ระยะในแนวนอนของทั้งคู่ยาว $\cos\theta$ และระยะในแนวตั้งยาว $\sin\theta$</li>
+      <li>เหลือแค่ใส่เครื่องหมายตามตำแหน่ง — $P'$ อยู่ทางซ้ายของแกน $y$ พิกัด $x$ จึงติดลบ
+        ส่วนยังอยู่เหนือแกน $x$ พิกัด $y$ จึงยังเป็นบวก
+        $$P'=(-\cos\theta,\ \sin\theta)$$</li>
+      <li>อ่านพิกัดตามนิยามวงกลมหนึ่งหน่วย
+        $$\cos(180^\circ-\theta)=-\cos\theta \qquad \sin(180^\circ-\theta)=\sin\theta \qquad \blacksquare$$</li>
+      <li>หารกันได้ผลพลอยได้ทันที
+        $$\tan(180^\circ-\theta)=\frac{\sin\theta}{-\cos\theta}=-\tan\theta$$</li>
+    </ol>
+    <div class="ans">
+      แก่นของการพิสูจน์คือ <strong>สามเหลี่ยมเท่ากันทุกประการ</strong> (ให้ขนาดของพิกัด)
+      บวกกับ <strong>ควอดรันต์</strong> (ให้เครื่องหมายของพิกัด) — สองอย่างนี้ใช้ได้กับทุกแถวในตารางด้านบน
+    </div>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 5 — พิสูจน์กลุ่ม $90^\circ+\theta$ ด้วยการหมุน</h4>
+    <p class="q">จงพิสูจน์ว่า $\;\sin(90^\circ+\theta)=\cos\theta\;$ และ $\;\cos(90^\circ+\theta)=-\sin\theta$</p>
+    <ol class="steps">
+      <li>แขนสิ้นสุดของมุม $90^\circ+\theta$ ก็คือแขนของมุม $\theta$ ที่ถูกหมุนทวนเข็มไปอีก $90^\circ$ พอดี
+        ดังนั้น $P'$ คือภาพหมุนของ $P$ รอบจุดกำเนิดเป็นมุม $90^\circ$</li>
+      <li>ดูผลของการหมุน $90^\circ$ บนรูป: ระยะที่เคยวัดในแนวนอนจะไปวัดในแนวตั้ง
+        และระยะที่เคยวัดในแนวตั้งจะไปวัดในแนวนอนโดยชี้ไปทาง <em>ซ้าย</em>
+        นั่นคือการหมุนส่งจุด $(x,y)$ ไปเป็น $(-y,\ x)$</li>
+      <li>แทน $P=(\cos\theta,\ \sin\theta)$ ลงไป
+        $$P'=(-\sin\theta,\ \cos\theta)$$</li>
+      <li>อ่านพิกัด: พิกัด $x$ คือ $\cos(90^\circ+\theta)$ และพิกัด $y$ คือ $\sin(90^\circ+\theta)$
+        $$\cos(90^\circ+\theta)=-\sin\theta \qquad \sin(90^\circ+\theta)=\cos\theta \qquad \blacksquare$$</li>
+    </ol>
+    <div class="ans">
+      สังเกตว่ากลุ่ม $90^\circ$ กับ $270^\circ$ ทำให้ $x$ กับ $y$ <strong>สลับที่กัน</strong>
+      ชื่อฟังก์ชันจึงเปลี่ยนเป็นโคฟังก์ชัน (sin ↔ cos, tan ↔ cot)
+      ส่วนกลุ่ม $180^\circ$ กับ $360^\circ$ ไม่สลับที่ ชื่อฟังก์ชันจึงคงเดิม
+    </div>
+  </div>
+
+  <div class="box key">
+    <div class="box-title">กฎอ่านผลลัพธ์ใน 5 วินาที</div>
+    <ol style="margin:0">
+      <li><strong>ชื่อฟังก์ชัน</strong> — ถ้ามุมตั้งต้นเป็น $180^\circ$ หรือ $360^\circ$ (แกนแนวนอน) ชื่อ <em>คงเดิม</em>
+        แต่ถ้าเป็น $90^\circ$ หรือ $270^\circ$ (แกนแนวตั้ง) ให้ <em>สลับเป็นโคฟังก์ชัน</em></li>
+      <li><strong>เครื่องหมาย</strong> — สมมติให้ $\theta$ เป็นมุมแหลม ดูว่ามุมใหม่ตกอยู่ควอดรันต์ไหน
+        แล้วใช้ A–S–T–C กับ <em>ฟังก์ชันเดิมที่อยู่ข้างซ้าย</em></li>
+    </ol>
+    <p style="margin:.6em 0 0">
+      ลองกับ $\cos(270^\circ+\theta)$ — ตั้งต้นด้วย $270^\circ$ จึงเปลี่ยน cos เป็น sin
+      และถ้า $\theta$ แหลม มุม $270^\circ+\theta$ อยู่ควอดรันต์ที่ 4 ซึ่ง <em>cos</em> เป็นบวก
+      จึงได้ $\cos(270^\circ+\theta)=+\sin\theta$ ตรงกับตาราง
+    </p>
+  </div>
+
+  <div class="box warn">
+    <div class="box-title">จุดพลาดที่เจอบ่อยที่สุด</div>
+    <p style="margin:0">
+      เครื่องหมายต้องดูจากฟังก์ชัน <strong>เดิม</strong> ไม่ใช่ฟังก์ชันที่สลับแล้ว
+      เช่น $\sin(90^\circ+\theta)$ ต้องถามว่า “<em>sin</em> ในควอดรันต์ที่ 2 เป็นบวกหรือลบ” (บวก)
+      แล้วจึงเขียน $+\cos\theta$ — ถ้าเผลอไปถามว่า cos ในควอดรันต์ที่ 2 เป็นอะไรจะได้เครื่องหมายผิดทันที
+    </p>
+  </div>
+
+  <div class="box note">
+    <div class="box-title">ตรวจซ้ำด้วยพีชคณิต และขยายให้ครอบคลุมทุกมุม</div>
+    <p style="margin:0 0 .5em">
+      การวาดรูปข้างต้นใช้ $\theta$ แหลมเพื่อให้เห็นสามเหลี่ยมชัด ๆ
+      ถ้าต้องการการพิสูจน์ที่ใช้ได้กับ <em>ทุก</em> ค่าของ $\theta$ ให้ใช้สูตรผลบวกมุมจากหัวข้อ 4.3 ซึ่งจบในบรรทัดเดียว
+    </p>
+    $$\sin(180^\circ-\theta)=\sin 180^\circ\cos\theta-\cos 180^\circ\sin\theta=0+\sin\theta=\sin\theta$$
+    $$\cos(90^\circ+\theta)=\cos 90^\circ\cos\theta-\sin 90^\circ\sin\theta=0-\sin\theta=-\sin\theta$$
+    <p style="margin:.5em 0 0">
+      วงกลมหนึ่งหน่วยทำให้ <strong>เห็นว่าทำไม</strong> ส่วนสูตรผลบวกมุมเป็นการพิสูจน์ที่ <strong>รัดกุมและครบทุกกรณี</strong>
+      ในข้อสอบใช้ได้ทั้งสองแบบ
+    </p>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 6 — ลดรูปด้วยเอกลักษณ์มุมสัมพันธ์</h4>
+    <p class="q">จงลดรูป $\;\dfrac{\sin(180^\circ-\theta)\,\cos(90^\circ+\theta)}{\cos(180^\circ+\theta)\,\sin(270^\circ-\theta)}$</p>
+    <ol class="steps">
+      <li>จัดการทีละก้อนด้วยการอ่านจากวงกลม (หรือจากตารางด้านบน)
+        $$\sin(180^\circ-\theta)=\sin\theta \qquad \cos(90^\circ+\theta)=-\sin\theta$$
+        $$\cos(180^\circ+\theta)=-\cos\theta \qquad \sin(270^\circ-\theta)=-\cos\theta$$</li>
+      <li>แทนกลับเข้าไปทั้งสี่ก้อน
+        $$=\frac{(\sin\theta)(-\sin\theta)}{(-\cos\theta)(-\cos\theta)}=\frac{-\sin^{2}\theta}{\cos^{2}\theta}$$</li>
+      <li>ตัวส่วนสองตัวติดลบคูณกันได้บวก เหลือลบตัวเดียวที่ตัวเศษ</li>
+    </ol>
+    <div class="ans">ตอบ $-\tan^{2}\theta$</div>
+  </div>
+
   <h2 id="prove">4.7 เทคนิคการพิสูจน์เอกลักษณ์</h2>
   <div class="box note">
     <div class="box-title">ลำดับที่ควรลองตามนี้</div>
@@ -213,7 +367,7 @@
   </div>
 
   <div class="example">
-    <h4>โจทย์ตัวอย่าง 4 — พิสูจน์เอกลักษณ์</h4>
+    <h4>โจทย์ตัวอย่าง 7 — พิสูจน์เอกลักษณ์</h4>
     <p class="q">จงพิสูจน์ว่า $\;\dfrac{\cos\theta}{1-\sin\theta}=\sec\theta+\tan\theta$</p>
     <ol class="steps">
       <li>ข้างซ้ายมีตัวส่วนที่เป็น $1-\sin\theta$ จึงคูณทั้งเศษและส่วนด้วยคอนจูเกต $1+\sin\theta$
@@ -249,7 +403,7 @@
   </div>
 
   <div class="example">
-    <h4>โจทย์ตัวอย่าง 5</h4>
+    <h4>โจทย์ตัวอย่าง 8</h4>
     <p class="q">จงหาค่าสูงสุดและค่าต่ำสุดของ $y = 3\sin x + 4\cos x$ พร้อมระบุค่า x ที่ทำให้เกิดค่าสูงสุด</p>
     <ol class="steps">
       <li>เทียบกับรูปมาตรฐาน ได้ $a=3$, $b=4$</li>

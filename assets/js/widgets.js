@@ -1061,6 +1061,169 @@
     }
   });
 
+  /* 4.6 พิสูจน์เอกลักษณ์มุมสัมพันธ์ 90°±θ, 180°±θ ด้วยวงกลมหนึ่งหน่วย
+     แต่ละแบบคือการ “สะท้อน” (ax = มุมของเส้นสะท้อน) หรือ “หมุน” (rot = องศาที่หมุน)
+     sw = true หมายถึงพิกัด x กับ y สลับที่กัน (กลุ่ม 90° และ 270° จึงเปลี่ยนเป็นโคฟังก์ชัน) */
+  var REDUCE = [
+    {
+      n: '180° − θ', c: 180, d: -1, sw: false, ax: 90, rot: 0,
+      map: function (x, y) { return [-x, y]; },
+      how: 'สะท้อนข้ามแกน y', S: 'sin θ', K: '−cos θ', T: '−tan θ'
+    },
+    {
+      n: '180° + θ', c: 180, d: 1, sw: false, ax: null, rot: 180,
+      map: function (x, y) { return [-x, -y]; },
+      how: 'หมุนครึ่งรอบ 180°', S: '−sin θ', K: '−cos θ', T: 'tan θ'
+    },
+    {
+      n: '−θ (เท่ากับ 360° − θ)', c: 0, d: -1, sw: false, ax: 0, rot: 0,
+      map: function (x, y) { return [x, -y]; },
+      how: 'สะท้อนข้ามแกน x', S: '−sin θ', K: 'cos θ', T: '−tan θ'
+    },
+    {
+      n: '90° − θ', c: 90, d: -1, sw: true, ax: 45, rot: 0,
+      map: function (x, y) { return [y, x]; },
+      how: 'สะท้อนข้ามเส้น y = x', S: 'cos θ', K: 'sin θ', T: 'cot θ'
+    },
+    {
+      n: '90° + θ', c: 90, d: 1, sw: true, ax: null, rot: 90,
+      map: function (x, y) { return [-y, x]; },
+      how: 'หมุนทวนเข็ม 90°', S: 'cos θ', K: '−sin θ', T: '−cot θ'
+    },
+    {
+      n: '270° − θ', c: 270, d: -1, sw: true, ax: 135, rot: 0,
+      map: function (x, y) { return [-y, -x]; },
+      how: 'สะท้อนข้ามเส้น y = −x', S: '−cos θ', K: '−sin θ', T: 'cot θ'
+    },
+    {
+      n: '270° + θ', c: 270, d: 1, sw: true, ax: null, rot: -90,
+      map: function (x, y) { return [y, -x]; },
+      how: 'หมุนตามเข็ม 90°', S: '−cos θ', K: 'sin θ', T: '−cot θ'
+    }
+  ];
+
+  TV.widget('#w-reduce', {
+    title: 'พิสูจน์เอกลักษณ์มุมสัมพันธ์ด้วยวงกลมหนึ่งหน่วย',
+    badge: 'เลือก · ลากได้',
+    desc: 'P คือจุดของมุม θ ส่วน P′ คือจุดของมุมใหม่ — สามเหลี่ยมมุมฉากสองรูปนี้เท่ากันทุกประการเสมอ พิกัดของ P′ จึงเป็นชุดเดิม เปลี่ยนแค่เครื่องหมายหรือสลับที่ x กับ y',
+    plot: { xmin: -1.78, xmax: 1.95, ymin: -1.5, ymax: 1.62, equal: true, ratio: 0.63, minH: 340, maxH: 480 },
+    controls: [
+      {
+        type: 'select', key: 'r', label: 'มุมใหม่', wide: true,
+        options: REDUCE.map(function (d) { return [d, d.n]; }), value: REDUCE[0]
+      },
+      { type: 'range', key: 'th', label: 'มุม θ', min: 8, max: 82, step: 0.5, value: 35, fmt: degFmt },
+      { type: 'check', key: 'tri', label: 'สามเหลี่ยมมุมฉาก', value: true }
+    ],
+    hint: 'ไม่ต้องท่องสิบกว่าบรรทัด — วาดวงกลมแล้วอ่านพิกัดของ P′ ก็ได้ทั้ง sin และ cos พร้อมเครื่องหมายในคราวเดียว (รูปนี้ตั้ง θ เป็นมุมแหลมเพื่อให้เห็นภาพชัด ส่วนการพิสูจน์ที่ครอบคลุมทุกค่าของ θ ใช้สูตรผลบวกมุมจากหัวข้อ 4.3)',
+    onPointer: function (p, s, wx, wy) {
+      if (Math.hypot(wx, wy) > 1.6) return false;
+      s.th = clamp(r2d(Math.atan2(Math.abs(wy), Math.abs(wx))), 8, 82);
+      return true;
+    },
+    draw: function (p, s, api) {
+      var d = s.r, th = d2r(s.th);
+      var x = cos(th), y = sin(th);
+      var q = d.map(x, y);
+      var tgt = d.c + d.d * s.th;
+      var tt = d2r(tgt);
+      var name = d.n.split(' (')[0];
+
+      p.grid(0.5, 0.5, '#f6f4ee');
+      p.axes({ xStep: 1, yStep: 1, digits: 0, xName: 'x', yName: 'y' });
+      p.circle(0, 0, 1, { color: '#b8b4aa', w: 2 });
+
+      /* ---- เส้นสะท้อน หรือ ส่วนโค้งบอกการหมุน ---- */
+      if (d.ax !== null) {
+        var a = d2r(d.ax), L = 1.36;
+        p.line(-L * cos(a), -L * sin(a), L * cos(a), L * sin(a), { color: C.tan, w: 1.7, dash: [7, 5] });
+        p.text(-L * cos(a), -L * sin(a), d.how, {
+          dy: d.ax === 0 ? -14 : 14, color: C.tan, size: 10.5, bg: 'rgba(255,255,255,.9)'
+        });
+      } else {
+        var rr = d2r(d.rot), R = 1.22;
+        p.arc(0, 0, R, th, th + rr, { color: C.tan, w: 1.8, dash: [6, 4] });
+        var e0 = th + rr * 0.94;
+        p.arrow(R * cos(e0), R * sin(e0), R * cos(th + rr), R * sin(th + rr), { color: C.tan, w: 1.8, head: 9 });
+        var mid = th + rr / 2;
+        p.text(R * cos(mid), R * sin(mid), d.how, { color: C.tan, size: 10.5, bg: 'rgba(255,255,255,.92)' });
+      }
+
+      /* ---- สามเหลี่ยมมุมฉากสองรูปที่เท่ากันทุกประการ ---- */
+      if (s.tri) {
+        p.poly([[0, 0], [x, 0], [x, y]], { fill: 'rgba(124,58,237,.09)', color: C.hyp, w: 1.3 });
+        p.poly([[0, 0], [q[0], 0], [q[0], q[1]]], { fill: 'rgba(4,120,87,.10)', color: C.tan, w: 1.3, dash: [5, 4] });
+        p.rightAngle(x, 0, -Math.sign(x), 0, 0, Math.sign(y), 9, C.soft);
+        p.rightAngle(q[0], 0, -Math.sign(q[0]), 0, 0, Math.sign(q[1]), 9, C.soft);
+      }
+
+      /* ---- ด้านประกอบ: ระบายสีตาม “ความยาว” ไม่ใช่ตามทิศ จึงเห็นชัดว่าคู่ไหนสลับที่กัน ---- */
+      var hCol = d.sw ? C.sin : C.cos;     /* สีของด้านแนวนอนของ P′ */
+      var vCol = d.sw ? C.cos : C.sin;
+
+      p.line(0, 0, x, 0, { color: C.cos, w: 5 });
+      p.line(x, 0, x, y, { color: C.sin, w: 5 });
+      p.line(0, 0, x, y, { color: C.hyp, w: 2.4 });
+
+      p.line(0, 0, q[0], 0, { color: hCol, w: 5 });
+      p.line(q[0], 0, q[0], q[1], { color: vCol, w: 5 });
+      p.line(0, 0, q[0], q[1], { color: C.hyp, w: 2.4, dash: [7, 4] });
+
+      /* ---- มุม θ และมุมใหม่ ---- */
+      p.arc(0, 0, 0.3, 0, th, { fill: 'rgba(180,83,9,.14)', color: C.accent, w: 1.8 });
+      p.text(0.3 * cos(th / 2), 0.3 * sin(th / 2), 'θ', {
+        dx: 20 * cos(th / 2), dy: -20 * sin(th / 2), color: C.accent, size: 12.5
+      });
+      p.arc(0, 0, 0.62, 0, tt, { color: '#9ecabc', w: 1.6 });   /* มุมใหม่ วัดจากแกน x เหมือนกัน */
+
+      /* ---- จุดและป้าย ---- */
+      p.dot(x, y, { fill: C.hyp, r: 7, halo: C.hyp });
+      p.dot(q[0], q[1], { fill: C.tan, r: 7, halo: C.tan });
+      p.dot(0, 0, { fill: C.ink, r: 3.5 });
+
+      p.text(x, y, 'P (cos θ, sin θ)', {
+        dx: 13, dy: -13, align: 'left', color: C.hyp, size: 11.5, bg: 'rgba(255,255,255,.92)'
+      });
+      p.text(q[0], q[1], 'P′ (' + d.K + ', ' + d.S + ')', {
+        dx: q[0] >= 0 ? 13 : -13, dy: q[1] >= 0 ? -13 : 15,
+        align: q[0] >= 0 ? 'left' : 'right', color: C.tan, size: 11.5, bg: 'rgba(255,255,255,.92)'
+      });
+
+      /* ป้ายความยาวด้าน — ของ P′ เลื่อนลงอีกชั้นเมื่อทับแถวเดียวกับของ P */
+      p.text(x / 2, 0, 'cos θ', { dy: 15, color: C.cos, size: 11, bg: 'rgba(255,255,255,.9)' });
+      p.text(x, y / 2, 'sin θ', { dx: 11, align: 'left', color: C.sin, size: 11, bg: 'rgba(255,255,255,.9)' });
+      p.text(q[0] / 2, 0, d.sw ? 'sin θ' : 'cos θ', {
+        dy: q[1] >= 0 ? (q[0] > 0 ? 33 : 15) : (q[0] > 0 ? -32 : -15),
+        color: hCol, size: 11, bg: 'rgba(255,255,255,.9)'
+      });
+      /* ถ้า P′ อยู่ควอดรันต์เดียวกับ P (กรณี 90° − θ) ให้ป้ายหลบไปอีกฝั่งของด้าน จะได้ไม่ทับกัน */
+      var same = Math.sign(q[0]) === Math.sign(x) && Math.sign(q[1]) === Math.sign(y);
+      var vdx = (q[0] >= 0 ? 11 : -11) * (same ? -1 : 1);
+      p.text(q[0], q[1] / 2, d.sw ? 'cos θ' : 'sin θ', {
+        dx: vdx, align: vdx >= 0 ? 'left' : 'right',
+        color: vCol, size: 11, bg: 'rgba(255,255,255,.9)'
+      });
+
+      /* ---- เอกลักษณ์ที่อ่านได้จากรูปตรง ๆ ---- */
+      p.text(-1.78, 1.62, 'cos(' + name + ') = ' + d.K, {
+        dx: 8, dy: 13, align: 'left', color: C.cos, size: 12.5, bg: 'rgba(255,255,255,.92)'
+      });
+      p.text(-1.78, 1.62, 'sin(' + name + ') = ' + d.S, {
+        dx: 8, dy: 33, align: 'left', color: C.sin, size: 12.5, bg: 'rgba(255,255,255,.92)'
+      });
+
+      api.stats({
+        'มุมใหม่': nf(tgt, 1) + '°',
+        'การแปลงจุด': d.how,
+        'P (มุม θ)': { v: '(' + nf(x, 3) + ', ' + nf(y, 3) + ')', color: C.hyp },
+        'P′ (มุมใหม่)': { v: '(' + nf(q[0], 3) + ', ' + nf(q[1], 3) + ')', color: C.tan },
+        'cos มุมใหม่ = พิกัด x': { v: nf(q[0], 3) + ' = ' + d.K, color: C.cos },
+        'sin มุมใหม่ = พิกัด y': { v: nf(q[1], 3) + ' = ' + d.S, color: C.sin },
+        'tan มุมใหม่': { v: d.T, color: C.tan }
+      });
+    }
+  });
+
   /* 4.4 รวมคลื่น a sin x + b cos x */
   TV.widget('#w-combine', {
     title: 'รวมสองคลื่นเป็นคลื่นเดียว',
