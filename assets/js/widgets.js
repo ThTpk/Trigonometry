@@ -462,14 +462,31 @@
      ===================================================================== */
 
   /* 2.1 วงกลมหนึ่งหน่วย — widget หลักของเว็บ */
+  /* มุมมาตรฐานที่ออกสอบบ่อย — ปุ่มจะเปลี่ยนป้ายตามหน่วยที่เลือก (องศา ↔ เรเดียน) */
+  var UC_ANGLES = [0, 30, 45, 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330];
+
   TV.widget('#w-unitcircle', {
     title: 'วงกลมหนึ่งหน่วย',
-    badge: 'ลากจุดได้',
-    desc: 'ลากจุดสีม่วงไปรอบวงกลม — cos θ คือระยะในแนวนอน (สีส้ม) และ sin θ คือระยะในแนวตั้ง (สีน้ำเงิน) ของจุดนั้น',
+    badge: 'กดปุ่ม · ลากจุดได้',
+    desc: 'ลากจุดสีม่วงไปรอบวงกลม หรือกดปุ่มมุมมาตรฐานด้านล่าง — cos θ คือระยะในแนวนอน (สีส้ม) และ sin θ คือระยะในแนวตั้ง (สีน้ำเงิน) ของจุดนั้น ค่าที่ได้แสดงเป็นค่าที่แน่นอน ไม่ใช่ทศนิยม',
     plot: { xmin: -1.72, xmax: 1.98, ymin: -1.45, ymax: 1.45, equal: true, ratio: 0.62, minH: 320, maxH: 460 },
     controls: [
       { type: 'range', key: 'th', label: 'มุม θ', min: 0, max: 360, step: 0.5, value: 40, fmt: degFmt },
       { type: 'seg', key: 'u', label: 'หน่วยมุม', options: [['deg', 'องศา'], ['rad', 'เรเดียน']], value: 'deg' },
+      {
+        type: 'chips', key: 'th', label: 'มุมมาตรฐาน', wide: true,
+        options: UC_ANGLES.map(function (a) {
+          return {
+            v: a,
+            label: function (st) { return st.u === 'rad' ? TV.radLabel(d2r(a)) : a + '°'; }
+          };
+        }),
+        /* ไฮไลต์ปุ่มเมื่อมุมปัจจุบันตรงกับปุ่มนั้น (คิดแบบวนรอบ 360°) */
+        isOn: function (st, v) {
+          var dd = (((st.th - v) % 360) + 360) % 360;
+          return Math.min(dd, 360 - dd) < 0.25;
+        }
+      },
       { type: 'check', key: 'astc', label: 'ป้ายควอดรันต์', value: true },
       { type: 'check', key: 'ref', label: 'มุมอ้างอิง', value: false },
       { type: 'check', key: 'tg', label: 'เส้น tan', value: false },
@@ -519,7 +536,7 @@
             p.line(0, 0, 1, tv, { color: C.tan, w: 1.3, dash: [5, 4] });
             p.dot(1, tv, { fill: C.tan, r: 4.5 });
           }
-          p.text(1, ty / 2, 'tan θ' + (Math.abs(tv) > 1.38 ? ' (เกินกรอบ)' : ' = ' + nf(tv, 2)), {
+          p.text(1, ty / 2, 'tan θ' + (Math.abs(tv) > 1.38 ? ' (เกินกรอบ)' : ' = ' + (TV.exact(tv) || nf(tv, 2))), {
             dx: 10, color: C.tan, size: 11.5, align: 'left', bg: 'rgba(255,255,255,.9)'
           });
         } else {
@@ -553,20 +570,21 @@
 
       p.text(x / 2, 0, 'cos θ', { dy: y >= 0 ? 15 : -15, color: C.cos, size: 12, bg: 'rgba(255,255,255,.9)' });
       p.text(x, y / 2, 'sin θ', { dx: x >= 0 ? 12 : -12, align: x >= 0 ? 'left' : 'right', color: C.sin, size: 12, bg: 'rgba(255,255,255,.9)' });
-      p.text(x, y, '(' + nf(x, 2) + ', ' + nf(y, 2) + ')', {
+      p.text(x, y, '(' + (TV.exact(x) || nf(x, 3)) + ', ' + (TV.exact(y) || nf(y, 3)) + ')', {
         dx: x >= 0 ? 14 : -14, dy: y >= 0 ? -14 : 14,
         align: x >= 0 ? 'left' : 'right', color: C.hyp, size: 11.5, mono: true, bg: 'rgba(255,255,255,.92)'
       });
       var lab = s.u === 'deg' ? nf(s.th, 1) + '°' : (exactPi(th) || nf(th, 2)) + ' rad';
       p.text(0.3 * cos(th / 2), 0.3 * sin(th / 2), lab, { dx: 22 * cos(th / 2), dy: -22 * sin(th / 2), color: C.accent, size: 12.5, bg: 'rgba(255,255,255,.9)' });
 
+      var ref = refAngle(s.th);
       api.stats({
-        'θ': s.u === 'deg' ? nf(s.th, 1) + '°' : nf(th, 4) + ' rad' + (exactPi(th) ? ' = ' + exactPi(th) : ''),
-        'sin θ': { v: nf(y, 4), color: C.sin },
-        'cos θ': { v: nf(x, 4), color: C.cos },
-        'tan θ': { v: isFinite(tv) && Math.abs(tv) < 1e4 ? nf(tv, 4) : 'ไม่นิยาม', color: C.tan },
+        'θ': s.u === 'deg' ? nf(s.th, 1) + '°' : (exactPi(th) || nf(th, 4)) + ' rad',
+        'sin θ': { v: TV.exact(y) || nf(y, 4), color: C.sin },
+        'cos θ': { v: TV.exact(x) || nf(x, 4), color: C.cos },
+        'tan θ': { v: !isFinite(tv) || Math.abs(tv) > 1e4 ? 'ไม่นิยาม' : (TV.exact(tv) || nf(tv, 4)), color: C.tan },
         'ควอดรันต์': quadrantOf(s.th),
-        'มุมอ้างอิง': nf(refAngle(s.th), 1) + '°'
+        'มุมอ้างอิง': s.u === 'deg' ? nf(ref, 1) + '°' : TV.radLabel(d2r(ref)) + ' rad'
       });
     }
   });

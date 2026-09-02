@@ -226,6 +226,16 @@ code {
 .seg button:last-child { border-right: none; }
 .seg button.on { background: var(--c-sin); color: #fff; font-weight: 600; }
 
+/* แถวปุ่มค่าที่ใช้บ่อย (เช่น มุมมาตรฐานในวงกลมหนึ่งหน่วย) */
+.chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.chips button {
+  border: 1px solid var(--rule); background: var(--card); color: var(--ink-soft);
+  border-radius: 7px; padding: 4px 9px; cursor: pointer; min-width: 42px;
+  font-family: var(--font-mono); font-size: .78rem; line-height: 1.4;
+}
+.chips button:hover { background: var(--paper-2); color: var(--ink); }
+.chips button.on { background: var(--c-sin); border-color: var(--c-sin); color: #fff; font-weight: 700; }
+
 .btn {
   border: 1px solid var(--rule); background: var(--card); color: var(--ink);
   padding: 6px 14px; border-radius: 8px; cursor: pointer;

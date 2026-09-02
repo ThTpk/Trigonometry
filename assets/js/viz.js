@@ -53,6 +53,30 @@
     return nf(x, 2);
   }
 
+  /* คืนค่าที่แน่นอนในรูป a√r/d เช่น "√3/2", "−1/2", "√3", "√3/3"
+     ถ้าเทียบกับรูปแบบไหนไม่ได้เลยจะคืน null เพื่อให้ผู้เรียกใช้ทศนิยมแทน
+     (ตัวส่วนถูกทำให้เป็นจำนวนตรรกยะเสมอ ตามที่ใช้กันในตำรา) */
+  function exact(v) {
+    if (typeof v !== 'number' || !isFinite(v)) return null;
+    if (Math.abs(v) < 1e-12) return '0';
+    var sign = v < 0 ? '−' : '', a = Math.abs(v);
+    var RS = [1, 2, 3, 5, 6], best = null;
+    for (var d = 1; d <= 4; d++) {
+      for (var i = 0; i < RS.length; i++) {
+        var r = RS[i], n = a * d / Math.sqrt(r);
+        var k = Math.round(n);
+        if (k < 1 || k > 12 || Math.abs(n - k) > 1e-9) continue;
+        /* เลือกรูปที่ "อ่านง่ายที่สุด": ตัวส่วนน้อยก่อน แล้วค่อยตัวเศษน้อย */
+        var cost = d * 10 + k * 2 + (r === 1 ? 0 : 1);
+        if (!best || cost < best.cost) best = { k: k, r: r, d: d, cost: cost };
+      }
+    }
+    if (!best) return null;
+    var num = best.r === 1 ? String(best.k)
+      : (best.k === 1 ? '√' + best.r : best.k + '√' + best.r);
+    return sign + (best.d === 1 ? num : num + '/' + best.d);
+  }
+
   /* =====================================================================
      Plot — ระบบพิกัดบน canvas
      ===================================================================== */
@@ -389,7 +413,9 @@
     if (!host) return null;
 
     var state = {};
-    (spec.controls || []).forEach(function (c) { if (c.key !== undefined) state[c.key] = c.value; });
+    (spec.controls || []).forEach(function (c) {
+      if (c.key !== undefined && c.value !== undefined) state[c.key] = c.value;
+    });
 
     /* ---- หัว ---- */
     if (spec.title) {
@@ -451,7 +477,7 @@
         inp.addEventListener('input', function () {
           state[c.key] = parseFloat(inp.value);
           stopAnim();
-          val.textContent = fmtOf(c)(state[c.key]);
+          syncControls();
           render();
         });
         box.appendChild(lab); box.appendChild(inp);
@@ -500,6 +526,32 @@
           for (var i = 0; i < c.options.length; i++) {
             if (c.options[i][0] === state[c.key]) { sl.value = String(i); break; }
           }
+        });
+      } else if (c.type === 'chips') {
+        /* แถวปุ่มเล็ก ๆ สำหรับ "ค่าที่ใช้บ่อย" — ป้ายของแต่ละปุ่มเป็นฟังก์ชันของ state ได้
+           จึงเปลี่ยนตามหน่วยที่ผู้ใช้เลือกอยู่ (เช่น องศา ↔ เรเดียน) */
+        var chBox = el('div', 'ctrl');
+        if (c.label) chBox.appendChild(el('label', null, c.label));
+        var chWrap = el('div', 'chips');
+        var chips = c.options.map(function (op) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.addEventListener('click', function () {
+            stopAnim();
+            if (c.action) c.action(api, op.v); else state[c.key] = op.v;
+            syncControls(); render();
+          });
+          chWrap.appendChild(b);
+          return { b: b, v: op.v, lab: op.label };
+        });
+        chBox.appendChild(chWrap);
+        if (c.wide) { chBox.style.flex = '1 1 100%'; chBox.style.minWidth = '100%'; }
+        ctrlBar.appendChild(chBox);
+        refresh.push(function () {
+          chips.forEach(function (it) {
+            it.b.textContent = typeof it.lab === 'function' ? it.lab(state) : it.lab;
+            it.b.classList.toggle('on', !!(c.isOn ? c.isOn(state, it.v) : state[c.key] === it.v));
+          });
         });
       } else if (c.type === 'check') {
         var lab2 = el('label', 'chk');
@@ -636,6 +688,6 @@
 
   global.TV = {
     C: C, Plot: Plot, widget: widget,
-    clamp: clamp, d2r: d2r, r2d: r2d, nf: nf, radLabel: radLabel, TAU: TAU, el: el
+    clamp: clamp, d2r: d2r, r2d: r2d, nf: nf, radLabel: radLabel, exact: exact, TAU: TAU, el: el
   };
 })(window);
