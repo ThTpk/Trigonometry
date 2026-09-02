@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>บทที่ 6 · กฎไซน์และกฎโคไซน์ — ตรีโกณมิติเห็นภาพ</title>
+<meta name="description" content="แก้สามเหลี่ยมที่ไม่มีมุมฉากด้วยกฎของไซน์และกฎของโคไซน์ พร้อมกรณีกำกวม SSA พื้นที่สามเหลี่ยม และสูตรเฮรอน">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d4ed8'/%3E%3Cpath d='M6 25 L26 25 L26 8 Z' fill='none' stroke='white' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=IBM+Plex+Sans+Thai:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar"></aside>
+<main>
+
+  <div class="eyebrow">บทที่ 6</div>
+  <h1>กฎไซน์และกฎโคไซน์</h1>
+  <p class="lead">
+    ห้าบทที่ผ่านมาทั้งหมดตั้งอยู่บนสามเหลี่ยม<em>มุมฉาก</em>
+    บทนี้ทลายข้อจำกัดนั้น — เราจะแก้สามเหลี่ยมรูปไหนก็ได้ด้วยกฎเพียงสองข้อ
+    ซึ่งเป็นเครื่องมือที่นักรังวัด นักเดินเรือ และวิศวกรใช้จริงมาหลายร้อยปี
+  </p>
+
+  <h2 id="why">6.1 ทำไมต้องมีกฎใหม่</h2>
+  <p>
+    SOH–CAH–TOA จากบทที่ 1 ใช้ได้เฉพาะเมื่อมีมุมฉากอยู่ในรูป
+    แต่สามเหลี่ยมส่วนใหญ่ในโลกจริงไม่มีมุมฉาก เช่นการวัดระยะระหว่างภูเขาสองลูกจากจุดสังเกตจุดเดียว
+  </p>
+  <div class="box note">
+    <div class="box-title">“แก้สามเหลี่ยม” หมายถึงอะไร</div>
+    <p style="margin:0">
+      สามเหลี่ยมมีส่วนประกอบหกอย่าง — ด้านสามด้าน $a, b, c$ และมุมสามมุม $A, B, C$
+      โดยตกลงกันว่า <strong>ด้านตัวเล็กอยู่ตรงข้ามมุมตัวใหญ่ตัวเดียวกัน</strong>
+      (ด้าน $a$ อยู่ตรงข้ามมุม $A$ เสมอ) การ “แก้สามเหลี่ยม” คือรู้มาสามอย่างแล้วหาอีกสามอย่างที่เหลือ
+    </p>
+  </div>
+
+  <h2 id="sine">6.2 กฎของไซน์</h2>
+  <div class="box key">
+    <div class="box-title">กฎของไซน์ <span class="en">(Law of Sines)</span></div>
+    $$\frac{a}{\sin A}=\frac{b}{\sin B}=\frac{c}{\sin C}=2R$$
+    <p style="margin:.6em 0 0">โดย $R$ คือรัศมีของวงกลมที่ล้อมรอบสามเหลี่ยม</p>
+  </div>
+  <p>
+    ลากจุดยอดในภาพให้เป็นสามเหลี่ยมรูปไหนก็ได้ แล้วดูสามค่าในแถบด้านล่าง —
+    ไม่ว่าจะบิดรูปอย่างไร ทั้งสามก็เท่ากันเสมอ
+  </p>
+
+  <div class="widget" id="w-lawsines"></div>
+
+  <div class="box note">
+    <div class="box-title">ทำไมถึงเท่ากับ 2R — และทำไมกฎนี้ถึงเป็นจริง</div>
+    <p style="margin:0">
+      ลากเส้นผ่านศูนย์กลางจากจุด $B$ ผ่านจุดศูนย์กลางวงกลมไปโผล่อีกฝั่งที่จุด $B'$
+      จะได้ว่า $\angle BCB'$ เป็นมุมในครึ่งวงกลม จึงเท่ากับ $90^\circ$ พอดี
+      และ $\angle BB'C$ กับ $\angle BAC$ เป็นมุมในส่วนโค้งเดียวกันจึงเท่ากับ $A$
+      ในสามเหลี่ยมมุมฉาก $BCB'$ จึงได้ $\sin A = \dfrac{a}{2R}$ นั่นคือ $\dfrac{a}{\sin A}=2R$
+      ทำแบบเดียวกันกับอีกสองมุมก็ได้ค่าเดิม
+    </p>
+  </div>
+
+  <div class="box key">
+    <div class="box-title">ใช้กฎไซน์เมื่อไร</div>
+    <p style="margin:0">
+      ใช้เมื่อโจทย์ให้ <strong>ด้านคู่กับมุมที่อยู่ตรงข้ามกัน</strong> มาอย่างน้อยหนึ่งคู่ ได้แก่กรณี
+    </p>
+    <ul style="margin:.4em 0 0">
+      <li><strong>AAS / ASA</strong> — รู้สองมุมกับหนึ่งด้าน (หามุมที่สามจาก $180^\circ$ ก่อน) มีคำตอบเดียวเสมอ</li>
+      <li><strong>SSA</strong> — รู้สองด้านกับมุมที่ไม่ได้อยู่ระหว่างสองด้านนั้น <span class="t-cos">กรณีนี้ต้องระวัง</span> ดูหัวข้อถัดไป</li>
+    </ul>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 1</h4>
+    <p class="q">
+      สามเหลี่ยม $ABC$ มี $A = 42^\circ$, $B = 71^\circ$ และ $a = 12$ ซม. จงหาด้าน $b$ และ $c$
+    </p>
+    <ol class="steps">
+      <li>หามุมที่สามก่อนเสมอ
+        $$C = 180^\circ - 42^\circ - 71^\circ = 67^\circ$$</li>
+      <li>ใช้กฎไซน์คู่ที่รู้ครบคือ $\dfrac{a}{\sin A}$ เป็นตัวอ้างอิง
+        $$\frac{a}{\sin A}=\frac{12}{\sin 42^\circ}=\frac{12}{0.6691}\approx 17.93$$</li>
+      <li>หา $b$
+        $$b = 17.93\sin 71^\circ \approx 17.93(0.9455)\approx 16.95$$</li>
+      <li>หา $c$
+        $$c = 17.93\sin 67^\circ \approx 17.93(0.9205)\approx 16.51$$</li>
+      <li>ตรวจความสมเหตุสมผล: มุม $B$ ใหญ่ที่สุด ด้าน $b$ จึงควรยาวที่สุด ✓</li>
+    </ol>
+    <div class="ans">ตอบ $b \approx 16.95$ ซม. และ $c \approx 16.51$ ซม.</div>
+  </div>
+
+  <h2 id="ssa">6.3 กรณีกำกวม SSA</h2>
+  <p>
+    นี่คือจุดที่ทำให้กฎไซน์อันตราย — ข้อมูลชุดเดียวกันอาจสร้างสามเหลี่ยมได้ <strong>สองรูปที่ต่างกันโดยสิ้นเชิง</strong>
+    หรืออาจสร้างไม่ได้เลย สาเหตุคือเมื่อเราแก้ $\sin B = k$ ได้ค่าหนึ่งมา
+    มุมป้าน $180^\circ - B$ ก็ให้ค่า $\sin$ เท่ากันทุกประการ (จากบทที่ 2)
+  </p>
+  <p>
+    ลองเลื่อนด้าน $a$ ในภาพ แล้วดูว่าวงกลมสีส้มตัดเส้นฐานกี่จุด — จุดตัดแต่ละจุดคือตำแหน่ง $B$ ที่เป็นไปได้หนึ่งรูป
+  </p>
+
+  <div class="widget" id="w-ambiguous"></div>
+
+  <div class="box key">
+    <div class="box-title">เกณฑ์ตัดสิน — เทียบ a กับความสูง h = b sin A</div>
+    <div class="tbl-wrap" style="margin:.4em 0 0">
+    <table>
+      <thead><tr><th>เงื่อนไข</th><th>จำนวนสามเหลี่ยม</th><th>เหตุผลเชิงรูป</th></tr></thead>
+      <tbody>
+        <tr><td>$a &lt; h$</td><td>0</td><td>วงกลมรัศมี $a$ สั้นเกินไป ไปไม่ถึงเส้นฐาน</td></tr>
+        <tr><td>$a = h$</td><td>1 (มุมฉาก)</td><td>วงกลมสัมผัสเส้นฐานพอดีจุดเดียว</td></tr>
+        <tr><td>$h &lt; a &lt; b$</td><td><strong>2</strong></td><td>วงกลมตัดเส้นฐานสองจุด ทั้งคู่อยู่ด้านขวาของ $A$</td></tr>
+        <tr><td>$a \ge b$</td><td>1</td><td>จุดตัดอีกจุดตกไปอยู่หลังจุด $A$ จึงใช้ไม่ได้</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="box warn">
+    <div class="box-title">วิธีกันพลาดในห้องสอบ</div>
+    <p style="margin:0">
+      เมื่อใช้กฎไซน์หามุมแล้วได้ $\sin B = k$ ให้ <strong>เขียนคำตอบทั้งสองไว้ก่อนเสมอ</strong>
+      คือ $B_1 = \sin^{-1}k$ และ $B_2 = 180^\circ - B_1$
+      แล้วค่อยตรวจว่าตัวไหนใช้ได้ ด้วยการบวกกับมุมที่รู้อยู่แล้ว —
+      ถ้าผลรวมเกิน $180^\circ$ ให้ตัดทิ้ง เพราะสามเหลี่ยมนั้นไม่มีอยู่จริง
+    </p>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 2 — กรณีที่ได้สองคำตอบ</h4>
+    <p class="q">สามเหลี่ยม $ABC$ มี $A = 30^\circ$, $b = 12$ และ $a = 8$ จงแก้สามเหลี่ยมนี้</p>
+    <ol class="steps">
+      <li>ตรวจก่อนว่าเข้าเงื่อนไขข้อไหน — คำนวณความสูง
+        $$h = b\sin A = 12\sin 30^\circ = 6$$
+        ได้ $6 &lt; 8 &lt; 12$ นั่นคือ $h &lt; a &lt; b$ จึง <strong>มีสองสามเหลี่ยม</strong></li>
+      <li>ใช้กฎไซน์หามุม $B$
+        $$\frac{\sin B}{12}=\frac{\sin 30^\circ}{8} \;\Longrightarrow\; \sin B = \frac{12(0.5)}{8}=0.75$$</li>
+      <li>เขียนคำตอบทั้งสองไว้
+        $$B_1 = \sin^{-1}(0.75)\approx 48.6^\circ \qquad B_2 = 180^\circ - 48.6^\circ = 131.4^\circ$$</li>
+      <li>ตรวจทั้งคู่ — $30^\circ + 48.6^\circ = 78.6^\circ &lt; 180^\circ$ ✓ และ $30^\circ + 131.4^\circ = 161.4^\circ &lt; 180^\circ$ ✓
+        ทั้งสองใช้ได้จริง</li>
+      <li>หามุมที่สามและด้าน $c$ ของแต่ละรูป
+        $$C_1 = 101.4^\circ,\quad c_1 = \frac{8}{\sin 30^\circ}\sin 101.4^\circ \approx 15.7$$
+        $$C_2 = 18.6^\circ,\quad c_2 = \frac{8}{\sin 30^\circ}\sin 18.6^\circ \approx 5.1$$</li>
+    </ol>
+    <div class="ans">
+      ตอบ ได้สองสามเหลี่ยม —
+      รูปที่ 1: $B\approx 48.6^\circ,\; C\approx 101.4^\circ,\; c\approx 15.7$ ·
+      รูปที่ 2: $B\approx 131.4^\circ,\; C\approx 18.6^\circ,\; c\approx 5.1$
+    </div>
+  </div>
+
+  <h2 id="cosine">6.4 กฎของโคไซน์</h2>
+  <p>
+    เมื่อโจทย์ไม่ให้คู่ด้าน–มุมตรงข้ามมาเลย กฎไซน์ใช้ไม่ได้ ต้องเปลี่ยนมาใช้กฎโคไซน์แทน
+    ซึ่งจริง ๆ แล้วคือ <strong>ทฤษฎีบทพีทาโกรัสฉบับที่ใช้ได้กับทุกมุม</strong>
+  </p>
+
+  <div class="box key">
+    <div class="box-title">กฎของโคไซน์ <span class="en">(Law of Cosines)</span></div>
+    $$c^{2}=a^{2}+b^{2}-2ab\cos C$$
+    <p style="margin:.6em 0 .3em">เขียนสลับตัวอักษรได้อีกสองรูป โดยยึดว่าด้านที่อยู่ข้างซ้ายต้องตรงข้ามมุมที่อยู่ในโคไซน์</p>
+    $$a^{2}=b^{2}+c^{2}-2bc\cos A \qquad b^{2}=a^{2}+c^{2}-2ac\cos B$$
+  </div>
+
+  <p>
+    เลื่อนมุม $C$ ผ่าน $90^\circ$ ในภาพ แล้วสังเกตแถบสองอัน — ตรง $90^\circ$ พอดีสองแถบยาวเท่ากันเป๊ะ
+  </p>
+
+  <div class="widget" id="w-lawcos"></div>
+
+  <div class="box note">
+    <div class="box-title">พจน์ที่เพิ่มมาทำหน้าที่อะไร</div>
+    <ul style="margin:0">
+      <li>ถ้า $C = 90^\circ$ แล้ว $\cos C = 0$ พจน์แก้หายไปหมด เหลือ $c^2 = a^2+b^2$ ซึ่งคือพีทาโกรัส</li>
+      <li>ถ้า $C &lt; 90^\circ$ แล้ว $\cos C &gt; 0$ พจน์แก้เป็นลบ ทำให้ $c$ <strong>สั้นกว่า</strong>กรณีมุมฉาก</li>
+      <li>ถ้า $C &gt; 90^\circ$ แล้ว $\cos C &lt; 0$ พจน์แก้กลายเป็นบวก ทำให้ $c$ <strong>ยาวกว่า</strong></li>
+    </ul>
+  </div>
+
+  <div class="box key">
+    <div class="box-title">ใช้กฎโคไซน์เมื่อไร</div>
+    <ul style="margin:0">
+      <li><strong>SAS</strong> — รู้สองด้านกับมุมที่อยู่ <em>ระหว่าง</em> สองด้านนั้น → หาด้านที่สามได้ทันที</li>
+      <li><strong>SSS</strong> — รู้ครบสามด้าน → จัดรูปหามุมได้ $\cos C = \dfrac{a^2+b^2-c^2}{2ab}$</li>
+    </ul>
+    <p style="margin:.5em 0 0">ทั้งสองกรณีนี้ให้คำตอบเดียวเสมอ ไม่มีปัญหากำกวมเหมือน SSA</p>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 3 — กรณี SAS</h4>
+    <p class="q">
+      เรือลำหนึ่งแล่นจากท่า A ไปทางทิศตะวันออก 40 กม. แล้วเลี้ยวไปอีกทิศหนึ่งแล่นต่อ 55 กม.
+      โดยมุมที่จุดเลี้ยวระหว่างเส้นทางเดิมที่ย้อนกลับกับเส้นทางใหม่คือ $115^\circ$
+      จงหาว่าตอนนี้เรืออยู่ห่างจากท่า A เท่าไร
+    </p>
+    <ol class="steps">
+      <li>วาดรูป: สามเหลี่ยมมี $a = 40$, $b = 55$ และมุมระหว่างสองด้านนี้คือ $C = 115^\circ$ — เป็นกรณี SAS</li>
+      <li>ใช้กฎโคไซน์หาด้านตรงข้ามมุมที่รู้
+        $$c^{2}=40^{2}+55^{2}-2(40)(55)\cos 115^\circ$$</li>
+      <li>แทนค่า $\cos 115^\circ \approx -0.4226$ — <strong>สังเกตว่าเป็นลบ</strong> พจน์สุดท้ายจึงกลายเป็นบวก
+        $$c^{2}=1600+3025-4400(-0.4226)=4625+1859.4=6484.4$$</li>
+      <li>ถอดราก
+        $$c=\sqrt{6484.4}\approx 80.5$$</li>
+      <li>ตรวจ: มุม $115^\circ$ เป็นมุมป้าน $c$ จึงควรยาวกว่ากรณีมุมฉาก ($\sqrt{4625}\approx 68$) ✓</li>
+    </ol>
+    <div class="ans">ตอบ เรืออยู่ห่างจากท่า A ประมาณ 80.5 กม.</div>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 4 — กรณี SSS</h4>
+    <p class="q">สามเหลี่ยมมีด้านยาว 7, 9 และ 12 หน่วย จงหามุมที่ใหญ่ที่สุด</p>
+    <ol class="steps">
+      <li>มุมที่ใหญ่ที่สุดอยู่ตรงข้ามด้านที่ยาวที่สุดเสมอ จึงหามุมตรงข้ามด้าน 12</li>
+      <li>จัดรูปกฎโคไซน์ให้เหลือ $\cos$ อยู่ข้างเดียว
+        $$\cos C=\frac{a^{2}+b^{2}-c^{2}}{2ab}=\frac{7^{2}+9^{2}-12^{2}}{2(7)(9)}$$</li>
+      <li>คำนวณ
+        $$=\frac{49+81-144}{126}=\frac{-14}{126}\approx -0.1111$$</li>
+      <li>ค่าติดลบแปลว่าเป็นมุมป้าน
+        $$C=\cos^{-1}(-0.1111)\approx 96.4^\circ$$</li>
+    </ol>
+    <div class="ans">
+      ตอบ มุมที่ใหญ่ที่สุดประมาณ $96.4^\circ$ —
+      ข้อสังเกต: การหามุมด้วยกฎโคไซน์ปลอดภัยกว่ากฎไซน์ เพราะ $\cos^{-1}$ แยกมุมแหลมกับมุมป้านได้จากเครื่องหมาย
+      ไม่ต้องกังวลเรื่องความกำกวม
+    </div>
+  </div>
+
+  <h2 id="pick">6.5 เลือกใช้กฎไหน</h2>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>โจทย์ให้อะไรมา</th><th>ใช้กฎ</th><th>จำนวนคำตอบ</th></tr></thead>
+    <tbody>
+      <tr><td><strong>ASA</strong> · สองมุมกับด้านที่อยู่ระหว่างมุม</td><td class="t-sin">กฎไซน์</td><td>1</td></tr>
+      <tr><td><strong>AAS</strong> · สองมุมกับด้านที่ไม่อยู่ระหว่างมุม</td><td class="t-sin">กฎไซน์</td><td>1</td></tr>
+      <tr><td><strong>SSA</strong> · สองด้านกับมุมที่ไม่อยู่ระหว่างด้าน</td><td class="t-sin">กฎไซน์</td><td class="t-cos">0, 1 หรือ 2 — ต้องตรวจ</td></tr>
+      <tr><td><strong>SAS</strong> · สองด้านกับมุมที่อยู่ระหว่างด้าน</td><td class="t-tan">กฎโคไซน์</td><td>1</td></tr>
+      <tr><td><strong>SSS</strong> · ครบสามด้าน</td><td class="t-tan">กฎโคไซน์</td><td>1</td></tr>
+      <tr><td><strong>AAA</strong> · ครบสามมุม</td><td>—</td><td>ไม่จำกัด (รูปคล้ายทุกขนาด)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="box note">
+    <div class="box-title">วิธีจำแบบสั้นที่สุด</div>
+    <p style="margin:0">
+      <strong>มีคู่ด้าน–มุมตรงข้ามครบคู่หนึ่งหรือไม่</strong> — ถ้ามีให้ใช้กฎไซน์ ถ้าไม่มีให้ใช้กฎโคไซน์
+      และเมื่อใช้กฎโคไซน์เปิดทางได้แล้ว ค่อยเปลี่ยนไปใช้กฎไซน์ต่อในขั้นถัดไปก็ได้ เพราะคำนวณง่ายกว่า
+    </p>
+  </div>
+  <div class="box warn">
+    <div class="box-title">เคล็ดลับหลีกเลี่ยงความกำกวม</div>
+    <p style="margin:0">
+      หลังใช้กฎโคไซน์หาด้านที่สามได้แล้ว ถ้าจะหามุมต่อ ให้ <strong>หามุมที่เล็กที่สุดก่อน</strong>
+      (คือมุมตรงข้ามด้านที่สั้นที่สุด) เพราะมุมนั้นต้องเป็นมุมแหลมแน่นอน จึงไม่มีทางเลือกผิดเป็นมุมป้าน
+      แล้วมุมสุดท้ายค่อยหาจากผลรวม $180^\circ$
+    </p>
+  </div>
+
+  <h2 id="area">6.6 พื้นที่สามเหลี่ยม</h2>
+  <p>
+    สูตร $\tfrac12 \times$ ฐาน $\times$ สูง ใช้ได้ก็ต่อเมื่อรู้ความสูง
+    แต่โจทย์มักให้ด้านกับมุมมาแทน — ตรีโกณช่วยแปลงให้ได้ทันที
+    เพราะ <strong>ความสูงก็คือ $b\sin C$ นั่นเอง</strong>
+  </p>
+
+  <div class="widget" id="w-area"></div>
+
+  <div class="box key">
+    <div class="box-title">สองสูตรที่ต้องมีติดตัว</div>
+    <p style="margin:0 0 .3em">เมื่อรู้สองด้านกับมุมระหว่างด้าน (SAS)</p>
+    $$\text{พื้นที่}=\tfrac12\,ab\sin C=\tfrac12\,bc\sin A=\tfrac12\,ac\sin B$$
+    <p style="margin:.6em 0 .3em">เมื่อรู้ครบสามด้าน (SSS) ใช้ <strong>สูตรเฮรอน</strong> <span class="en">(Heron)</span></p>
+    $$\text{พื้นที่}=\sqrt{s(s-a)(s-b)(s-c)} \qquad s=\frac{a+b+c}{2}$$
+    <p style="margin:.6em 0 0">
+      โดย $s$ คือครึ่งหนึ่งของเส้นรอบรูป — ในภาพด้านบนสองสูตรนี้ให้ค่าเท่ากันเสมอ ลองเลื่อนดู
+    </p>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 5</h4>
+    <p class="q">
+      ที่ดินรูปสามเหลี่ยมแปลงหนึ่งมีด้านสองด้านยาว 45 เมตร และ 60 เมตร
+      โดยมุมระหว่างสองด้านนี้เท่ากับ $68^\circ$ จงหาพื้นที่
+    </p>
+    <ol class="steps">
+      <li>เป็นกรณี SAS จึงใช้สูตร $\tfrac12 ab\sin C$ ได้ทันที
+        $$\text{พื้นที่}=\tfrac12(45)(60)\sin 68^\circ$$</li>
+      <li>คำนวณ
+        $$=1350 \times 0.9272 \approx 1251.7$$</li>
+      <li>ตรวจความสมเหตุสมผล: ถ้ามุมเป็น $90^\circ$ พื้นที่จะเป็น 1350 ตร.ม. พอดี
+        มุม $68^\circ$ เล็กกว่าจึงควรได้พื้นที่น้อยกว่าเล็กน้อย ✓</li>
+    </ol>
+    <div class="ans">ตอบ ที่ดินมีพื้นที่ประมาณ 1,252 ตารางเมตร</div>
+  </div>
+
+  <h2 id="apply">6.7 การประยุกต์: การรังวัดและการเดินเรือ</h2>
+  <p>
+    กฎสองข้อนี้เกิดมาเพื่องานสองอย่างนี้โดยตรง —
+    วัดระยะที่เดินไปวัดเองไม่ได้ โดยอาศัยการวัดมุมจากจุดที่เข้าถึงได้
+  </p>
+  <div class="box note">
+    <div class="box-title">ทิศแบริ่ง <span class="en">(bearing)</span></div>
+    <p style="margin:0">
+      ในงานเดินเรือ ทิศวัดเป็นองศา <strong>ตามเข็มนาฬิกาจากทิศเหนือ</strong> เขียนเป็นเลขสามหลัก
+      เช่น ทิศ 000° คือเหนือ · 090° คือตะวันออก · 180° คือใต้ · 270° คือตะวันตก
+      ต่างจากมุมมาตรฐานในบทที่ 2 ซึ่งวัดทวนเข็มจากแกน x — <strong>อย่าสับสนสองระบบนี้</strong>
+    </p>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 6 — รังวัดข้ามหุบเขา</h4>
+    <p class="q">
+      นักสำรวจต้องการวัดระยะจากจุด $P$ ไปยังหอคอย $T$ ที่อยู่คนละฟากหุบเขา
+      เขาจึงเดินจาก $P$ ไปยังจุด $Q$ ที่อยู่ห่าง 250 เมตร แล้ววัดมุมได้ว่า
+      มุม $TPQ = 63^\circ$ และมุม $TQP = 79^\circ$ จงหาระยะ $PT$
+    </p>
+    <ol class="steps">
+      <li>รู้สองมุมกับด้านที่อยู่ระหว่างมุมทั้งสอง — เป็นกรณี ASA จึงใช้กฎไซน์</li>
+      <li>หามุมที่สาม
+        $$\angle PTQ = 180^\circ - 63^\circ - 79^\circ = 38^\circ$$</li>
+      <li>ด้าน $PQ = 250$ อยู่ตรงข้ามมุม $T = 38^\circ$ ส่วนด้าน $PT$ อยู่ตรงข้ามมุม $Q = 79^\circ$
+        $$\frac{PT}{\sin 79^\circ}=\frac{250}{\sin 38^\circ}$$</li>
+      <li>แก้หา $PT$
+        $$PT = \frac{250\sin 79^\circ}{\sin 38^\circ}=\frac{250(0.9816)}{0.6157}\approx 398.6$$</li>
+      <li>ตรวจ: มุม $Q$ ใหญ่กว่ามุม $T$ มาก ด้านตรงข้ามจึงควรยาวกว่า 250 พอสมควร ✓</li>
+    </ol>
+    <div class="ans">ตอบ ระยะจาก $P$ ถึงหอคอยประมาณ 399 เมตร โดยไม่ต้องข้ามหุบเขาไปวัดเลย</div>
+  </div>
+
+  <h2 id="wrap">6.8 สรุป</h2>
+  <div class="box key">
+    <div class="box-title">ขั้นตอนมาตรฐานของการแก้สามเหลี่ยม</div>
+    <ol style="margin:0">
+      <li><strong>วาดรูปคร่าว ๆ ก่อนเสมอ</strong> แล้วเขียนสิ่งที่รู้ลงไป — ช่วยให้เห็นว่าเป็นกรณีไหน</li>
+      <li><strong>ระบุกรณี</strong> ASA · AAS · SSA · SAS · SSS</li>
+      <li><strong>เลือกกฎ</strong> — มีคู่ด้าน–มุมตรงข้ามครบคู่หรือไม่</li>
+      <li><strong>ถ้าเป็น SSA ให้ตรวจความกำกวม</strong> ด้วยการเทียบ $a$ กับ $h = b\sin A$</li>
+      <li><strong>หามุมสุดท้ายจาก $180^\circ$</strong> ไม่ต้องคำนวณซ้ำ</li>
+      <li><strong>ตรวจว่ามุมใหญ่คู่กับด้านยาว</strong> ถ้าสลับกันแสดงว่าคำนวณผิด</li>
+    </ol>
+  </div>
+
+  <div class="box link">
+    <div class="box-title">เช็กลิสต์ก่อนไปต่อ</div>
+    <ul style="margin:0">
+      <li>เลือกได้ว่าโจทย์ข้อไหนใช้กฎไซน์ ข้อไหนใช้กฎโคไซน์ โดยดูจากสิ่งที่โจทย์ให้มา</li>
+      <li>อธิบายได้ว่าทำไม SSA ถึงกำกวม และตรวจจำนวนสามเหลี่ยมได้ด้วย $h = b\sin A$</li>
+      <li>ใช้กฎโคไซน์หาทั้งด้านและมุมได้ พร้อมรู้ว่าเครื่องหมายลบของ $\cos$ แปลว่ามุมป้าน</li>
+      <li>หาพื้นที่ได้ทั้งจาก $\tfrac12 ab\sin C$ และสูตรเฮรอน แล้วแต่ข้อมูลที่มี</li>
+      <li>อธิบายได้ว่ากฎไซน์เกี่ยวข้องกับวงกลมล้อมรอบอย่างไร</li>
+    </ul>
+  </div>
+
+  <div class="chapnav">
+    <a href="ch5.html"><div class="dir">◀ ก่อนหน้า</div><div class="ttl">บทที่ 5 · สมการตรีโกณ</div></a>
+    <a class="next" href="index.html"><div class="dir">กลับไป ▶</div><div class="ttl">หน้าแรก</div></a>
+  </div>
+
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script src="assets/js/viz.js"></script>
+<script src="assets/js/widgets.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

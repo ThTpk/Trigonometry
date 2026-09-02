@@ -1351,4 +1351,302 @@
       });
     }
   });
+
+  /* =====================================================================
+     บทที่ 6 — กฎไซน์และกฎโคไซน์
+     ===================================================================== */
+
+  /* ด้านและมุมของสามเหลี่ยมจากพิกัดจุดยอดสามจุด (ด้าน a อยู่ตรงข้ามมุม A) */
+  function triSolve(A, B, Cv) {
+    var a = Math.hypot(B[0] - Cv[0], B[1] - Cv[1]);
+    var b = Math.hypot(A[0] - Cv[0], A[1] - Cv[1]);
+    var c = Math.hypot(A[0] - B[0], A[1] - B[1]);
+    var AA = Math.acos(clamp((b * b + c * c - a * a) / (2 * b * c), -1, 1));
+    var BB = Math.acos(clamp((a * a + c * c - b * b) / (2 * a * c), -1, 1));
+    return { a: a, b: b, c: c, A: AA, B: BB, C: PI - AA - BB };
+  }
+
+  /* จุดศูนย์กลางและรัศมีของวงกลมล้อมรอบ */
+  function circumCircle(A, B, Cv) {
+    var d = 2 * (A[0] * (B[1] - Cv[1]) + B[0] * (Cv[1] - A[1]) + Cv[0] * (A[1] - B[1]));
+    if (Math.abs(d) < 1e-9) return null;
+    var A2 = A[0] * A[0] + A[1] * A[1], B2 = B[0] * B[0] + B[1] * B[1], C2 = Cv[0] * Cv[0] + Cv[1] * Cv[1];
+    var ux = (A2 * (B[1] - Cv[1]) + B2 * (Cv[1] - A[1]) + C2 * (A[1] - B[1])) / d;
+    var uy = (A2 * (Cv[0] - B[0]) + B2 * (A[0] - Cv[0]) + C2 * (B[0] - A[0])) / d;
+    return [ux, uy, Math.hypot(ux - A[0], uy - A[1])];
+  }
+
+  /* วาดส่วนโค้งมุมภายในที่จุดยอด V ระหว่างแขนที่ชี้ไป P1 และ P2 · คืนมุมกึ่งกลางไว้วางป้าย */
+  function arcAt(p, V, P1, P2, r, opt) {
+    var a1 = Math.atan2(P1[1] - V[1], P1[0] - V[0]);
+    var a2 = Math.atan2(P2[1] - V[1], P2[0] - V[0]);
+    var d = a2 - a1;
+    while (d <= -PI) d += TAU;
+    while (d > PI) d -= TAU;
+    p.arc(V[0], V[1], r, a1, a1 + d, opt);
+    return a1 + d / 2;
+  }
+
+  /* 6.1 กฎของไซน์ — สามอัตราส่วนที่เท่ากันเสมอ */
+  function seedTri(s) {
+    if (s.ax === undefined) {
+      s.ax = 0.5; s.ay = 0.5; s.bx = 4.4; s.by = 0.5; s.cx = 3.1; s.cy = 3.1; s.d = -1;
+    }
+  }
+
+  TV.widget('#w-lawsines', {
+    title: 'กฎของไซน์ — สามอัตราส่วนที่เท่ากันเสมอ',
+    badge: 'ลากจุดยอดได้',
+    desc: 'ลากจุดยอดให้เป็นสามเหลี่ยมรูปไหนก็ได้ แล้วดูสามค่าในแถบด้านล่าง — ไม่ว่าจะบิดรูปอย่างไร ทั้งสามก็เท่ากันเสมอ และเท่ากับเส้นผ่านศูนย์กลางของวงกลมล้อมรอบพอดี',
+    plot: { xmin: -1.4, xmax: 6.6, ymin: -1.4, ymax: 4.8, equal: true, ratio: 0.68, minH: 300, maxH: 430 },
+    controls: [
+      { type: 'check', key: 'circ', label: 'แสดงวงกลมล้อมรอบ', value: true },
+      {
+        type: 'button', label: 'รีเซ็ตรูป', action: function (api) {
+          var s = api.state;
+          s.ax = 0.5; s.ay = 0.5; s.bx = 4.4; s.by = 0.5; s.cx = 3.1; s.cy = 3.1;
+          api.redraw();
+        }
+      }
+    ],
+    hint: 'ค่าที่เท่ากันทั้งสามนั้นคือ 2R เมื่อ R เป็นรัศมีวงกลมล้อมรอบ — นี่คือเหตุผลเชิงเรขาคณิตว่าทำไมกฎไซน์ถึงเป็นจริง ไม่ใช่เรื่องบังเอิญ',
+    onPointer: function (p, s, wx, wy, phase) {
+      seedTri(s);
+      if (phase === 'up') { s.d = -1; return; }
+      var pts = [[s.ax, s.ay], [s.bx, s.by], [s.cx, s.cy]];
+      if (phase === 'down') {
+        var best = -1, bd = 0.6;
+        pts.forEach(function (v, i) {
+          var dd = Math.hypot(v[0] - wx, v[1] - wy);
+          if (dd < bd) { bd = dd; best = i; }
+        });
+        s.d = best;
+        return best >= 0;
+      }
+      if (s.d < 0) return;
+      pts[s.d] = [clamp(wx, -0.3, 5.9), clamp(wy, -0.3, 4.1)];
+      var ar = Math.abs((pts[1][0] - pts[0][0]) * (pts[2][1] - pts[0][1]) -
+                        (pts[2][0] - pts[0][0]) * (pts[1][1] - pts[0][1])) / 2;
+      if (ar < 1.1) return;   /* กันรูปแบนจนวงกลมล้อมรอบใหญ่เกินกรอบ */
+      s.ax = pts[0][0]; s.ay = pts[0][1];
+      s.bx = pts[1][0]; s.by = pts[1][1];
+      s.cx = pts[2][0]; s.cy = pts[2][1];
+    },
+    draw: function (p, s, api) {
+      seedTri(s);
+      var A = [s.ax, s.ay], B = [s.bx, s.by], Cv = [s.cx, s.cy];
+      var t = triSolve(A, B, Cv);
+      var cc = circumCircle(A, B, Cv);
+
+      p.grid(1, 1, '#f5f3ed');
+      if (s.circ && cc) {
+        p.circle(cc[0], cc[1], cc[2], { color: '#c9c5bb', w: 1.6, dash: [6, 5] });
+        p.dot(cc[0], cc[1], { fill: '#c9c5bb', r: 3.5 });
+        p.text(cc[0], cc[1], 'R = ' + nf(cc[2], 2), { dy: 16, color: C.faint, size: 11, bg: 'rgba(255,255,255,.85)' });
+      }
+      p.poly([A, B, Cv], { fill: 'rgba(29,78,216,.05)', color: '#4a4842', w: 2.4 });
+
+      /* มุมทั้งสาม */
+      var mA = arcAt(p, A, B, Cv, 0.55, { fill: 'rgba(194,65,12,.13)', color: C.cos, w: 2 });
+      var mB = arcAt(p, B, Cv, A, 0.55, { fill: 'rgba(29,78,216,.13)', color: C.sin, w: 2 });
+      var mC = arcAt(p, Cv, A, B, 0.55, { fill: 'rgba(4,120,87,.13)', color: C.tan, w: 2 });
+      p.text(A[0] + 0.85 * cos(mA), A[1] + 0.85 * sin(mA), 'A ' + nf(r2d(t.A), 0) + '°', { color: C.cos, size: 12.5, bg: 'rgba(255,255,255,.85)' });
+      p.text(B[0] + 0.85 * cos(mB), B[1] + 0.85 * sin(mB), 'B ' + nf(r2d(t.B), 0) + '°', { color: C.sin, size: 12.5, bg: 'rgba(255,255,255,.85)' });
+      p.text(Cv[0] + 0.85 * cos(mC), Cv[1] + 0.85 * sin(mC), 'C ' + nf(r2d(t.C), 0) + '°', { color: C.tan, size: 12.5, bg: 'rgba(255,255,255,.85)' });
+
+      /* ชื่อด้าน วางกลางด้าน เยื้องออกนอกรูป */
+      var mid = function (P, Q, O) {
+        var mx = (P[0] + Q[0]) / 2, my = (P[1] + Q[1]) / 2;
+        var vx = mx - O[0], vy = my - O[1], m = Math.hypot(vx, vy) || 1;
+        return [mx + vx / m * 0.34, my + vy / m * 0.34];
+      };
+      var pa = mid(B, Cv, A), pb = mid(A, Cv, B), pc = mid(A, B, Cv);
+      p.text(pa[0], pa[1], 'a = ' + nf(t.a, 2), { color: C.cos, size: 12, bg: 'rgba(255,255,255,.85)' });
+      p.text(pb[0], pb[1], 'b = ' + nf(t.b, 2), { color: C.sin, size: 12, bg: 'rgba(255,255,255,.85)' });
+      p.text(pc[0], pc[1], 'c = ' + nf(t.c, 2), { color: C.tan, size: 12, bg: 'rgba(255,255,255,.85)' });
+
+      [[A, C.cos], [B, C.sin], [Cv, C.tan]].forEach(function (v) {
+        p.dot(v[0][0], v[0][1], { fill: v[1], r: 7, halo: v[1] });
+      });
+
+      api.stats({
+        'a / sin A': { v: nf(t.a / sin(t.A), 4), color: C.cos },
+        'b / sin B': { v: nf(t.b / sin(t.B), 4), color: C.sin },
+        'c / sin C': { v: nf(t.c / sin(t.C), 4), color: C.tan },
+        '2R (เส้นผ่านศูนย์กลาง)': { v: cc ? nf(2 * cc[2], 4) : '—', color: C.hyp },
+        'ผลรวมมุม': nf(r2d(t.A + t.B + t.C), 1) + '°'
+      });
+    }
+  });
+
+  /* 6.2 กรณีกำกวม SSA */
+  TV.widget('#w-ambiguous', {
+    title: 'กรณีกำกวม — ข้อมูลชุดเดียวแต่ได้สองรูป',
+    badge: 'ปรับค่าได้',
+    desc: 'รู้มุม A กับด้าน b (ประกอบมุม) และด้าน a (ตรงข้ามมุม A) — ลองเลื่อน a ดูว่าวงกลมตัดเส้นฐานกี่จุด นั่นคือจำนวนสามเหลี่ยมที่เป็นไปได้',
+    plot: { xmin: -0.8, xmax: 8.2, ymin: -1.6, ymax: 5.4, equal: true, ratio: 0.6, minH: 300, maxH: 420 },
+    controls: [
+      { type: 'range', key: 'A', label: 'มุม A', min: 15, max: 80, step: 1, value: 35, fmt: degFmt },
+      { type: 'range', key: 'b', label: 'ด้าน b (ประกอบมุม A)', min: 2, max: 4.4, step: 0.05, value: 3.6, fmt: function (v) { return nf(v, 2); } },
+      { type: 'range', key: 'a', label: 'ด้าน a (ตรงข้ามมุม A)', min: 0.4, max: 6, step: 0.05, value: 2.6, fmt: function (v) { return nf(v, 2); } },
+      { type: 'button', label: 'ให้ได้ 0 รูป', action: function (api) { api.set('a', Math.round(api.state.b * sin(d2r(api.state.A)) * 0.62 * 20) / 20); } },
+      { type: 'button', label: 'ให้ได้ 2 รูป', action: function (api) { var h = api.state.b * sin(d2r(api.state.A)); api.set('a', Math.round((h + api.state.b) / 2 * 20) / 20); } },
+      { type: 'button', label: 'ให้ได้ 1 รูป', action: function (api) { api.set('a', Math.round(api.state.b * 1.2 * 20) / 20); } }
+    ],
+    hint: 'เกณฑ์ตัดสินคือความสูง h = b sin A · ถ้า a < h ไม่มีรูป · a = h ได้รูปมุมฉากหนึ่งรูป · h < a < b ได้สองรูป · a ≥ b ได้รูปเดียว',
+    draw: function (p, s, api) {
+      var Ar = d2r(s.A), Apt = [0, 0];
+      var Cv = [s.b * cos(Ar), s.b * sin(Ar)];
+      var h = s.b * sin(Ar);
+      var disc = s.a * s.a - h * h;
+
+      p.grid(1, 1, '#f5f3ed');
+      p.line(-0.8, 0, 8.2, 0, { color: '#b3afa4', w: 2 });                 /* เส้นฐาน */
+      p.line(0, 0, Cv[0] * 1.25, Cv[1] * 1.25, { color: '#c9c5bb', w: 1.4, dash: [6, 5] });
+      p.line(0, 0, Cv[0], Cv[1], { color: C.sin, w: 3 });
+      p.circle(Cv[0], Cv[1], s.a, { color: C.cos, w: 1.6, dash: [6, 5] });
+      p.line(Cv[0], Cv[1], Cv[0], 0, { color: C.tan, w: 1.8, dash: [4, 4] });
+      p.text(Cv[0], h / 2, 'h = ' + nf(h, 2), { dx: 9, align: 'left', color: C.tan, size: 12, bg: 'rgba(255,255,255,.9)' });
+      p.rightAngle(Cv[0], 0, -1, 0, 0, 1, 9, C.tan);
+
+      var xs = [];
+      if (disc >= -1e-9) {
+        var r = Math.sqrt(Math.max(disc, 0));
+        [Cv[0] - r, Cv[0] + r].forEach(function (x) { if (x > 1e-6) xs.push(x); });
+        xs = xs.filter(function (x, i, arr) { return i === 0 || Math.abs(x - arr[0]) > 1e-6; });
+      }
+
+      var cols = [C.hyp, C.accent];
+      xs.forEach(function (x, i) {
+        var Bp = [x, 0];
+        p.poly([Apt, Bp, Cv], { fill: i === 0 ? 'rgba(124,58,237,.08)' : 'rgba(180,83,9,.08)', color: cols[i], w: 2.4 });
+        p.dot(x, 0, { fill: cols[i], r: 7, halo: cols[i] });
+        p.text(x, 0, (xs.length > 1 ? 'B' + (i + 1) : 'B'), { dy: 20, color: cols[i], size: 13 });
+        p.text(x, 0, 'c = ' + nf(x, 2), { dy: 38, color: cols[i], size: 11, bg: 'rgba(255,255,255,.9)' });
+      });
+
+      arcAt(p, Apt, [1, 0], Cv, 0.62, { fill: 'rgba(29,78,216,.13)', color: C.sin, w: 2 });
+      p.text(0.95 * cos(Ar / 2), 0.95 * sin(Ar / 2), 'A = ' + nf(s.A, 0) + '°', { color: C.sin, size: 12.5, bg: 'rgba(255,255,255,.88)' });
+      p.text(Cv[0] / 2, Cv[1] / 2, 'b = ' + nf(s.b, 2), { dx: -12, dy: -10, align: 'right', color: C.sin, size: 12, bg: 'rgba(255,255,255,.9)' });
+      p.dot(Cv[0], Cv[1], { fill: C.sin, r: 7 });
+      p.text(Cv[0], Cv[1], 'C', { dx: -6, dy: -16, color: C.sin, size: 13 });
+      p.text(0, 0, 'A', { dx: -14, dy: 10, color: C.sin, size: 13 });
+
+      var verdict = s.a < h - 1e-6 ? 'a < h  →  วงกลมไปไม่ถึงเส้นฐาน ไม่มีสามเหลี่ยม'
+                  : Math.abs(s.a - h) < 1e-6 ? 'a = h  →  สัมผัสพอดี ได้สามเหลี่ยมมุมฉากหนึ่งรูป'
+                  : s.a < s.b - 1e-6 ? 'h < a < b  →  ตัดสองจุด ได้สองสามเหลี่ยม'
+                  : 'a ≥ b  →  จุดตัดอีกจุดตกหลังจุด A จึงใช้ไม่ได้ เหลือรูปเดียว';
+      api.stats({
+        'h = b sin A': { v: nf(h, 3), color: C.tan },
+        'a': { v: nf(s.a, 2), color: C.cos },
+        'b': { v: nf(s.b, 2), color: C.sin },
+        'จำนวนสามเหลี่ยม': { v: String(xs.length), color: xs.length === 0 ? '#dc2626' : xs.length === 2 ? C.accent : C.hyp },
+        'เหตุผล': verdict
+      });
+    }
+  });
+
+  /* 6.3 กฎโคไซน์เป็นพีทาโกรัสฉบับขยาย */
+  TV.widget('#w-lawcos', {
+    title: 'กฎโคไซน์คือพีทาโกรัสที่ถูกขยาย',
+    badge: 'หมุนมุม C',
+    desc: 'เลื่อนมุม C ผ่าน 90° แล้วเทียบแถบสองอัน — ตรง 90° พอดีสองแถบยาวเท่ากันเป๊ะ นั่นคือพีทาโกรัส ส่วนมุมอื่นจะมีพจน์แก้ 2ab cos C มาชดเชย',
+    plot: { xmin: -3.8, xmax: 10.4, ymin: -2.5, ymax: 3.8, equal: true, ratio: 0.44, minH: 280, maxH: 380 },
+    controls: [
+      { type: 'range', key: 'a', label: 'ด้าน a', min: 1.2, max: 3.2, step: 0.05, value: 2.6, fmt: function (v) { return nf(v, 2); } },
+      { type: 'range', key: 'b', label: 'ด้าน b', min: 1.2, max: 3.2, step: 0.05, value: 2.1, fmt: function (v) { return nf(v, 2); } },
+      { type: 'range', key: 'C', label: 'มุม C', min: 12, max: 168, step: 1, value: 60, fmt: degFmt },
+      { type: 'button', label: 'ตั้งเป็น 90°', primary: true, action: function (api) { api.set('C', 90); } }
+    ],
+    hint: 'จำง่าย ๆ ว่ากฎโคไซน์คือพีทาโกรัสบวกพจน์แก้ — มุมแหลมทำให้ด้านตรงข้ามสั้นลง มุมป้านทำให้ยาวขึ้น และมุมฉากทำให้พจน์แก้หายไปพอดี',
+    draw: function (p, s, api) {
+      var Cr = d2r(s.C);
+      var Cv = [0, 0], B = [s.a, 0], A = [s.b * cos(Cr), s.b * sin(Cr)];
+      var c2 = s.a * s.a + s.b * s.b - 2 * s.a * s.b * cos(Cr);
+      var cc = Math.sqrt(c2), ab2 = s.a * s.a + s.b * s.b;
+
+      p.poly([Cv, B, A], { fill: 'rgba(124,58,237,.07)', color: '#4a4842', w: 2.4 });
+      p.line(0, 0, s.a, 0, { color: C.cos, w: 3.5 });
+      p.line(0, 0, A[0], A[1], { color: C.sin, w: 3.5 });
+      p.line(A[0], A[1], s.a, 0, { color: C.hyp, w: 3.5 });
+      arcAt(p, Cv, B, A, 0.5, { fill: 'rgba(4,120,87,.14)', color: C.tan, w: 2 });
+      if (Math.abs(s.C - 90) < 0.6) p.rightAngle(0, 0, 1, 0, 0, 1, 12, C.tan);
+      p.text(1.15 * cos(Cr / 2), 1.15 * sin(Cr / 2), 'C = ' + nf(s.C, 0) + '°', { color: C.tan, size: 12.5, bg: 'rgba(255,255,255,.88)' });
+      p.text(s.a / 2, 0, 'a', { dy: 16, color: C.cos, size: 13 });
+      p.text(A[0] / 2, A[1] / 2, 'b', { dx: -13, dy: -8, align: 'right', color: C.sin, size: 13 });
+      p.text((A[0] + s.a) / 2, A[1] / 2, 'c = ' + nf(cc, 2), { dx: 12, align: 'left', color: C.hyp, size: 12.5, bg: 'rgba(255,255,255,.9)' });
+
+      /* แถบเปรียบเทียบ */
+      var X0 = 4.3, W = 5.4, sc = W / ((s.a + s.b) * (s.a + s.b));
+      var bar = function (y, len, col, lab) {
+        p.poly([[X0, y], [X0 + len * sc, y], [X0 + len * sc, y + 0.62], [X0, y + 0.62]],
+               { fill: col, color: '#ffffff', w: 1 });
+        p.text(X0, y + 0.31, lab, { dx: 6, align: 'left', color: '#ffffff', size: 12 });
+      };
+      bar(1.5, ab2, 'rgba(29,78,216,.75)', 'a² + b² = ' + nf(ab2, 2));
+      bar(0.4, c2, 'rgba(124,58,237,.75)', 'c² = ' + nf(c2, 2));
+      var e1 = X0 + ab2 * sc, e2 = X0 + c2 * sc;
+      p.line(e1, 0.3, e1, 2.3, { color: C.sin, w: 1.2, dash: [4, 4] });
+      p.line(e2, 0.3, e2, 2.3, { color: C.hyp, w: 1.2, dash: [4, 4] });
+      p.text((e1 + e2) / 2, 2.55, 'ผลต่าง = 2ab cos C = ' + nf(2 * s.a * s.b * cos(Cr), 2), {
+        color: C.accent, size: 12, bg: 'rgba(255,255,255,.9)'
+      });
+      p.text(X0 + W / 2, -0.5, Math.abs(s.C - 90) < 0.6 ? '✓ มุมฉากพอดี — พจน์แก้เป็นศูนย์ เหลือ c² = a² + b²'
+             : (s.C < 90 ? 'มุมแหลม → c² น้อยกว่า a² + b²' : 'มุมป้าน → c² มากกว่า a² + b²'), {
+        color: Math.abs(s.C - 90) < 0.6 ? C.tan : C.accent, size: 12.5, bg: 'rgba(255,255,255,.9)'
+      });
+
+      api.stats({
+        'a² + b²': { v: nf(ab2, 3), color: C.sin },
+        '2ab cos C': { v: nf(2 * s.a * s.b * cos(Cr), 3), color: C.accent },
+        'c² = a²+b²−2ab cos C': { v: nf(c2, 3), color: C.hyp },
+        'c': { v: nf(cc, 3), color: C.hyp }
+      });
+    }
+  });
+
+  /* 6.4 พื้นที่สามเหลี่ยม */
+  TV.widget('#w-area', {
+    title: 'พื้นที่ = ครึ่งหนึ่งของ ฐาน × สูง',
+    badge: 'หมุนมุม C',
+    desc: 'ความสูงของสามเหลี่ยมคือ b sin C พอดี สูตรพื้นที่ ½ab sin C จึงเป็นแค่สูตร ½ × ฐาน × สูง ที่เขียนใหม่ ไม่ใช่สูตรใหม่',
+    plot: { xmin: -3.6, xmax: 4.6, ymin: -1.5, ymax: 3.8, equal: true, ratio: 0.6, minH: 280, maxH: 380 },
+    controls: [
+      { type: 'range', key: 'a', label: 'ฐาน a', min: 1.2, max: 3.4, step: 0.05, value: 3, fmt: function (v) { return nf(v, 2); } },
+      { type: 'range', key: 'b', label: 'ด้าน b', min: 1.2, max: 3.4, step: 0.05, value: 2.4, fmt: function (v) { return nf(v, 2); } },
+      { type: 'range', key: 'C', label: 'มุม C ระหว่างสองด้าน', min: 10, max: 170, step: 1, value: 55, fmt: degFmt }
+    ],
+    hint: 'สังเกตว่าพื้นที่สูงสุดเกิดตอน C = 90° เพราะ sin C มีค่ามากที่สุดตรงนั้น — โจทย์ที่ถามว่า “พื้นที่มากที่สุดเท่าใด” จึงตอบได้ทันทีว่า ½ab',
+    draw: function (p, s, api) {
+      var Cr = d2r(s.C);
+      var Cv = [0, 0], B = [s.a, 0], A = [s.b * cos(Cr), s.b * sin(Cr)];
+      var h = s.b * sin(Cr), foot = [A[0], 0];
+      var area = 0.5 * s.a * h;
+      var sp = (s.a + s.b + Math.hypot(A[0] - s.a, A[1])) / 2;
+      var her = Math.sqrt(Math.max(sp * (sp - s.a) * (sp - s.b) * (sp - Math.hypot(A[0] - s.a, A[1])), 0));
+
+      p.grid(1, 1, '#f5f3ed');
+      if (A[0] < 0) p.line(A[0] - 0.2, 0, 0, 0, { color: '#c9c5bb', w: 1.4, dash: [5, 4] });
+      p.poly([Cv, B, A], { fill: 'rgba(4,120,87,.12)', color: C.tan, w: 2.4 });
+      p.line(0, 0, s.a, 0, { color: C.cos, w: 3.5 });
+      p.line(0, 0, A[0], A[1], { color: C.sin, w: 3.5 });
+      p.line(A[0], A[1], foot[0], foot[1], { color: C.hyp, w: 2, dash: [5, 4] });
+      p.rightAngle(foot[0], foot[1], A[0] >= 0 ? -1 : 1, 0, 0, 1, 9, C.hyp);
+
+      arcAt(p, Cv, B, A, 0.52, { fill: 'rgba(4,120,87,.16)', color: C.tan, w: 2 });
+      p.text(0.88 * cos(Cr / 2), 0.88 * sin(Cr / 2), 'C = ' + nf(s.C, 0) + '°', { color: C.tan, size: 12.5, bg: 'rgba(255,255,255,.88)' });
+      p.text(s.a / 2, 0, 'ฐาน a = ' + nf(s.a, 2), { dy: 17, color: C.cos, size: 12, bg: 'rgba(255,255,255,.9)' });
+      p.text(A[0] / 2, A[1] / 2, 'b = ' + nf(s.b, 2), { dx: A[0] >= 0 ? -12 : 12, dy: -8, align: A[0] >= 0 ? 'right' : 'left', color: C.sin, size: 12, bg: 'rgba(255,255,255,.9)' });
+      p.text(A[0], h / 2, 'สูง = b sin C = ' + nf(h, 2), { dx: A[0] >= 0 ? 10 : -10, align: A[0] >= 0 ? 'left' : 'right', color: C.hyp, size: 12, bg: 'rgba(255,255,255,.92)' });
+      p.dot(A[0], A[1], { fill: C.sin, r: 6 });
+
+      api.stats({
+        'ฐาน a': { v: nf(s.a, 2), color: C.cos },
+        'สูง = b sin C': { v: nf(h, 3), color: C.hyp },
+        'พื้นที่ = ½ a b sin C': { v: nf(area, 4), color: C.tan },
+        'สูตรเฮรอน': { v: nf(her, 4), color: C.tan },
+        'พื้นที่มากที่สุด (C = 90°)': nf(0.5 * s.a * s.b, 4)
+      });
+    }
+  });
 })();

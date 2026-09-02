@@ -10,7 +10,8 @@
     { file: 'ch2.html',   n: 'บท 2', title: 'วงกลมหนึ่งหน่วย' },
     { file: 'ch3.html',   n: 'บท 3', title: 'กราฟฟังก์ชันตรีโกณ' },
     { file: 'ch4.html',   n: 'บท 4', title: 'เอกลักษณ์ตรีโกณ' },
-    { file: 'ch5.html',   n: 'บท 5', title: 'สมการตรีโกณ' }
+    { file: 'ch5.html',   n: 'บท 5', title: 'สมการตรีโกณ' },
+    { file: 'ch6.html',   n: 'บท 6', title: 'กฎไซน์–โคไซน์' }
   ];
 
   function currentFile() {
