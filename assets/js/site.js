@@ -9,7 +9,8 @@
     { file: 'ch1.html',   n: 'บท 1', title: 'สามเหลี่ยมมุมฉาก' },
     { file: 'ch2.html',   n: 'บท 2', title: 'วงกลมหนึ่งหน่วย' },
     { file: 'ch3.html',   n: 'บท 3', title: 'กราฟฟังก์ชันตรีโกณ' },
-    { file: 'ch4.html',   n: 'บท 4', title: 'เอกลักษณ์ตรีโกณ' }
+    { file: 'ch4.html',   n: 'บท 4', title: 'เอกลักษณ์ตรีโกณ' },
+    { file: 'ch5.html',   n: 'บท 5', title: 'สมการตรีโกณ' }
   ];
 
   function currentFile() {

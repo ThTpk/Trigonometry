@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>บทที่ 5 · สมการตรีโกณ — ตรีโกณมิติเห็นภาพ</title>
+<meta name="description" content="แก้สมการตรีโกณมิติ คำตอบทั่วไป สมการมุมหลายเท่า กับดักคำตอบหาย และสมการรูป a sin x + b cos x = c">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d4ed8'/%3E%3Cpath d='M6 25 L26 25 L26 8 Z' fill='none' stroke='white' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=IBM+Plex+Sans+Thai:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar"></aside>
+<main>
+
+  <div class="eyebrow">บทที่ 5</div>
+  <h1>สมการตรีโกณ</h1>
+  <p class="lead">
+    สี่บทที่ผ่านมาให้เครื่องมือครบแล้ว บทนี้คือการเอาทุกอย่างมาใช้พร้อมกัน —
+    มุมอ้างอิงจากบทที่ 2 · กราฟจากบทที่ 3 · เอกลักษณ์จากบทที่ 4
+    และเป็นบทที่ออกข้อสอบหนักที่สุด พร้อมกับดักที่ทำให้เสียคะแนนมากที่สุดสองอย่าง
+  </p>
+
+  <h2 id="vs">5.1 สมการต่างจากเอกลักษณ์อย่างไร</h2>
+  <p>
+    ทบทวนจากบทที่แล้ว — <strong>เอกลักษณ์</strong>เป็นจริงทุกค่า เราจึง <em>พิสูจน์</em> มัน
+    ส่วน <strong>สมการ</strong> เป็นจริงเฉพาะบางค่า เราจึง <em>แก้</em> มันเพื่อหาว่าค่าไหนบ้าง
+  </p>
+  <div class="box key">
+    <div class="box-title">ความต่างที่ทำให้สมการตรีโกณพิเศษกว่าสมการอื่น</div>
+    <p style="margin:0">
+      สมการพีชคณิตอย่าง $2x = 6$ มีคำตอบเดียว แต่สมการตรีโกณมี <strong>คำตอบไม่จำกัด</strong>
+      เพราะฟังก์ชันตรีโกณมีคาบ — ถ้า $x$ เป็นคำตอบ แล้ว $x + 2\pi$, $x + 4\pi$, $x - 2\pi$ ก็เป็นคำตอบด้วยทั้งหมด
+    </p>
+  </div>
+  <p>โจทย์จึงต้องระบุอย่างใดอย่างหนึ่งเสมอ และเราต้องอ่านให้ขาดว่าเขาถามแบบไหน</p>
+  <ul>
+    <li><strong>“จงหาคำตอบในช่วง …”</strong> — ตอบเป็นรายการค่าเฉพาะในช่วงนั้น</li>
+    <li><strong>“จงหาคำตอบทั่วไป”</strong> — ตอบเป็นสูตรที่มีตัวแปร $n$ ครอบคลุมทุกคำตอบ</li>
+  </ul>
+
+  <h2 id="basic">5.2 สมการพื้นฐาน</h2>
+  <p>
+    สมการทุกข้อในบทนี้ ไม่ว่าจะซับซ้อนแค่ไหน สุดท้ายจะถูกจัดรูปให้เหลือแบบพื้นฐานนี้เสมอ
+  </p>
+  $$\sin x = k \qquad \cos x = k \qquad \tan x = k$$
+  <p>
+    วิธีคิดที่เห็นภาพที่สุดคือมองเป็น <strong>จุดตัดของกราฟกับเส้นตรงแนวนอน</strong> $y = k$
+    เส้นตรงตัดกราฟกี่จุด สมการก็มีคำตอบเท่านั้น
+  </p>
+
+  <div class="widget" id="w-solve"></div>
+
+  <div class="box warn">
+    <div class="box-title">เมื่อไรถึงไม่มีคำตอบ</div>
+    <p style="margin:0">
+      $\sin x$ และ $\cos x$ มีค่าอยู่ในช่วง $[-1,\,1]$ เท่านั้น
+      ดังนั้น $\sin x = 1.4$ จึง <strong>ไม่มีคำตอบ</strong> — เลื่อนค่า $k$ ในภาพให้เกิน 1 ดูจะเห็นว่าเส้นตรงลอยพ้นกราฟไปเลย
+      ส่วน $\tan x$ ไม่มีขีดจำกัด สมการ $\tan x = k$ จึงมีคำตอบเสมอทุกค่า $k$
+    </p>
+  </div>
+
+  <h2 id="general">5.3 คำตอบทั่วไป</h2>
+  <p>
+    เมื่อหาคำตอบหลักในหนึ่งคาบได้แล้ว คำตอบที่เหลือคือค่าเดิมบวกลบไปทีละคาบ
+    เขียนรวบให้อยู่ในสูตรเดียวได้โดยใช้ $n$ แทนจำนวนเต็มใด ๆ
+  </p>
+
+  <div class="box key">
+    <div class="box-title">สามสูตรคำตอบทั่วไป — เมื่อ α คือค่าจากเครื่องคิดเลข</div>
+    $$\sin x=\sin\alpha \;\Longrightarrow\; x = 2n\pi+\alpha \;\text{ หรือ }\; x=(2n+1)\pi-\alpha$$
+    $$\cos x=\cos\alpha \;\Longrightarrow\; x = 2n\pi \pm \alpha$$
+    $$\tan x=\tan\alpha \;\Longrightarrow\; x = n\pi+\alpha$$
+    <p style="margin:.6em 0 0">โดย $n \in \mathbb{Z}$ (จำนวนเต็มใด ๆ ทั้งบวก ลบ และศูนย์)</p>
+  </div>
+
+  <div class="box note">
+    <div class="box-title">ทำไม tan ถึงมีสูตรเดียว ส่วน sin กับ cos มีสองแบบ</div>
+    <p style="margin:0">
+      เพราะ <strong>tan มีคาบ $\pi$</strong> ในหนึ่งคาบจึงมีคำตอบเดียว
+      ส่วน sin และ cos มีคาบ $2\pi$ ซึ่งกว้างพอให้มีคำตอบสองตัว — ตรงกับที่เห็นในภาพด้านบนพอดี
+      (นับจุดตัดในแถบสีฟ้าดู)
+    </p>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 1</h4>
+    <p class="q">จงหาคำตอบทั่วไปของ $\;2\cos x + \sqrt{3} = 0$</p>
+    <ol class="steps">
+      <li>จัดให้อยู่ในรูปพื้นฐานก่อน
+        $$\cos x = -\frac{\sqrt3}{2}$$</li>
+      <li>หา $\alpha$ จากค่าบวกก่อนเสมอ แล้วค่อยจัดการเครื่องหมาย —
+        เรารู้ว่า $\cos 30^\circ = \tfrac{\sqrt3}{2}$ และค่าที่ต้องการเป็นลบ
+        ซึ่ง cos เป็นลบในควอดรันต์ที่ 2 และ 3
+        $$\alpha = 180^\circ - 30^\circ = 150^\circ = \frac{5\pi}{6}$$</li>
+      <li>ใช้สูตรของ cos
+        $$x = 2n\pi \pm \frac{5\pi}{6}$$</li>
+      <li>ตรวจด้วยการแทน $n=0$ ได้ $x = \pm\dfrac{5\pi}{6}$ ซึ่ง $-\dfrac{5\pi}{6}$ เท่ากับ $\dfrac{7\pi}{6}$ เมื่อบวกหนึ่งรอบ —
+        ตรงกับคำตอบสองตัวในหนึ่งคาบ ✓</li>
+    </ol>
+    <div class="ans">ตอบ $x = 2n\pi \pm \dfrac{5\pi}{6}$ เมื่อ $n$ เป็นจำนวนเต็มใด ๆ</div>
+  </div>
+
+  <h2 id="multi">5.4 สมการมุมหลายเท่า</h2>
+  <p>
+    เมื่อในวงเล็บไม่ใช่ $x$ เปล่า ๆ แต่เป็น $2x$ หรือ $3x$ จำนวนคำตอบในช่วงเดิมจะเพิ่มขึ้นเป็นเท่าตัว
+    ข้อสอบชอบถามว่า “มีกี่คำตอบในช่วง $[0, 2\pi)$” เพราะรู้ว่านักเรียนมักตอบผิด
+  </p>
+
+  <div class="widget" id="w-multiangle"></div>
+
+  <div class="box key">
+    <div class="box-title">ขั้นตอนที่ปลอดภัย</div>
+    <ol style="margin:0">
+      <li><strong>แทนตัวแปรก่อน</strong> ให้ $u = Bx$</li>
+      <li><strong>แปลงช่วงตาม</strong> ถ้า $0 \le x &lt; 2\pi$ แล้ว $0 \le u &lt; 2\pi B$</li>
+      <li><strong>หาคำตอบของ $u$ ให้ครบทุกรอบ</strong> ในช่วงใหม่นั้น</li>
+      <li><strong>หารด้วย $B$ กลับ</strong> เพื่อได้ $x$</li>
+    </ol>
+    <p style="margin:.5em 0 0">
+      ข้ามขั้นที่ 2 คือสาเหตุที่คำตอบหายไปครึ่งหนึ่ง
+    </p>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 2</h4>
+    <p class="q">จงหาคำตอบของ $\;\sin 2x = \dfrac{1}{2}\;$ ในช่วง $[0,\,2\pi)$</p>
+    <ol class="steps">
+      <li>ให้ $u = 2x$ เมื่อ $0 \le x &lt; 2\pi$ จะได้ $0 \le u &lt; 4\pi$ (สองรอบเต็ม)</li>
+      <li>แก้ $\sin u = \tfrac12$ ในหนึ่งรอบแรกได้ $u = \dfrac{\pi}{6}$ และ $u = \dfrac{5\pi}{6}$</li>
+      <li>รอบที่สองคือบวก $2\pi$ เข้าไป
+        $$u = \frac{\pi}{6},\; \frac{5\pi}{6},\; \frac{13\pi}{6},\; \frac{17\pi}{6}$$</li>
+      <li>หารทุกตัวด้วย 2 เพื่อกลับไปเป็น $x$
+        $$x = \frac{\pi}{12},\; \frac{5\pi}{12},\; \frac{13\pi}{12},\; \frac{17\pi}{12}$$</li>
+      <li>ตรวจ: ทุกค่าอยู่ในช่วง $[0, 2\pi)$ ✓ และได้ 4 คำตอบตามที่คาด (2 คำตอบต่อรอบ × 2 รอบ)</li>
+    </ol>
+    <div class="ans">ตอบ $x = \dfrac{\pi}{12},\; \dfrac{5\pi}{12},\; \dfrac{13\pi}{12},\; \dfrac{17\pi}{12}$ รวม 4 คำตอบ</div>
+  </div>
+
+  <h2 id="reduce">5.5 สมการที่ต้องจัดรูปก่อน</h2>
+  <p>
+    โจทย์จริงมักไม่ได้ให้รูปพื้นฐานมาตรง ๆ งานของเราคือจัดรูปให้เหลือ <strong>ฟังก์ชันเดียว มุมเดียว</strong> ก่อนเสมอ
+    มีสามลวดลายที่เจอบ่อยที่สุด
+  </p>
+
+  <h3>ลวดลายที่ 1 — สมการกำลังสอง</h3>
+  <p>ถ้าเห็น $\sin^2$ หรือ $\cos^2$ อยู่กับตัวเดียวกัน ให้มองเป็นสมการกำลังสองแล้วแยกตัวประกอบ</p>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 3</h4>
+    <p class="q">จงหาคำตอบของ $\;2\sin^2 x - \sin x - 1 = 0\;$ ในช่วง $[0,\,2\pi)$</p>
+    <ol class="steps">
+      <li>มองเป็นสมการกำลังสองใน $\sin x$ โดยสมมติ $t = \sin x$
+        $$2t^2 - t - 1 = 0$$</li>
+      <li>แยกตัวประกอบ $(2t+1)(t-1)=0$ ได้ $t = -\dfrac12$ หรือ $t = 1$</li>
+      <li>แทนกลับเป็น $\sin x = -\dfrac12$ ได้ $x = \dfrac{7\pi}{6},\; \dfrac{11\pi}{6}$ (ควอดรันต์ 3 และ 4 เพราะ sin ติดลบ)</li>
+      <li>และ $\sin x = 1$ ได้ $x = \dfrac{\pi}{2}$ เพียงค่าเดียว (เป็นจุดยอดพอดี)</li>
+    </ol>
+    <div class="ans">ตอบ $x = \dfrac{\pi}{2},\; \dfrac{7\pi}{6},\; \dfrac{11\pi}{6}$</div>
+  </div>
+
+  <h3>ลวดลายที่ 2 — ใช้เอกลักษณ์ให้เหลือฟังก์ชันเดียว</h3>
+  <p>
+    ถ้ามีทั้ง sin และ cos ปนกันในรูปกำลังสอง ให้ใช้ $\sin^2 x + \cos^2 x = 1$ กำจัดตัวหนึ่งทิ้ง
+  </p>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 4</h4>
+    <p class="q">จงหาคำตอบของ $\;2\cos^2 x + 3\sin x - 3 = 0\;$ ในช่วง $[0,\,2\pi)$</p>
+    <ol class="steps">
+      <li>เลือกกำจัด cos เพราะอีกพจน์เป็น sin อยู่แล้ว ใช้ $\cos^2 x = 1 - \sin^2 x$
+        $$2(1-\sin^2 x) + 3\sin x - 3 = 0$$</li>
+      <li>กระจายและจัดรูป
+        $$-2\sin^2 x + 3\sin x - 1 = 0 \;\Longrightarrow\; 2\sin^2 x - 3\sin x + 1 = 0$$</li>
+      <li>แยกตัวประกอบ $(2\sin x - 1)(\sin x - 1) = 0$</li>
+      <li>$\sin x = \dfrac12$ ได้ $x = \dfrac{\pi}{6},\; \dfrac{5\pi}{6}$ &nbsp;และ&nbsp; $\sin x = 1$ ได้ $x = \dfrac{\pi}{2}$</li>
+      <li>ตรวจโดยแทน $x = \dfrac{\pi}{6}$ กลับ: $2\left(\dfrac{3}{4}\right) + 3\left(\dfrac12\right) - 3 = 1.5 + 1.5 - 3 = 0$ ✓</li>
+    </ol>
+    <div class="ans">ตอบ $x = \dfrac{\pi}{6},\; \dfrac{\pi}{2},\; \dfrac{5\pi}{6}$</div>
+  </div>
+
+  <h3>ลวดลายที่ 3 — ลดมุมสองเท่าให้เหลือมุมเดียว</h3>
+  <p>
+    ถ้ามีทั้ง $2x$ และ $x$ ปนกัน ให้ใช้สูตรมุมสองเท่าจากบทที่ 4 กระจาย $2x$ ออกก่อน
+    แล้วสมการจะเหลือมุมเดียวให้แยกตัวประกอบได้ — ซึ่งพาเราไปสู่กับดักข้อถัดไปพอดี
+  </p>
+
+  <h2 id="trap">5.6 กับดักที่ทำให้คำตอบหาย</h2>
+  <p>
+    นี่คือข้อผิดพลาดที่ทำให้เสียคะแนนมากที่สุดในบทนี้ และร้ายตรงที่ <strong>คำตอบที่ได้ไม่ผิด แต่ได้ไม่ครบ</strong>
+    ผู้ทำจึงมักไม่รู้ตัวเลย
+  </p>
+
+  <div class="widget" id="w-lost-roots"></div>
+
+  <div class="box warn">
+    <div class="box-title">กฎเหล็กสองข้อ</div>
+    <ol style="margin:0">
+      <li><strong>ห้ามหารทั้งสองข้างด้วยนิพจน์ที่อาจเป็นศูนย์</strong> —
+        ให้ย้ายมาข้างเดียวกันแล้วแยกตัวประกอบ ใช้หลัก “ผลคูณเป็นศูนย์ แปลว่าตัวใดตัวหนึ่งเป็นศูนย์”</li>
+      <li><strong>ถ้ายกกำลังสองระหว่างทาง ต้องตรวจคำตอบทุกตัวกลับเสมอ</strong> —
+        การยกกำลังสองอาจเพิ่มคำตอบปลอม <span class="en">(extraneous root)</span> ที่ไม่ได้สอดคล้องสมการเดิม</li>
+    </ol>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 5</h4>
+    <p class="q">จงหาคำตอบของ $\;\sin 2x = \sin x\;$ ในช่วง $[0,\,2\pi]$</p>
+    <ol class="steps">
+      <li>กระจายมุมสองเท่า $\sin 2x = 2\sin x\cos x$
+        $$2\sin x\cos x = \sin x$$</li>
+      <li><strong>ย้ายมาข้างเดียวกัน ห้ามหารด้วย $\sin x$</strong>
+        $$2\sin x\cos x - \sin x = 0$$</li>
+      <li>ดึงตัวร่วม
+        $$\sin x\,(2\cos x - 1) = 0$$</li>
+      <li>แยกเป็นสองกรณี — $\sin x = 0$ ได้ $x = 0,\; \pi,\; 2\pi$</li>
+      <li>และ $\cos x = \dfrac12$ ได้ $x = \dfrac{\pi}{3},\; \dfrac{5\pi}{3}$</li>
+    </ol>
+    <div class="ans">
+      ตอบ $x = 0,\; \dfrac{\pi}{3},\; \pi,\; \dfrac{5\pi}{3},\; 2\pi$ รวม 5 คำตอบ —
+      ถ้าหารด้วย $\sin x$ ตั้งแต่ขั้นที่ 2 จะเหลือแค่ 2 คำตอบ หายไปสามตัว
+    </div>
+  </div>
+
+  <h2 id="combo">5.7 สมการรูป a sin x + b cos x = c</h2>
+  <p>
+    สมการแบบนี้แยกตัวประกอบไม่ได้ และแทนเอกลักษณ์ตรง ๆ ก็ไม่ช่วย
+    ทางออกคือใช้เทคนิครวมคลื่นจากบทที่ 4 ยุบสองพจน์ให้เหลือพจน์เดียวก่อน
+  </p>
+  $$a\sin x + b\cos x = R\sin(x+\alpha) \qquad R=\sqrt{a^2+b^2},\quad \tan\alpha=\frac{b}{a}$$
+  <p>
+    สมการก็จะกลายเป็น $R\sin(x+\alpha) = c$ นั่นคือ $\sin(x+\alpha) = \dfrac{c}{R}$ ซึ่งเป็นรูปพื้นฐานแล้ว
+  </p>
+
+  <div class="widget" id="w-linear-combo"></div>
+
+  <div class="box key">
+    <div class="box-title">เงื่อนไขการมีคำตอบ — ตอบได้ทันทีโดยไม่ต้องแก้</div>
+    <p style="margin:0">
+      เพราะ $\sin$ ของอะไรก็ตามต้องอยู่ในช่วง $[-1,1]$ สมการจะมีคำตอบก็ต่อเมื่อ
+      $$\left|\frac{c}{R}\right| \le 1 \quad\Longleftrightarrow\quad |c| \le \sqrt{a^2+b^2}$$
+      ในภาพคือเส้นตรง $y=c$ ต้องอยู่ในแถบสีเขียว $\pm R$ ลองดันค่า $c$ ให้พ้นแถบดูจะเห็นว่าไม่มีจุดตัดเลย
+    </p>
+  </div>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 6</h4>
+    <p class="q">จงหาคำตอบของ $\;3\sin x + 4\cos x = 2\;$ ในช่วง $[0^\circ,\,360^\circ)$</p>
+    <ol class="steps">
+      <li>หา $R$ ก่อนเพื่อเช็กว่ามีคำตอบไหม
+        $$R=\sqrt{3^2+4^2}=5 \quad\text{และ}\quad |2| \le 5 \;\checkmark$$</li>
+      <li>หา $\alpha$ จาก $\tan\alpha = \dfrac{b}{a} = \dfrac{4}{3}$ โดย $a,b$ เป็นบวกทั้งคู่ จึงอยู่ควอดรันต์ที่ 1
+        $$\alpha = \tan^{-1}\frac{4}{3} \approx 53.13^\circ$$</li>
+      <li>เขียนสมการใหม่
+        $$5\sin(x+53.13^\circ) = 2 \;\Longrightarrow\; \sin(x+53.13^\circ) = 0.4$$</li>
+      <li>แก้แบบพื้นฐาน ให้ $u = x + 53.13^\circ$ ได้ $\sin u = 0.4$
+        $$u \approx 23.58^\circ \quad\text{หรือ}\quad u \approx 180^\circ - 23.58^\circ = 156.42^\circ$$</li>
+      <li>ย้อนกลับเป็น $x = u - 53.13^\circ$
+        $$x \approx -29.55^\circ \quad\text{หรือ}\quad x \approx 103.29^\circ$$</li>
+      <li>ค่าติดลบต้องบวกหนึ่งรอบให้เข้าช่วง $-29.55^\circ + 360^\circ = 330.45^\circ$</li>
+    </ol>
+    <div class="ans">ตอบ $x \approx 103.3^\circ$ และ $x \approx 330.4^\circ$</div>
+  </div>
+
+  <div class="box warn">
+    <div class="box-title">อย่าลืมย้อนกลับให้เข้าช่วง</div>
+    <p style="margin:0">
+      หลังลบ $\alpha$ ออก ค่าที่ได้อาจหลุดออกนอกช่วงที่โจทย์กำหนด
+      ต้องบวกหรือลบ $360^\circ$ (หรือ $2\pi$) ให้กลับเข้ามาเสมอ — เป็นขั้นที่ถูกลืมบ่อยที่สุดของโจทย์ประเภทนี้
+    </p>
+  </div>
+
+  <h2 id="apply">5.8 การประยุกต์: ย้อนกลับไปหาเวลา</h2>
+  <p>
+    ในบทที่ 3 เราสร้างแบบจำลองน้ำขึ้นน้ำลงแล้วถามว่า “เวลานี้น้ำสูงเท่าไร”
+    ซึ่งเป็นการแทนค่าตรง ๆ แต่คำถามที่มีประโยชน์กว่าคือย้อนกลับ —
+    <strong>“น้ำจะสูงถึงระดับที่ต้องการตอนกี่โมง”</strong> ซึ่งก็คือการแก้สมการตรีโกณนั่นเอง
+  </p>
+
+  <div class="example">
+    <h4>โจทย์ตัวอย่าง 7</h4>
+    <p class="q">
+      ระดับน้ำที่ท่าเรือแห่งหนึ่งคือ $h(t) = 1.85 + 1.25\sin\!\left(\dfrac{2\pi(t-3.2)}{12.4}\right)$ เมตร
+      เมื่อ $t$ เป็นชั่วโมงนับจากเที่ยงคืน เรือลำหนึ่งต้องการน้ำลึกอย่างน้อย 2.2 เมตร
+      จงหาว่าเรือเข้าท่าได้ครั้งแรกตอนกี่โมง
+    </p>
+    <ol class="steps">
+      <li>ตั้งสมการจากเงื่อนไข $h(t) = 2.2$ แล้วจัดรูปให้เหลือฟังก์ชันเดียว
+        $$1.25\sin\!\left(\frac{2\pi(t-3.2)}{12.4}\right) = 0.35$$</li>
+      <li>หารด้วย 1.25 ให้เป็นรูปพื้นฐาน
+        $$\sin\!\left(\frac{2\pi(t-3.2)}{12.4}\right) = 0.28$$</li>
+      <li>ให้ $u = \dfrac{2\pi(t-3.2)}{12.4}$ แล้วแก้ $\sin u = 0.28$
+        $$u \approx 0.2838 \quad\text{หรือ}\quad u \approx \pi - 0.2838 = 2.8578$$</li>
+      <li>ย้อนกลับหา $t$ จาก $u$ โดย $t = 3.2 + \dfrac{12.4\,u}{2\pi}$
+        $$t \approx 3.2 + 0.560 = 3.76 \qquad t \approx 3.2 + 5.640 = 8.84$$</li>
+      <li>แปลงเป็นเวลา: $3.76$ ชั่วโมง คือ 03:46 และ $8.84$ ชั่วโมง คือ 08:50</li>
+      <li>ระหว่างสองเวลานี้ $h(t) > 2.2$ (เพราะ sin เป็นบวกและกำลังขึ้นในช่วงนั้น) จึงเป็นหน้าต่างที่เข้าท่าได้</li>
+    </ol>
+    <div class="ans">
+      ตอบ เรือเข้าท่าได้ครั้งแรกเวลา 03:46 น. และหน้าต่างนั้นปิดตอน 08:50 น. —
+      ตรงกับแถบสีเขียวใน <a href="ch3.html#apply">ภาพน้ำขึ้นน้ำลงของบทที่ 3</a> พอดี
+    </div>
+  </div>
+
+  <div class="box note">
+    <div class="box-title">จากสมการสู่อสมการ</div>
+    <p style="margin:0">
+      โจทย์ที่ถามว่า “ช่วงเวลาใดบ้าง” คืออสมการ $h(t) \ge 2.2$ ไม่ใช่สมการ
+      แต่วิธีทำเหมือนกันทุกประการ — <strong>แก้สมการก่อนเพื่อหาจุดปลายของช่วง</strong>
+      แล้วค่อยดูจากกราฟว่าช่วงไหนอยู่เหนือเส้น ไม่ต้องเดา
+    </p>
+  </div>
+
+  <h2 id="wrap">5.9 สรุป</h2>
+  <div class="box key">
+    <div class="box-title">ขั้นตอนมาตรฐานของการแก้สมการตรีโกณ</div>
+    <ol style="margin:0">
+      <li><strong>จัดรูปให้เหลือฟังก์ชันเดียว มุมเดียว</strong> — ใช้เอกลักษณ์จากบทที่ 4 ช่วย</li>
+      <li><strong>แยกตัวประกอบ</strong> ถ้าทำได้ ห้ามหารทิ้ง</li>
+      <li><strong>แก้แต่ละกรณีเป็นรูปพื้นฐาน</strong> $\sin x = k$ หรือทำนองนี้</li>
+      <li><strong>หา α จากค่าบวกก่อน</strong> แล้วใช้ควอดรันต์กำหนดคำตอบที่เหลือ</li>
+      <li><strong>ขยายให้ครบช่วงที่โจทย์ถาม</strong> หรือเขียนเป็นคำตอบทั่วไปด้วย $n$</li>
+      <li><strong>ตรวจคำตอบกลับ</strong> โดยเฉพาะถ้ามีการยกกำลังสองระหว่างทาง</li>
+    </ol>
+  </div>
+
+  <div class="box link">
+    <div class="box-title">เช็กลิสต์ก่อนไปต่อ</div>
+    <ul style="margin:0">
+      <li>เขียนคำตอบทั่วไปของ sin, cos, tan ได้ถูกสูตร และรู้ว่าทำไม tan ต่างจากอีกสองตัว</li>
+      <li>นับจำนวนคำตอบของสมการมุมหลายเท่าในช่วงที่กำหนดได้ถูกต้อง</li>
+      <li>ไม่หารทิ้งเด็ดขาด และอธิบายได้ว่าทำไมคำตอบถึงหาย</li>
+      <li>ใช้ $R\sin(x+\alpha)$ แก้สมการ $a\sin x + b\cos x = c$ ได้ พร้อมเช็กเงื่อนไข $|c| \le R$</li>
+      <li>แปลงโจทย์สถานการณ์จริงเป็นสมการแล้วย้อนกลับหาคำตอบได้</li>
+    </ul>
+  </div>
+
+  <div class="box key">
+    <div class="box-title">หัวข้อถัดไปที่ต่อยอดจากบทนี้</div>
+    <p style="margin:0">
+      <strong>ฟังก์ชันผกผัน</strong> arcsin, arccos, arctan — ปุ่ม $\sin^{-1}$ บนเครื่องคิดเลขที่เราใช้หา $\alpha$
+      ตลอดทั้งบทนี้ จริง ๆ แล้วเป็นฟังก์ชันที่มีนิยามเข้มงวด และเหตุผลที่มันคืนค่ามาแค่ค่าเดียว
+      ทั้งที่สมการมีคำตอบไม่จำกัด ก็คือเนื้อหาของบทนั้น
+    </p>
+  </div>
+
+  <div class="chapnav">
+    <a href="ch4.html"><div class="dir">◀ ก่อนหน้า</div><div class="ttl">บทที่ 4 · เอกลักษณ์ตรีโกณ</div></a>
+    <a class="next" href="index.html"><div class="dir">กลับไป ▶</div><div class="ttl">หน้าแรก</div></a>
+  </div>
+
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script src="assets/js/viz.js"></script>
+<script src="assets/js/widgets.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

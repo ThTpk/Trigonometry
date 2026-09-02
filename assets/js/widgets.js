@@ -1105,4 +1105,250 @@
       });
     }
   });
+
+  /* =====================================================================
+     บทที่ 5 — สมการตรีโกณ
+     ===================================================================== */
+
+  /* หาคำตอบทั้งหมดของ f(x) = k ในช่วง [lo, hi] */
+  function solveTrig(f, k, lo, hi) {
+    var out = [], n, a;
+    if (f === 'tan') {
+      a = Math.atan(k);
+      for (n = -5; n <= 5; n++) out.push(n * PI + a);
+    } else if (Math.abs(k) <= 1) {
+      if (f === 'sin') {
+        a = Math.asin(k);
+        for (n = -3; n <= 3; n++) { out.push(2 * n * PI + a); out.push((2 * n + 1) * PI - a); }
+      } else {
+        a = Math.acos(k);
+        for (n = -3; n <= 3; n++) { out.push(2 * n * PI + a); out.push(2 * n * PI - a); }
+      }
+    }
+    return out
+      .filter(function (x) { return x >= lo - 1e-9 && x <= hi + 1e-9; })
+      .sort(function (p, q) { return p - q; })
+      .filter(function (x, i, arr) { return i === 0 || Math.abs(x - arr[i - 1]) > 1e-6; });
+  }
+
+  /* เขียนคำตอบเป็นข้อความ ตามหน่วยที่เลือก */
+  function solText(x, unit) {
+    return unit === 'deg' ? nf(r2d(x), 1) + '°' : (exactPi(x) || nf(x, 3));
+  }
+  function solList(arr, unit) {
+    return arr.length ? arr.map(function (x) { return solText(x, unit); }).join(', ') : '— ไม่มี';
+  }
+
+  var GEN_FORM = {
+    sin: 'x = 2nπ + α  หรือ  x = (2n+1)π − α',
+    cos: 'x = 2nπ + α  หรือ  x = 2nπ − α',
+    tan: 'x = nπ + α'
+  };
+
+  /* 5.1 สมการพื้นฐานและคำตอบทั่วไป */
+  TV.widget('#w-solve', {
+    title: 'สมการพื้นฐาน f(x) = k มีคำตอบกี่ตัว',
+    badge: 'ปรับค่าได้',
+    desc: 'เลื่อนค่า k แล้วนับจุดตัด — เส้นตรงตัดกราฟกี่จุด สมการก็มีคำตอบเท่านั้น และเพราะกราฟซ้ำตัวเองไปเรื่อย ๆ คำตอบจึงไม่มีวันหมด',
+    plot: { xmin: -TAU - 0.35, xmax: TAU + 0.35, ymin: -1.75, ymax: 1.75, ratio: 0.4, minH: 280, maxH: 360, pad: 20 },
+    controls: [
+      { type: 'seg', key: 'f', label: 'ฟังก์ชัน', options: [['sin', 'sin'], ['cos', 'cos'], ['tan', 'tan']], value: 'sin' },
+      { type: 'range', key: 'k', label: 'ค่า k', min: -1.3, max: 1.3, step: 0.01, value: 0.5, fmt: function (v) { return nf(v, 2); } },
+      { type: 'seg', key: 'u', label: 'หน่วย', options: [['deg', 'องศา'], ['rad', 'เรเดียน']], value: 'deg' },
+      { type: 'check', key: 'win', label: 'เน้นช่วง [0, 2π)', value: true }
+    ],
+    hint: 'จุดตัดในช่วง [0, 2π) คือ “คำตอบหลัก” ส่วนจุดที่เหลือคือคำตอบเดิมบวกลบไปทีละหนึ่งคาบ — นี่คือที่มาของตัว n ในคำตอบทั่วไป',
+    draw: function (p, s, api) {
+      var isTan = s.f === 'tan';
+      var YM = isTan ? 3.2 : 1.75;
+      p.setBounds({ ymin: -YM, ymax: YM });
+      var fn = s.f === 'sin' ? sin : s.f === 'cos' ? cos : tan;
+      var col = s.f === 'sin' ? C.sin : s.f === 'cos' ? C.cos : C.tan;
+
+      p.grid(PI / 4, isTan ? 1 : 0.5, '#f4f2ec');
+      if (s.win) {
+        p.poly([[0, -YM], [TAU, -YM], [TAU, YM], [0, YM]], { fill: 'rgba(29,78,216,.045)' });
+      }
+      p.axes({ xStep: PI / 2, yStep: isTan ? 1 : 0.5, xLabel: 'pi', digits: 1, yDigits: isTan ? 0 : 1, xName: 'x', yName: 'y' });
+
+      if (isTan) {
+        for (var a = -1.5 * PI; a <= 1.5 * PI + 0.1; a += PI) {
+          p.line(a, -YM, a, YM, { color: '#f0b8b0', w: 1.3, dash: [5, 5] });
+        }
+      }
+      p.func(fn, { color: col, w: 2.8, jump: YM });
+      p.line(-TAU - 0.35, s.k, TAU + 0.35, s.k, { color: C.accent, w: 2, dash: [8, 5] });
+      p.text(-TAU - 0.35, s.k, 'y = ' + nf(s.k, 2), { dx: 8, dy: -11, align: 'left', color: C.accent, size: 12, bg: 'rgba(255,255,255,.9)' });
+
+      var all = solveTrig(s.f, s.k, -TAU, TAU);
+      var main = solveTrig(s.f, s.k, 0, TAU - 1e-6);
+      all.forEach(function (x) {
+        var inWin = x >= -1e-9 && x < TAU - 1e-9;
+        var c = (s.win && !inWin) ? '#c9c5bb' : col;
+        p.line(x, 0, x, s.k, { color: c, w: 1.2, dash: [4, 4] });
+        p.dot(x, s.k, { fill: c, r: inWin ? 6 : 4.5 });
+        if (inWin) {
+          p.text(x, 0, solText(x, s.u), { dy: s.k >= 0 ? 16 : -16, color: col, size: 11, bg: 'rgba(255,255,255,.92)' });
+        }
+      });
+
+      if (!all.length) {
+        p.text(0, YM * 0.62, '|k| > 1 จึงไม่มีคำตอบ — เพราะ ' + s.f + ' มีค่าอยู่ระหว่าง −1 ถึง 1 เท่านั้น', {
+          color: '#dc2626', size: 13, bg: 'rgba(255,255,255,.92)'
+        });
+      }
+
+      var alpha = s.f === 'sin' ? Math.asin(clamp(s.k, -1, 1))
+                : s.f === 'cos' ? Math.acos(clamp(s.k, -1, 1)) : Math.atan(s.k);
+      api.stats({
+        'สมการ': s.f + ' x = ' + nf(s.k, 2),
+        'α (จากเครื่องคิดเลข)': { v: all.length ? solText(alpha, s.u) : '—', color: C.accent },
+        'คำตอบใน [0, 2π)': { v: solList(main, s.u), color: col },
+        'จำนวนคำตอบต่อหนึ่งคาบ': all.length ? main.length : 0,
+        'คำตอบทั่วไป': { v: all.length ? GEN_FORM[s.f] : 'ไม่มีคำตอบ', color: all.length ? C.hyp : '#dc2626' }
+      });
+    }
+  });
+
+  /* 5.2 สมการมุมหลายเท่า */
+  TV.widget('#w-multiangle', {
+    title: 'สมการมุมหลายเท่า sin(Bx) = k',
+    badge: 'ปรับ B',
+    desc: 'เพิ่มค่า B แล้วนับจุดตัดในช่วง [0, 2π) — ทุกครั้งที่ B เพิ่มขึ้นหนึ่ง จำนวนคำตอบจะเพิ่มขึ้นเป็นเท่าตัวตาม เพราะกราฟบีบให้ครบรอบมากขึ้นในช่วงเดิม',
+    plot: { xmin: -0.35, xmax: TAU + 0.35, ymin: -1.75, ymax: 1.75, ratio: 0.36, minH: 250, maxH: 320, pad: 20 },
+    controls: [
+      { type: 'range', key: 'B', label: 'B — ตัวคูณมุม', min: 1, max: 5, step: 1, value: 2, fmt: function (v) { return nf(v, 0); } },
+      { type: 'range', key: 'k', label: 'ค่า k', min: -0.98, max: 0.98, step: 0.02, value: 0.5, fmt: function (v) { return nf(v, 2); } },
+      { type: 'seg', key: 'u', label: 'หน่วย', options: [['deg', 'องศา'], ['rad', 'เรเดียน']], value: 'deg' }
+    ],
+    hint: 'วิธีทำที่ถูกต้อง: แทน u = Bx ก่อน แล้วสังเกตว่าถ้า x วิ่งใน [0, 2π) แปลว่า u วิ่งใน [0, 2πB) — ต้องหาคำตอบของ u ให้ครบทุกรอบ แล้วค่อยหารด้วย B',
+    draw: function (p, s, api) {
+      p.grid(PI / 4, 0.5, '#f4f2ec');
+      p.axes({ xStep: PI / 2, yStep: 0.5, xLabel: 'pi', digits: 1, yDigits: 1, xName: 'x', yName: 'y' });
+      p.func(function (x) { return sin(s.B * x); }, { from: 0, to: TAU, color: C.sin, w: 2.8 });
+      p.line(-0.35, s.k, TAU + 0.35, s.k, { color: C.accent, w: 2, dash: [8, 5] });
+
+      var sols = solveTrig('sin', s.k, 0, TAU * s.B - 1e-6).map(function (u) { return u / s.B; });
+      sols.forEach(function (x) {
+        p.line(x, 0, x, s.k, { color: C.sin, w: 1.1, dash: [4, 4] });
+        p.dot(x, s.k, { fill: C.sin, r: 5.5 });
+      });
+      p.text(TAU / 2, -1.75, 'y = sin(' + s.B + 'x)', { dy: -14, color: C.sin, size: 13 });
+      p.text(TAU + 0.35, s.k, 'y = ' + nf(s.k, 2), { dx: -6, dy: -11, align: 'right', color: C.accent, size: 12, bg: 'rgba(255,255,255,.9)' });
+
+      api.stats({
+        'สมการ': 'sin(' + s.B + 'x) = ' + nf(s.k, 2),
+        'ช่วงของ u = Bx': { v: '[0, ' + (2 * s.B) + 'π)', color: C.hyp },
+        'จำนวนคำตอบใน [0, 2π)': { v: String(sols.length), color: C.accent },
+        'คำตอบ': { v: solList(sols, s.u), color: C.sin }
+      });
+    }
+  });
+
+  /* 5.3 กับดักคำตอบหาย */
+  TV.widget('#w-lost-roots', {
+    title: 'กับดัก: หารทิ้งแล้วคำตอบหาย',
+    badge: 'สลับวิธีดู',
+    desc: 'แก้ sin 2x = sin x ในช่วง [0, 2π] — สองวิธีนี้ต่างกันแค่บรรทัดเดียว แต่ได้คำตอบไม่เท่ากัน ลองสลับดูว่าหายไปกี่ตัว',
+    plot: { xmin: -0.35, xmax: TAU + 0.35, ymin: -1.5, ymax: 1.5, ratio: 0.4, minH: 260, maxH: 340, pad: 20 },
+    controls: [
+      {
+        type: 'seg', key: 'm', label: 'วิธีทำ',
+        options: [['bad', 'หารด้วย sin x'], ['good', 'แยกตัวประกอบ']], value: 'bad'
+      }
+    ],
+    hint: 'กฎเหล็ก: ห้ามหารทั้งสองข้างด้วยนิพจน์ที่อาจเป็นศูนย์ — ให้ย้ายมาข้างเดียวกันแล้วแยกตัวประกอบเสมอ',
+    draw: function (p, s, api) {
+      var keep = [PI / 3, 5 * PI / 3];          /* จาก cos x = 1/2 */
+      var lost = [0, PI, TAU];                   /* จาก sin x = 0 */
+      p.grid(PI / 4, 0.5, '#f4f2ec');
+      p.axes({ xStep: PI / 2, yStep: 0.5, xLabel: 'pi', digits: 1, yDigits: 1, xName: 'x', yName: 'y' });
+      p.func(function (x) { return sin(2 * x); }, { from: 0, to: TAU, color: C.sin, w: 2.6 });
+      p.func(sin, { from: 0, to: TAU, color: C.cos, w: 2.6, dash: [8, 5] });
+      p.text(PI / 4, 1.5, 'y = sin 2x', { dy: 14, color: C.sin, size: 12 });
+      p.text(PI / 2, 1, 'y = sin x', { dx: 16, dy: -12, align: 'left', color: C.cos, size: 12 });
+
+      keep.forEach(function (x) {
+        p.dot(x, sin(x), { fill: C.tan, r: 7, halo: C.tan });
+        p.text(x, sin(x), TV.radLabel(x), { dy: sin(x) >= 0 ? -17 : 17, color: C.tan, size: 11.5, bg: 'rgba(255,255,255,.92)' });
+      });
+      lost.forEach(function (x) {
+        var bad = s.m === 'bad';
+        p.dot(x, 0, { fill: bad ? '#ffffff' : C.tan, r: 7, ring: bad ? '#dc2626' : '#ffffff', w: 2.5, halo: bad ? '#dc2626' : C.tan });
+        p.text(x, 0, (bad ? '✗ ' : '') + TV.radLabel(x), {
+          dy: 20, color: bad ? '#dc2626' : C.tan, size: 11.5, bg: 'rgba(255,255,255,.92)'
+        });
+      });
+
+      var bad = s.m === 'bad';
+      p.text(TAU / 2, -1.5, bad ? 'หารด้วย sin x  →  cos x = 1/2  →  ได้แค่ 2 คำตอบ' :
+                                  'sin x (2 cos x − 1) = 0  →  ได้ครบ 5 คำตอบ', {
+        dy: -12, color: bad ? '#dc2626' : C.tan, size: 13, bg: 'rgba(255,255,255,.92)'
+      });
+
+      api.stats({
+        'วิธีที่ใช้': bad ? 'หารทั้งสองข้างด้วย sin x' : 'ย้ายข้างแล้วแยกตัวประกอบ',
+        'คำตอบที่ได้': { v: bad ? '2 ตัว' : '5 ตัว', color: bad ? '#dc2626' : C.tan },
+        'คำตอบที่หายไป': { v: bad ? '0, π, 2π  (จุดวงแดง)' : 'ไม่มี', color: bad ? '#dc2626' : C.tan },
+        'สาเหตุ': bad ? 'sin x เป็นศูนย์ได้ จึงหารไม่ได้' : 'ผลคูณเป็นศูนย์ ⇒ ตัวใดตัวหนึ่งเป็นศูนย์'
+      });
+    }
+  });
+
+  /* 5.4 สมการรูป a sin x + b cos x = c */
+  TV.widget('#w-linear-combo', {
+    title: 'สมการรูป a sin x + b cos x = c',
+    badge: 'ปรับ a, b, c',
+    desc: 'รวมสองพจน์เป็นคลื่นลูกเดียว R sin(x + α) ก่อน แล้วสมการก็เหลือแบบพื้นฐาน — ลองดันค่า c ให้เกินแถบ ±R ดูว่าเกิดอะไรขึ้น',
+    plot: { xmin: -0.35, xmax: TAU + 0.35, ymin: -6.6, ymax: 6.6, ratio: 0.44, minH: 280, maxH: 360, pad: 20 },
+    controls: [
+      { type: 'range', key: 'a', label: 'a (สัมประสิทธิ์ sin x)', min: -4, max: 4, step: 0.1, value: 3, fmt: function (v) { return nf(v, 1); } },
+      { type: 'range', key: 'b', label: 'b (สัมประสิทธิ์ cos x)', min: -4, max: 4, step: 0.1, value: 4, fmt: function (v) { return nf(v, 1); } },
+      { type: 'range', key: 'c', label: 'c (ข้างขวา)', min: -6, max: 6, step: 0.1, value: 2, fmt: function (v) { return nf(v, 1); } },
+      { type: 'seg', key: 'u', label: 'หน่วย', options: [['deg', 'องศา'], ['rad', 'เรเดียน']], value: 'deg' }
+    ],
+    hint: 'เงื่อนไขมีคำตอบคือ |c| ≤ R เท่านั้น — โจทย์ที่ถามว่า “สมการนี้มีคำตอบหรือไม่” ตอบได้ทันทีโดยไม่ต้องแก้ เพียงเทียบ |c| กับ √(a²+b²)',
+    draw: function (p, s, api) {
+      var R = Math.hypot(s.a, s.b), al = Math.atan2(s.b, s.a);
+      var g = function (x) { return s.a * sin(x) + s.b * cos(x); };
+      p.grid(PI / 4, 1, '#f4f2ec');
+      p.axes({ xStep: PI / 2, yStep: 1, xLabel: 'pi', digits: 0, xName: 'x', yName: 'y' });
+
+      p.poly([[-0.35, -R], [TAU + 0.35, -R], [TAU + 0.35, R], [-0.35, R]], { fill: 'rgba(4,120,87,.06)' });
+      [R, -R].forEach(function (y) {
+        p.line(-0.35, y, TAU + 0.35, y, { color: C.tan, w: 1.4, dash: [4, 4] });
+      });
+      p.text(TAU + 0.35, R, 'R = ' + nf(R, 2), { dx: -6, dy: -11, align: 'right', color: C.tan, size: 11.5, bg: 'rgba(255,255,255,.9)' });
+
+      p.func(g, { from: 0, to: TAU, color: C.hyp, w: 3 });
+      p.line(-0.35, s.c, TAU + 0.35, s.c, { color: C.accent, w: 2, dash: [8, 5] });
+
+      var sols = R < 1e-9 ? [] : solveTrig('sin', s.c / R, 0, TAU - 1e-6).map(function (u) {
+        var x = u - al;
+        while (x < 0) x += TAU;
+        while (x >= TAU) x -= TAU;
+        return x;
+      }).sort(function (m, n) { return m - n; });
+
+      sols.forEach(function (x) {
+        p.line(x, 0, x, s.c, { color: C.hyp, w: 1.1, dash: [4, 4] });
+        p.dot(x, s.c, { fill: C.hyp, r: 6 });
+        p.text(x, s.c, solText(x, s.u), { dy: s.c >= 0 ? -16 : 16, color: C.hyp, size: 11, bg: 'rgba(255,255,255,.92)' });
+      });
+
+      var ok = Math.abs(s.c) <= R + 1e-9;
+      p.text(-0.35, 6.6, (ok ? '✓ |c| ≤ R จึงมีคำตอบ' : '✗ |c| > R เส้นตรงอยู่นอกแถบ จึงไม่มีคำตอบ'), {
+        dx: 10, dy: 15, align: 'left', size: 13, color: ok ? C.tan : '#dc2626', bg: 'rgba(255,255,255,.92)'
+      });
+
+      api.stats({
+        'R = √(a²+b²)': { v: nf(R, 4), color: C.tan },
+        'α': { v: solText(al, s.u), color: C.hyp },
+        'แปลงเป็น': nf(R, 2) + ' sin(x + α) = ' + nf(s.c, 1),
+        'sin(x + α) =': { v: R < 1e-9 ? '—' : nf(s.c / R, 3), color: C.accent },
+        'จำนวนคำตอบใน [0, 2π)': { v: String(sols.length), color: ok ? C.tan : '#dc2626' },
+        'คำตอบ': { v: solList(sols, s.u), color: C.hyp }
+      });
+    }
+  });
 })();
