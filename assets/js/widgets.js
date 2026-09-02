@@ -145,13 +145,14 @@
      กฎ: แต่ละมุมเกิดจากด้านสองด้าน → ให้อัตราส่วนสองแบบที่เป็นส่วนกลับกัน
          ลูกศรพุ่งทะลุด้านใด ด้านนั้นคือ "ตัวส่วน"
      --------------------------------------------------------------------- */
+  /* from = ด้านที่เป็นตัวเศษ (จุดเริ่มลูกศร) · to = ด้านที่เป็นตัวส่วน (ลูกศรพุ่งทะลุออก) */
   var MN_ITEMS = [
-    { grp: 'A',     side: 'hyp',  f: 0.30, key: 'cos',   col: C.cos },
-    { grp: 'A',     side: 'base', f: 0.30, key: 'sec',   col: C.cos },
-    { grp: 'top',   side: 'hyp',  f: 0.78, key: 'sin',   col: C.sin },
-    { grp: 'top',   side: 'vert', f: 0.74, key: 'cosec', col: C.sin },
-    { grp: 'right', side: 'vert', f: 0.26, key: 'cot',   col: C.tan },
-    { grp: 'right', side: 'base', f: 0.76, key: 'tan',   col: C.tan }
+    { grp: 'A',     key: 'cos',   col: C.cos, from: ['base', 0.14], to: ['hyp',  0.30] },
+    { grp: 'A',     key: 'sec',   col: C.cos, from: ['hyp',  0.46], to: ['base', 0.30] },
+    { grp: 'top',   key: 'sin',   col: C.sin, from: ['vert', 0.86], to: ['hyp',  0.78] },
+    { grp: 'top',   key: 'cosec', col: C.sin, from: ['hyp',  0.54], to: ['vert', 0.74] },
+    { grp: 'right', key: 'cot',   col: C.tan, from: ['base', 0.86], to: ['vert', 0.26] },
+    { grp: 'right', key: 'tan',   col: C.tan, from: ['vert', 0.46], to: ['base', 0.70] }
   ];
   var MN_GRPCOL = { A: C.cos, top: C.sin, right: C.tan };
   var MN_SIDES = { A: ['base', 'hyp'], top: ['hyp', 'vert'], right: ['base', 'vert'] };
@@ -195,29 +196,34 @@
       });
     }
 
-    /* ป้ายชื่อด้าน วางไว้ด้านในรูป กระจายตำแหน่งไม่ให้ชนกันแม้รูปจะแคบ */
-    var lb = { color: '#6b6961', size: 12, bg: 'rgba(255,255,255,.82)' };
-    p.text(W * 0.5, 0, o.sideLab.adj, Object.assign({ dy: -15 }, lb));
-    p.text(W, H * 0.62, o.sideLab.opp, Object.assign({ dx: -13, align: 'right' }, lb));
-    p.text(W * 0.42 + 0.32 * sin(th), H * 0.42 - 0.32 * cos(th), o.sideLab.hyp, lb);
+    /* ป้ายชื่อด้าน วางนอกรูป ตรงกลางระหว่างลูกศรสองตัวของด้านนั้น
+       (ในรูปแน่นเพราะมีเส้นโค้งหกเส้นวิ่งผ่าน) */
+    var lb = { color: '#6b6961', size: 12, bg: 'rgba(255,255,255,.85)' };
+    p.text(W * 0.5, -0.28, o.sideLab.adj, lb);
+    p.text(W + 0.30, H * 0.5, o.sideLab.opp, Object.assign({ align: 'left' }, lb));
+    p.text(W * 0.54 + nrm.hyp[0] * 0.28, H * 0.54 + nrm.hyp[1] * 0.28, o.sideLab.hyp, lb);
 
-    /* ลูกศรหกตัว — โค้งออกจากจุดยอดที่มันสังกัด แล้วพุ่งทะลุด้านที่เป็นตัวส่วน */
-    var bisA = th / 2, bisT = PI * 1.25 + th / 2, bisR = PI * 0.75;
-    var start = {
-      A:     [0.68 * cos(bisA), 0.68 * sin(bisA)],
-      top:   [W + 0.68 * cos(bisT), H + 0.68 * sin(bisT)],
-      right: [W + 0.68 * cos(bisR), 0.68 * sin(bisR)]
+    /* ลูกศรหกตัว — เริ่มบนด้านที่เป็นตัวเศษ โค้งอ้อมจุดยอด แล้วพุ่งทะลุด้านที่เป็นตัวส่วน */
+    var ptOn = function (side, f) {
+      return side === 'hyp' ? [W * f, H * f] : side === 'base' ? [W * f, 0] : [W, H * f];
+    };
+    var ctrl = {
+      A:     [0.42 * cos(th / 2), 0.42 * sin(th / 2)],
+      top:   [W + 0.42 * cos(PI * 1.25 + th / 2), H + 0.42 * sin(PI * 1.25 + th / 2)],
+      right: [W + 0.42 * cos(PI * 0.75), 0.42 * sin(PI * 0.75)]
     };
     MN_ITEMS.forEach(function (it) {
-      var P = it.side === 'hyp' ? [W * it.f, H * it.f]
-            : it.side === 'base' ? [W * it.f, 0] : [W, H * it.f];
-      var n = nrm[it.side], c = col(it.grp, it.col), S = start[it.grp];
-      p.curveArrow(S[0], S[1], P[0], P[1],
+      var S = ptOn(it.from[0], it.from[1]);
+      var P = ptOn(it.to[0], it.to[1]);
+      var n = nrm[it.to[0]], c = col(it.grp, it.col), Q = ctrl[it.grp];
+      p.curveArrow(S[0], S[1], Q[0], Q[1],
                    P[0] + n[0] * 0.62, P[1] + n[1] * 0.62, { color: c, w: 2.2, head: 9.5 });
+      /* จุดกลมกำกับต้นทาง = ด้านที่เป็นตัวเศษ */
+      p.dot(S[0], S[1], { fill: c, r: 4, w: 2, ring: '#ffffff' });
       p.text(P[0] + n[0] * 0.88, P[1] + n[1] * 0.88, it.key + o.suffix, {
-        dx: it.side === 'vert' ? 9 : 0,
-        dy: it.side === 'base' ? 13 : (it.side === 'hyp' ? -9 : 0),
-        align: it.side === 'vert' ? 'left' : 'center',
+        dx: it.to[0] === 'vert' ? 9 : 0,
+        dy: it.to[0] === 'base' ? 13 : (it.to[0] === 'hyp' ? -9 : 0),
+        align: it.to[0] === 'vert' ? 'left' : 'center',
         color: c, size: 13, bg: 'rgba(255,255,255,.9)'
       });
     });
@@ -227,7 +233,7 @@
   TV.widget('#w-mnemonic', {
     title: 'แผนภาพช่วยจำทั้งหกฟังก์ชัน',
     badge: 'เลือกมุมดูได้',
-    desc: 'มุมแต่ละมุมของสามเหลี่ยมเกิดจากด้านสองด้านมาบรรจบกัน ด้านคู่นั้นสร้างอัตราส่วนได้สองแบบซึ่งเป็นส่วนกลับกันพอดี — และลูกศรพุ่งทะลุด้านใด ด้านนั้นคือ “ตัวส่วน”',
+    desc: 'อ่านลูกศรเป็นสูตรได้ทั้งเส้น — จุดกลมอยู่บนด้านที่เป็น “ตัวเศษ” แล้วลูกศรโค้งอ้อมจุดยอดไปพุ่งทะลุด้านที่เป็น “ตัวส่วน”',
     plot: { equal: true, ratio: 0.56, minH: 300, maxH: 430, pad: 14 },
     controls: [
       {
@@ -236,7 +242,7 @@
       },
       { type: 'range', key: 'th', label: 'มุม A', min: 15, max: 60, step: 1, value: 30, fmt: degFmt }
     ],
-    hint: 'สามคู่นี้เป็นส่วนกลับกันเสมอ: cos ↔ sec · sin ↔ cosec · tan ↔ cot — แผนภาพจึงบอกทั้งชื่อและสูตรของทั้งหกตัวพร้อมกัน',
+    hint: 'ลูกศรสองเส้นที่จุดยอดเดียวกันวิ่งสวนทางกัน จึงเป็นคู่ส่วนกลับกันเสมอ: cos ↔ sec · sin ↔ cosec · tan ↔ cot',
     draw: function (p, s, api) {
       var th = d2r(s.th), Lh = 3.5;
       drawMnemonic(p, {
@@ -277,7 +283,7 @@
   TV.widget('#w-mnemonic-special', {
     title: 'ใช้แผนภาพกับมุม 30°, 45°, 60°',
     badge: 'สลับมุมได้',
-    desc: 'เติมความยาวด้านที่แน่นอนลงในรูปเดิม แล้วอ่านค่าทั้งหกออกมาตามลูกศรได้ทันที โดยไม่ต้องท่องตารางเลย',
+    desc: 'เติมความยาวด้านที่แน่นอนลงในรูปเดิม แล้วอ่านค่าทั้งหกตามลูกศรได้ทันที — ความยาวที่จุดกลมคือตัวเศษ ความยาวที่ลูกศรทะลุออกคือตัวส่วน',
     plot: { equal: true, ratio: 0.58, minH: 310, maxH: 440, pad: 14 },
     controls: [
       {

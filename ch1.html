@@ -104,27 +104,33 @@
   </div>
 
   <p>
-    เหลือคำถามเดียวคือ ในแต่ละคู่ ตัวไหนเป็นตัวเศษตัวไหนเป็นตัวส่วน — ลูกศรในภาพตอบให้แล้ว
-    กดปุ่ม “เน้นที่มุม” เพื่อดูทีละมุม
+    เหลือคำถามเดียวคือ ในแต่ละคู่ ตัวไหนเป็นตัวเศษตัวไหนเป็นตัวส่วน — ลูกศรตอบให้แล้ว
+    เพราะมัน <strong>เริ่มต้นบนด้านที่เป็นตัวเศษ</strong> แล้ว <strong>พุ่งทะลุออกทางด้านที่เป็นตัวส่วน</strong>
+    ไล่นิ้วตามลูกศรหนึ่งเส้นก็ได้สูตรครบทั้งเศษและส่วน กดปุ่ม “เน้นที่มุม” เพื่อดูทีละมุม
   </p>
 
   <div class="widget" id="w-mnemonic"></div>
 
   <div class="box key">
     <div class="box-title">กฎเดียวที่ต้องจำ</div>
-    <p style="margin:0 0 .6em">
-      <strong>ลูกศรพุ่งทะลุด้านใด ด้านนั้นคือตัวส่วน</strong> ส่วนตัวเศษคืออีกด้านหนึ่งที่ประกอบมุมนั้น
+    <p style="margin:0 0 .5em">
+      ลูกศรหนึ่งเส้นคือสูตรหนึ่งสูตรเต็ม ๆ อ่านไล่ตามทิศทางของมันได้เลย
+    </p>
+    <p style="margin:0 0 .9em;text-align:center;font-weight:700;line-height:2">
+      เริ่มที่จุดกลม = ด้านที่เป็น<u>ตัวเศษ</u>
+      &nbsp;&nbsp;⟶&nbsp;&nbsp;
+      ทะลุออกที่หัวลูกศร = ด้านที่เป็น<u>ตัวส่วน</u>
     </p>
     <div class="tbl-wrap" style="margin:0">
     <table>
-      <thead><tr><th>จุดยอด</th><th>ลูกศรทะลุด้าน</th><th>ได้ฟังก์ชัน</th></tr></thead>
+      <thead><tr><th>จุดยอด</th><th>เริ่มที่ (ตัวเศษ)</th><th>ทะลุออกที่ (ตัวส่วน)</th><th>ได้ฟังก์ชัน</th></tr></thead>
       <tbody>
-        <tr><td rowspan="2">มุม A</td><td>ด้านตรงข้ามมุมฉาก</td><td><span class="t-cos">$\cos A=\dfrac{\text{adj}}{\text{hyp}}$</span></td></tr>
-        <tr><td>ข้างเคียง</td><td><span class="t-cos">$\sec A=\dfrac{\text{hyp}}{\text{adj}}$</span></td></tr>
-        <tr><td rowspan="2">มุมยอด</td><td>ด้านตรงข้ามมุมฉาก</td><td><span class="t-sin">$\sin A=\dfrac{\text{opp}}{\text{hyp}}$</span></td></tr>
-        <tr><td>ข้างตรงข้าม</td><td><span class="t-sin">$\csc A=\dfrac{\text{hyp}}{\text{opp}}$</span></td></tr>
-        <tr><td rowspan="2">มุมฉาก</td><td>ข้างเคียง</td><td><span class="t-tan">$\tan A=\dfrac{\text{opp}}{\text{adj}}$</span></td></tr>
-        <tr><td>ข้างตรงข้าม</td><td><span class="t-tan">$\cot A=\dfrac{\text{adj}}{\text{opp}}$</span></td></tr>
+        <tr><td rowspan="2">มุม A</td><td>ข้างเคียง</td><td>ด้านตรงข้ามมุมฉาก</td><td><span class="t-cos">$\cos A=\dfrac{\text{adj}}{\text{hyp}}$</span></td></tr>
+        <tr><td>ด้านตรงข้ามมุมฉาก</td><td>ข้างเคียง</td><td><span class="t-cos">$\sec A=\dfrac{\text{hyp}}{\text{adj}}$</span></td></tr>
+        <tr><td rowspan="2">มุมยอด</td><td>ข้างตรงข้าม</td><td>ด้านตรงข้ามมุมฉาก</td><td><span class="t-sin">$\sin A=\dfrac{\text{opp}}{\text{hyp}}$</span></td></tr>
+        <tr><td>ด้านตรงข้ามมุมฉาก</td><td>ข้างตรงข้าม</td><td><span class="t-sin">$\csc A=\dfrac{\text{hyp}}{\text{opp}}$</span></td></tr>
+        <tr><td rowspan="2">มุมฉาก</td><td>ข้างตรงข้าม</td><td>ข้างเคียง</td><td><span class="t-tan">$\tan A=\dfrac{\text{opp}}{\text{adj}}$</span></td></tr>
+        <tr><td>ข้างเคียง</td><td>ข้างตรงข้าม</td><td><span class="t-tan">$\cot A=\dfrac{\text{adj}}{\text{opp}}$</span></td></tr>
       </tbody>
     </table>
     </div>
@@ -135,7 +141,8 @@
     <ul style="margin:0">
       <li><strong>จับคู่ส่วนกลับได้เอง</strong> — สองลูกศรที่ออกจากจุดยอดเดียวกันคือคู่ส่วนกลับเสมอ
         จึงไม่มีวันจำสลับว่า sec คู่กับ sin (ซึ่งผิด)</li>
-      <li><strong>ไม่ต้องท่องว่าตัวไหนหารด้วยตัวไหน</strong> — ดูทิศลูกศรแล้วอ่านได้ทันที</li>
+      <li><strong>ไม่ต้องท่องว่าตัวไหนหารด้วยตัวไหน</strong> — ไล่นิ้วจากจุดกลมไปหาหัวลูกศร
+        จะได้ตัวเศษกับตัวส่วนมาตามลำดับพอดี</li>
       <li><strong>วาดใหม่ได้ตลอดเวลา</strong> — ในห้องสอบวาดสามเหลี่ยมกับลูกศรหกตัวใช้เวลาไม่ถึงยี่สิบวินาที
         ปลอดภัยกว่าการพึ่งความจำล้วน ๆ</li>
     </ul>
@@ -189,12 +196,12 @@
     วิธีอ่าน ยกตัวอย่างมุม 30° ซึ่งมีด้าน <code>adj = √3</code>, <code>opp = 1</code>, <code>hyp = 2</code>
   </p>
   <ul>
-    <li>ที่ <span class="t-cos">มุม A</span> ด้านที่ประกอบคือ √3 กับ 2 →
-      ลูกศรทะลุ hyp ได้ $\cos 30^\circ=\dfrac{\sqrt3}{2}$ · ลูกศรทะลุ adj ได้ $\sec 30^\circ=\dfrac{2}{\sqrt3}$</li>
-    <li>ที่ <span class="t-sin">มุมยอด</span> ด้านที่ประกอบคือ 1 กับ 2 →
-      $\sin 30^\circ=\dfrac{1}{2}$ · $\csc 30^\circ=\dfrac{2}{1}=2$</li>
-    <li>ที่ <span class="t-tan">มุมฉาก</span> ด้านที่ประกอบคือ 1 กับ √3 →
-      $\tan 30^\circ=\dfrac{1}{\sqrt3}$ · $\cot 30^\circ=\dfrac{\sqrt3}{1}=\sqrt3$</li>
+    <li>ที่ <span class="t-cos">มุม A</span> — ลูกศรที่เริ่มบน adj (ยาว √3) แล้วทะลุออกที่ hyp (ยาว 2)
+      ให้ $\cos 30^\circ=\dfrac{\sqrt3}{2}$ ส่วนเส้นที่วิ่งสวนทางกันให้ $\sec 30^\circ=\dfrac{2}{\sqrt3}$</li>
+    <li>ที่ <span class="t-sin">มุมยอด</span> — เริ่มบน opp (ยาว 1) ทะลุออกที่ hyp (ยาว 2)
+      ให้ $\sin 30^\circ=\dfrac{1}{2}$ สวนทางกันได้ $\csc 30^\circ=\dfrac{2}{1}=2$</li>
+    <li>ที่ <span class="t-tan">มุมฉาก</span> — เริ่มบน opp (ยาว 1) ทะลุออกที่ adj (ยาว √3)
+      ให้ $\tan 30^\circ=\dfrac{1}{\sqrt3}$ สวนทางกันได้ $\cot 30^\circ=\dfrac{\sqrt3}{1}=\sqrt3$</li>
   </ul>
 
   <div class="box key">
