@@ -10,7 +10,8 @@
   var PI = Math.PI, TAU = TV.TAU;
   var sin = Math.sin, cos = Math.cos, tan = Math.tan;
 
-  function degFmt(v) { return nf(v, 0) + '°'; }
+  function degFmt(v) { return nf(v, 0).replace('-', '−') + '°'; }
+  function degTxt(v) { return nf(v, 1).replace('-', '−') + '°'; }
 
   /* คืนรูป π เฉพาะเมื่อค่านั้นเป็นผลคูณของ π/12 จริง ๆ ไม่งั้นคืน null
      (ป้องกันการแสดง "π/3" ทั้งที่ค่าคือ 1.00 rad) */
@@ -468,10 +469,10 @@
   TV.widget('#w-unitcircle', {
     title: 'วงกลมหนึ่งหน่วย',
     badge: 'กดปุ่ม · ลากจุดได้',
-    desc: 'ลากจุดสีม่วงไปรอบวงกลม หรือกดปุ่มมุมมาตรฐานด้านล่าง — cos θ คือระยะในแนวนอน (สีส้ม) และ sin θ คือระยะในแนวตั้ง (สีน้ำเงิน) ของจุดนั้น ค่าที่ได้แสดงเป็นค่าที่แน่นอน ไม่ใช่ทศนิยม',
+    desc: 'ลากจุดสีม่วงไปรอบวงกลม หรือกดปุ่มมุมมาตรฐานด้านล่าง — cos θ คือระยะในแนวนอน (สีส้ม) และ sin θ คือระยะในแนวตั้ง (สีน้ำเงิน) ของจุดนั้น ปรับได้ตั้งแต่ −360° ถึง 360° และค่าที่ได้แสดงเป็นค่าที่แน่นอน ไม่ใช่ทศนิยม',
     plot: { xmin: -1.72, xmax: 1.98, ymin: -1.45, ymax: 1.45, equal: true, ratio: 0.62, minH: 320, maxH: 460 },
     controls: [
-      { type: 'range', key: 'th', label: 'มุม θ', min: 0, max: 360, step: 0.5, value: 40, fmt: degFmt },
+      { type: 'range', key: 'th', label: 'มุม θ', min: -360, max: 360, step: 0.5, value: 40, fmt: degFmt },
       { type: 'seg', key: 'u', label: 'หน่วยมุม', options: [['deg', 'องศา'], ['rad', 'เรเดียน']], value: 'deg' },
       {
         type: 'chips', key: 'th', label: 'มุมมาตรฐาน', wide: true,
@@ -502,11 +503,12 @@
         }
       }
     ],
-    hint: 'สังเกตเครื่องหมาย: ควอดรันต์ที่ 2 มี cos ติดลบแต่ sin ยังบวก — ท่องว่า A-S-T-C (ทั้งหมด, Sin, Tan, Cos เป็นบวก)',
+    hint: 'สังเกตเครื่องหมาย: ควอดรันต์ที่ 2 มี cos ติดลบแต่ sin ยังบวก — ท่องว่า A-S-T-C (ทั้งหมด, Sin, Tan, Cos เป็นบวก) · ลองเลื่อนไปฝั่งลบดู เช่น −60° กับ 300° ให้จุดเดียวกันเป๊ะ เพราะเป็นมุมโคเทอร์มินัลกัน ปุ่มมุมมาตรฐานจึงสว่างที่ 300°',
     onPointer: function (p, s, wx, wy) {
       if (Math.hypot(wx, wy) > 1.5) return false;
-      var a = r2d(Math.atan2(wy, wx));
-      s.th = (a + 360) % 360;
+      var a = ((r2d(Math.atan2(wy, wx)) % 360) + 360) % 360;
+      /* อยู่ฝั่งลบอยู่แล้วก็ให้คงเป็นมุมติดลบที่ชี้ไปจุดเดียวกัน */
+      s.th = s.th < 0 ? a - 360 : a;
       return true;
     },
     draw: function (p, s, api) {
@@ -547,10 +549,12 @@
       /* มุม */
       p.arc(0, 0, 0.3, 0, th, { fill: 'rgba(180,83,9,.13)', color: C.accent, w: 2 });
       if (s.ref) {
-        var r0 = d2r(refAngle(s.th));
-        var base = (s.th > 90 && s.th < 270) ? PI : (s.th > 270 ? TAU : 0);
+        /* ทอนมุมให้อยู่ใน 0°–360° ก่อน ส่วนโค้งจะได้ถูกต้องทั้งมุมบวกและมุมติดลบ */
+        var tn = ((s.th % 360) + 360) % 360;
+        var r0 = d2r(refAngle(tn));
+        var base = (tn > 90 && tn < 270) ? PI : (tn > 270 ? TAU : 0);
         /* มุมอ้างอิงวัดจากแกน x ที่ใกล้ที่สุด เข้าหาแขนสิ้นสุดเสมอ */
-        var dir = (s.th <= 90 || (s.th > 180 && s.th <= 270)) ? 1 : -1;
+        var dir = (tn <= 90 || (tn > 180 && tn <= 270)) ? 1 : -1;
         p.arc(0, 0, 0.56, base, base + dir * r0, { color: C.hyp, w: 2.4 });
         var mid = base + dir * r0 / 2;
         p.text(0.56 * cos(mid), 0.56 * sin(mid), nf(refAngle(s.th), 1) + '°', {
@@ -574,12 +578,12 @@
         dx: x >= 0 ? 14 : -14, dy: y >= 0 ? -14 : 14,
         align: x >= 0 ? 'left' : 'right', color: C.hyp, size: 11.5, mono: true, bg: 'rgba(255,255,255,.92)'
       });
-      var lab = s.u === 'deg' ? nf(s.th, 1) + '°' : (exactPi(th) || nf(th, 2)) + ' rad';
+      var lab = s.u === 'deg' ? degTxt(s.th) : (exactPi(th) || nf(th, 2)) + ' rad';
       p.text(0.3 * cos(th / 2), 0.3 * sin(th / 2), lab, { dx: 22 * cos(th / 2), dy: -22 * sin(th / 2), color: C.accent, size: 12.5, bg: 'rgba(255,255,255,.9)' });
 
       var ref = refAngle(s.th);
       api.stats({
-        'θ': s.u === 'deg' ? nf(s.th, 1) + '°' : (exactPi(th) || nf(th, 4)) + ' rad',
+        'θ': s.u === 'deg' ? degTxt(s.th) : (exactPi(th) || nf(th, 4)) + ' rad',
         'sin θ': { v: TV.exact(y) || nf(y, 4), color: C.sin },
         'cos θ': { v: TV.exact(x) || nf(x, 4), color: C.cos },
         'tan θ': { v: !isFinite(tv) || Math.abs(tv) > 1e4 ? 'ไม่นิยาม' : (TV.exact(tv) || nf(tv, 4)), color: C.tan },
@@ -964,68 +968,125 @@
 
   /* 4.2 พิสูจน์ sin(A+B) แบบเรขาคณิต */
   TV.widget('#w-anglesum', {
-    title: 'พิสูจน์ sin(A + B) ด้วยรูป',
-    badge: 'ปรับมุมได้',
-    desc: 'ความสูงของจุด P คือ sin(A+B) และรูปแสดงว่าความสูงนั้นแยกออกเป็นสองส่วนพอดี: sin A·cos B บวก cos A·sin B',
-    plot: { xmin: -0.28, xmax: 1.3, ymin: -0.22, ymax: 1.28, equal: true, ratio: 0.85, minH: 300, maxH: 420 },
+    title: 'พิสูจน์สูตรผลบวกมุมบนวงกลมหนึ่งหน่วย',
+    badge: 'ปรับมุม · หมุนได้',
+    desc: 'หมุนจากแกน x ไปเป็นมุม A ก่อน แล้วหมุนต่ออีก B — จุด P ที่ได้คือมุม A + B พิกัดของมันจึงเป็น (cos(A+B), sin(A+B)) พอดี และรูปแสดงว่าพิกัดนั้นแตกเป็นสองก้อนตามสูตร ปรับ A กับ B ได้ตั้งแต่ 1° ถึง 180° จึงกวาดได้ครบทั้งวงกลม',
+    plot: { xmin: -1.95, xmax: 2.05, ymin: -1.68, ymax: 1.68, equal: true, ratio: 0.66, minH: 340, maxH: 500 },
     controls: [
-      { type: 'range', key: 'A', label: 'มุม A', min: 10, max: 50, step: 1, value: 32, fmt: degFmt },
-      { type: 'range', key: 'B', label: 'มุม B', min: 10, max: 35, step: 1, value: 25, fmt: degFmt }
+      { type: 'range', key: 'A', label: 'มุม A', min: 1, max: 180, step: 1, value: 40, fmt: degFmt },
+      { type: 'range', key: 'B', label: 'มุม B', min: 1, max: 180, step: 1, value: 35, fmt: degFmt },
+      {
+        type: 'seg', key: 'f', label: 'ดูสูตรของ',
+        options: [['sin', 'sin(A+B)'], ['cos', 'cos(A+B)']], value: 'sin'
+      },
+      { type: 'check', key: 'gd', label: 'เส้นช่วย', value: true },
+      {
+        type: 'button', label: 'หมุนอัตโนมัติ', primary: true,
+        action: function (api, btn) {
+          if (api.isAnimating()) { api.stopAnim(); btn.textContent = 'หมุนอัตโนมัติ'; return; }
+          btn.textContent = 'หยุด';
+          api.animate(function (dt) {
+            api.state.B += dt * 32;
+            if (api.state.B > 180) api.state.B = 1;
+            if (!document.body.contains(btn)) return false;
+          });
+        }
+      }
     ],
-    hint: 'จำสูตรจากรูป: sin(A+B) = sin A cos B + cos A sin B  ส่วน cos(A+B) = cos A cos B − sin A sin B (ระยะในแนวนอนซึ่ง “หดสั้นลง” จึงเป็นเครื่องหมายลบ)',
+    hint: 'ลอง B > 90° ดู — cos B ติดลบ ท่อน OM จึงพับกลับไปอีกทาง แต่สมการยังเป็นจริงทุกประการ นี่คือข้อดีของการพิสูจน์บนวงกลมหนึ่งหน่วย: ใช้ได้กับทุกมุม ไม่ใช่เฉพาะมุมแหลมเหมือนรูปสามเหลี่ยมธรรมดา',
     draw: function (p, s, api) {
-      var A = d2r(s.A), B = d2r(s.B);
-      var Q = [cos(B) * cos(A), cos(B) * sin(A)];
-      var P = [cos(A + B), sin(A + B)];
-      var T = [P[0], Q[1]];
+      var a = d2r(s.A), b = d2r(s.B), sum = a + b;
+      var ca = cos(a), sa = sin(a), cb = cos(b), sb = sin(b);
+      var P = [cos(sum), sin(sum)];
+      var M = [cb * ca, cb * sa];          /* เท้าของเส้นตั้งฉากจาก P ลงบนแขนของมุม A */
+      var isSin = s.f === 'sin';
+      var sgn = cb >= 0 ? 1 : -1;
 
-      p.line(-0.25, 0, 1.25, 0, { color: '#ddd8ce', w: 1.4 });
-      p.line(0, -0.2, 0, 1.25, { color: '#ddd8ce', w: 1.4 });
-      p.circle(0, 0, 1, { color: '#eeece5', w: 1.4, dash: [4, 4] });
+      /* brace แนวตั้ง/แนวนอน ที่เลือกฝั่งวางเองได้ ไม่ว่าจุดจะอยู่ควอดรันต์ไหน */
+      function vm(x, y1, y2, right, lab, col) {
+        p.measure(x, y1, x, y2, (y2 > y1 ? 1 : -1) * (right ? 30 : -30), lab, col);
+      }
+      function hm(y, x1, x2, above, lab, col) {
+        p.measure(x1, y, x2, y, (x2 > x1 ? -1 : 1) * (above ? 28 : -28), lab, col);
+      }
 
-      p.poly([[0, 0], Q, P], { fill: 'rgba(124,58,237,.06)' });
-      p.poly([Q, T, P], { fill: 'rgba(4,120,87,.10)' });
+      p.grid(0.5, 0.5, '#f6f4ee');
+      p.axes({ xStep: 1, yStep: 1, digits: 0, xName: 'x', yName: 'y' });
+      p.circle(0, 0, 1, { color: '#b8b4aa', w: 2 });
 
-      /* มุม */
-      p.arc(0, 0, 0.27, 0, A, { fill: 'rgba(194,65,12,.14)', color: C.cos, w: 1.7 });
-      p.arc(0, 0, 0.27, A, A + B, { fill: 'rgba(29,78,216,.14)', color: C.sin, w: 1.7 });
-      p.text(0.32 * cos(A / 2), 0.32 * sin(A / 2), 'A', { color: C.cos, size: 13 });
-      p.text(0.34 * cos(A + B / 2), 0.34 * sin(A + B / 2), 'B', { color: C.sin, size: 13 });
+      /* แขนของมุม A ลากยาวเลยวงกลมไปนิดหนึ่ง เพื่อให้เห็นว่า M อยู่บนแนวนี้ */
+      p.line(-0.35 * ca, -0.35 * sa, 1.34 * ca, 1.34 * sa, { color: '#ddd8ce', w: 1.4, dash: [5, 4] });
 
-      /* เส้นหลัก */
-      p.line(0, 0, Q[0], Q[1], { color: C.cos, w: 3 });
-      p.line(Q[0], Q[1], P[0], P[1], { color: C.sin, w: 3 });
-      p.line(0, 0, P[0], P[1], { color: C.hyp, w: 2.4 });
-      p.rightAngle(Q[0], Q[1], -cos(A), -sin(A), -sin(A), cos(A), 11, C.soft);
-
-      /* เส้นช่วย */
-      p.line(P[0], 0, P[0], P[1], { color: C.faint, w: 1.2, dash: [4, 4] });
-      p.line(Q[0], 0, Q[0], Q[1], { color: C.faint, w: 1.2, dash: [4, 4] });
-      p.line(Q[0], Q[1], T[0], T[1], { color: C.tan, w: 1.6, dash: [4, 3] });
-      p.rightAngle(P[0], 0, -1, 0, 0, 1, 10, C.soft);
-
-      /* ป้าย */
-      p.text((0 + Q[0]) / 2, Q[1] / 2, 'cos B', { dx: 6, dy: -12, color: C.cos, size: 11.5, bg: 'rgba(255,255,255,.9)' });
-      p.text((Q[0] + P[0]) / 2, (Q[1] + P[1]) / 2, 'sin B', { dx: -14, dy: -20, align: 'right', color: C.sin, size: 11.5, bg: 'rgba(255,255,255,.9)' });
-      p.text(P[0] / 2, P[1] / 2, 'OP = 1', { dx: -6, dy: 14, align: 'right', color: C.hyp, size: 11, bg: 'rgba(255,255,255,.9)' });
-
-      /* ค่าตัวเลขอยู่ในแถบด้านล่างแล้ว บนรูปจึงใส่แค่ชื่อก้อน ไม่ให้ป้ายชนกัน */
-      p.measure(P[0], 0, P[0], Q[1], 32, 'sin A·cos B', C.cos);
-      p.measure(P[0], Q[1], P[0], P[1], 32, 'cos A·sin B', C.tan);
-      p.measure(0, 0, 0, P[1], -34, 'sin(A+B)', C.hyp);
-
-      p.dot(Q[0], Q[1], { fill: C.cos, r: 5 });
-      p.dot(P[0], P[1], { fill: C.hyp, r: 6.5 });
-      p.text(P[0], P[1], 'P', { dx: 12, dy: -8, color: C.hyp, size: 13, align: 'left' });
-      p.text(Q[0], Q[1], 'Q', { dx: 11, dy: 9, color: C.cos, size: 12, align: 'left' });
-
-      api.stats({
-        'A + B': nf(s.A + s.B, 0) + '°',
-        'sin(A+B)': { v: nf(sin(A + B), 5), color: C.hyp },
-        'sin A cos B': { v: nf(sin(A) * cos(B), 5), color: C.cos },
-        'cos A sin B': { v: nf(cos(A) * sin(B), 5), color: C.tan },
-        'ผลรวมสองก้อน': { v: nf(sin(A) * cos(B) + cos(A) * sin(B), 5), color: C.ink }
+      /* มุม A แล้วต่อด้วยมุม B */
+      p.arc(0, 0, 0.28, 0, a, { fill: 'rgba(194,65,12,.13)', color: C.cos, w: 1.8 });
+      p.arc(0, 0, 0.46, a, sum, { fill: 'rgba(29,78,216,.11)', color: C.sin, w: 1.8 });
+      p.text(0.28 * cos(a / 2), 0.28 * sin(a / 2), 'A', {
+        dx: 20 * cos(a / 2), dy: -20 * sin(a / 2), color: C.cos, size: 13, bg: 'rgba(255,255,255,.85)'
       });
+      p.text(0.46 * cos(a + b / 2), 0.46 * sin(a + b / 2), 'B', {
+        dx: 24 * cos(a + b / 2), dy: -24 * sin(a + b / 2), color: C.sin, size: 13, bg: 'rgba(255,255,255,.85)'
+      });
+
+      /* สามเหลี่ยมมุมฉาก O–M–P: ด้านประกอบยาว cos B กับ sin B พอดี */
+      p.poly([[0, 0], M, P], { fill: 'rgba(124,58,237,.07)' });
+
+      if (s.gd) {
+        p.line(P[0], 0, P[0], P[1], { color: C.faint, w: 1.2, dash: [4, 4] });
+        p.line(0, P[1], P[0], P[1], { color: C.faint, w: 1.2, dash: [4, 4] });
+        /* เส้นช่วยที่ตัดความสูง (หรือความกว้าง) ของ P ออกเป็นสองก้อน */
+        if (isSin) p.line(M[0], M[1], P[0], M[1], { color: C.tan, w: 1.5, dash: [4, 3] });
+        else p.line(M[0], M[1], M[0], P[1], { color: C.tan, w: 1.5, dash: [4, 3] });
+      }
+
+      p.line(0, 0, M[0], M[1], { color: C.cos, w: 4.5 });
+      p.line(M[0], M[1], P[0], P[1], { color: C.sin, w: 4.5 });
+      p.line(0, 0, P[0], P[1], { color: C.hyp, w: 2.4 });
+      if (Math.abs(cb) > 0.07) p.rightAngle(M[0], M[1], -sgn * ca, -sgn * sa, -sa, ca, 10, C.soft);
+
+      /* ป้ายความยาวของด้านประกอบ */
+      p.text(M[0] / 2, M[1] / 2, 'cos B', {
+        dx: 14 * sa, dy: 14 * ca, color: C.cos, size: 11.5, bg: 'rgba(255,255,255,.9)'
+      });
+      p.text((M[0] + P[0]) / 2, (M[1] + P[1]) / 2, 'sin B', {
+        dx: 15 * ca * sgn, dy: -15 * sa * sgn, color: C.sin, size: 11.5, bg: 'rgba(255,255,255,.9)'
+      });
+
+      /* การแยกเป็นสองก้อน — วาง brace ไว้ฝั่งที่ว่างเสมอ */
+      if (isSin) {
+        var rt = P[0] >= M[0];          /* ฝั่งที่ไม่มีตัวสามเหลี่ยมขวางอยู่ */
+        vm(P[0], 0, M[1], rt, 'sin A·cos B', C.cos);
+        vm(P[0], M[1], P[1], rt, 'cos A·sin B', C.tan);
+        vm(0, 0, P[1], P[0] < 0, 'sin(A+B)', C.hyp);
+      } else {
+        var ab = P[1] >= M[1];
+        hm(P[1], 0, M[0], ab, 'cos A·cos B', C.cos);
+        hm(P[1], M[0], P[0], ab, '−sin A·sin B', C.tan);
+        hm(0, 0, P[0], P[1] < 0, 'cos(A+B)', C.hyp);
+      }
+
+      p.dot(0, 0, { fill: C.ink, r: 3.5 });
+      p.dot(M[0], M[1], { fill: C.cos, r: 5 });
+      p.dot(P[0], P[1], { fill: C.hyp, r: 7, halo: C.hyp });
+      p.text(M[0], M[1], 'M', {
+        dx: -12 * sa * sgn, dy: -12 * ca * sgn, color: C.cos, size: 12, bg: 'rgba(255,255,255,.85)'
+      });
+      p.text(P[0], P[1], 'P', {
+        dx: 17 * P[0], dy: -17 * P[1], color: C.hyp, size: 13.5, weight: 700, bg: 'rgba(255,255,255,.85)'
+      });
+
+      var st = { 'A + B': nf(s.A + s.B, 0) + '°' };
+      if (isSin) {
+        st['sin(A+B)'] = { v: nf(sin(sum), 5), color: C.hyp };
+        st['sin A · cos B'] = { v: nf(sa * cb, 5), color: C.cos };
+        st['cos A · sin B'] = { v: nf(ca * sb, 5), color: C.tan };
+        st['ผลรวมสองก้อน'] = { v: nf(sa * cb + ca * sb, 5), color: C.ink };
+      } else {
+        st['cos(A+B)'] = { v: nf(cos(sum), 5), color: C.hyp };
+        st['cos A · cos B'] = { v: nf(ca * cb, 5), color: C.cos };
+        st['−sin A · sin B'] = { v: nf(-sa * sb, 5), color: C.tan };
+        st['ผลรวมสองก้อน'] = { v: nf(ca * cb - sa * sb, 5), color: C.ink };
+      }
+      api.stats(st);
     }
   });
 

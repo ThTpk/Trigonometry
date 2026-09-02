@@ -31,7 +31,7 @@
   function nf(v, n) {
     if (!isFinite(v)) return '∞';
     var s = v.toFixed(n === undefined ? 3 : n);
-    if (s === '-0.000' || s === '-0.00' || s === '-0.0' || s === '-0') s = s.slice(1);
+    if (/^-0(\.0+)?$/.test(s)) s = s.slice(1);
     return s;
   }
 
