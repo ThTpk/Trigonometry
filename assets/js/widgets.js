@@ -145,15 +145,23 @@
      กฎ: แต่ละมุมเกิดจากด้านสองด้าน → ให้อัตราส่วนสองแบบที่เป็นส่วนกลับกัน
          ลูกศรพุ่งทะลุด้านใด ด้านนั้นคือ "ตัวส่วน"
      --------------------------------------------------------------------- */
-  /* from = ด้านที่เป็นตัวเศษ (จุดเริ่มลูกศร) · to = ด้านที่เป็นตัวส่วน (ลูกศรพุ่งทะลุออก) */
+  /* from = ด้านตัวตั้ง (จุดเริ่มลูกศร) · to = ด้านตัวหาร (ลูกศรพุ่งทะลุออก)
+     band = เส้นในหรือเส้นนอก ทำให้ลูกศรสองเส้นที่มุมเดียวกันขนานกันโดยไม่ตัดกัน */
   var MN_ITEMS = [
-    { grp: 'A',     key: 'cos',   col: C.cos, from: ['base', 0.14], to: ['hyp',  0.30] },
-    { grp: 'A',     key: 'sec',   col: C.cos, from: ['hyp',  0.46], to: ['base', 0.30] },
-    { grp: 'top',   key: 'sin',   col: C.sin, from: ['vert', 0.86], to: ['hyp',  0.78] },
-    { grp: 'top',   key: 'cosec', col: C.sin, from: ['hyp',  0.54], to: ['vert', 0.74] },
-    { grp: 'right', key: 'cot',   col: C.tan, from: ['base', 0.86], to: ['vert', 0.26] },
-    { grp: 'right', key: 'tan',   col: C.tan, from: ['vert', 0.46], to: ['base', 0.70] }
+    { grp: 'A',     key: 'cos',   col: C.cos, from: 'base', to: 'hyp',  band: 'in'  },
+    { grp: 'A',     key: 'sec',   col: C.cos, from: 'hyp',  to: 'base', band: 'out' },
+    { grp: 'top',   key: 'sin',   col: C.sin, from: 'vert', to: 'hyp',  band: 'in'  },
+    { grp: 'top',   key: 'cosec', col: C.sin, from: 'hyp',  to: 'vert', band: 'out' },
+    { grp: 'right', key: 'cot',   col: C.tan, from: 'base', to: 'vert', band: 'in'  },
+    { grp: 'right', key: 'tan',   col: C.tan, from: 'vert', to: 'base', band: 'out' }
   ];
+
+  /* แปลง "ระยะจากจุดยอด" เป็นพารามิเตอร์ t บนด้านนั้น (t วัดจากจุดกำเนิดของด้านเสมอ) */
+  var MN_TFROM = {
+    A:     { base: function (f) { return f; },     hyp:  function (f) { return f; } },
+    top:   { hyp:  function (f) { return 1 - f; }, vert: function (f) { return 1 - f; } },
+    right: { base: function (f) { return 1 - f; }, vert: function (f) { return f; } }
+  };
   var MN_GRPCOL = { A: C.cos, top: C.sin, right: C.tan };
   var MN_SIDES = { A: ['base', 'hyp'], top: ['hyp', 'vert'], right: ['base', 'vert'] };
 
@@ -165,7 +173,14 @@
     var lit = function (g) { return sel === 'all' || sel === g; };
     var col = function (g, c) { return lit(g) ? c : '#dcd9d0'; };
 
-    p.setBounds({ xmin: -0.95, xmax: W + 1.95, ymin: -1.1, ymax: H + 0.95 });
+    var L = Math.hypot(W, H);
+    var LEN = { base: W, vert: H, hyp: L };
+    var F_IN = 0.16, F_OUT = 0.34;   /* สัดส่วนบนด้าน วัดจากจุดยอด — เกาะอยู่ใกล้มุม */
+    /* ระยะจากจุดยอดถึงเส้นในสุด ใช้กำหนดขนาดส่วนโค้งกับตำแหน่งป้ายกำกับมุม */
+    var near = function (a, b) { return F_IN * Math.min(LEN[a], LEN[b]); };
+    var nearA = near('base', 'hyp'), nearT = near('hyp', 'vert'), nearR = near('base', 'vert');
+
+    p.setBounds({ xmin: -1.25, xmax: W + 1.95, ymin: -1.45, ymax: H + 1.0 });
 
     /* ตัวสามเหลี่ยม — ด้านที่ประกอบมุมที่เลือกจะถูกเน้น */
     var hi = MN_SIDES[sel] || [];
@@ -178,52 +193,54 @@
     p.line(W, 0, W, H, { color: sc('vert'), w: sw('vert') });
     p.line(0, 0, W, H, { color: sc('hyp'), w: sw('hyp') });
 
-    /* จุดยอดทั้งสาม ระบายสีตามคู่ฟังก์ชันที่อยู่ตรงนั้น */
-    p.arc(0, 0, 0.5, 0, th, {
+    /* จุดยอดทั้งสาม ระบายสีตามคู่ฟังก์ชันที่อยู่ตรงนั้น
+       รัศมีส่วนโค้งเล็กกว่าเส้นในสุดเสมอ จะได้ไม่ถูกลูกศรพาดทับ */
+    var rA = Math.min(0.40, 0.66 * nearA), rT = Math.min(0.40, 0.66 * nearT);
+    /* ป้ายมุมวางถัดจากลูกศรเส้นนอกออกมาเล็กน้อย จะได้อยู่ในที่ว่างและยังเกาะมุมอยู่ */
+    /* ป้ายมุม A วางกึ่งกลางระหว่างลูกศรสองเส้นพอดี (ลูกศรที่มุมนี้เป็นเส้นตั้งฉากที่ x = F*W) */
+    var axA = (F_IN + F_OUT) / 2 * W;
+    p.arc(0, 0, rA, 0, th, {
       fill: lit('A') ? 'rgba(194,65,12,.13)' : null, color: col('A', C.cos), w: lit('A') ? 2.2 : 1.4
     });
-    p.text(0.62 * cos(th / 2), 0.62 * sin(th / 2), 'A', { color: col('A', C.cos), size: 15 });
-    p.arc(W, H, 0.5, PI + th, PI * 1.5, {
+    p.text(axA, axA * Math.tan(th / 2), 'A', { color: col('A', C.cos), size: 15, bg: 'rgba(255,255,255,.8)' });
+    p.arc(W, H, rT, PI + th, PI * 1.5, {
       fill: lit('top') ? 'rgba(29,78,216,.13)' : null, color: col('top', C.sin), w: lit('top') ? 2.2 : 1.4
     });
-    p.rightAngle(W, 0, -1, 0, 0, 1, 15, col('right', C.tan));
-    p.rightAngle(W, 0, -1, 0, 0, 1, 11, col('right', C.tan));
+    p.rightAngle(W, 0, -1, 0, 0, 1, 10, col('right', C.tan));
+    p.rightAngle(W, 0, -1, 0, 0, 1, 7, col('right', C.tan));
     if (o.topLab) {
-      /* วางไว้ในรูป ตามแนวเส้นแบ่งครึ่งมุมยอด จะได้ไม่ทับส่วนโค้งหรือลูกศร */
-      var bis = PI * 1.25 + th / 2;
-      p.text(W + 1.02 * cos(bis), H + 1.02 * sin(bis), o.topLab, {
+      /* วางเหนือจุดยอดบน ซึ่งเป็นที่ว่างเสมอไม่ว่าสามเหลี่ยมจะแบนหรือสูง */
+      p.text(W, H + 0.38, o.topLab, {
         color: col('top', C.sin), size: 12, bg: 'rgba(255,255,255,.85)'
       });
     }
 
-    /* ป้ายชื่อด้าน วางนอกรูป ตรงกลางระหว่างลูกศรสองตัวของด้านนั้น
-       (ในรูปแน่นเพราะมีเส้นโค้งหกเส้นวิ่งผ่าน) */
+    /* ป้ายชื่อด้าน — adj กับ opp วางในรูป ส่วน hyp วางนอกรูป
+       ทั้งสามอยู่ตรงกลางด้าน ซึ่งเป็นบริเวณที่ลูกศร (ซึ่งเกาะอยู่ตามมุม) ไปไม่ถึง */
     var lb = { color: '#6b6961', size: 12, bg: 'rgba(255,255,255,.85)' };
-    p.text(W * 0.5, -0.28, o.sideLab.adj, lb);
-    p.text(W + 0.30, H * 0.5, o.sideLab.opp, Object.assign({ align: 'left' }, lb));
-    p.text(W * 0.54 + nrm.hyp[0] * 0.28, H * 0.54 + nrm.hyp[1] * 0.28, o.sideLab.hyp, lb);
+    p.text(W * 0.52, 0, o.sideLab.adj, Object.assign({ dy: -15 }, lb));
+    p.text(W, H * 0.5, o.sideLab.opp, Object.assign({ dx: -13, align: 'right' }, lb));
+    p.text(W * 0.5 + nrm.hyp[0] * 0.30, H * 0.5 + nrm.hyp[1] * 0.30, o.sideLab.hyp, lb);
 
-    /* ลูกศรหกตัว — เริ่มบนด้านที่เป็นตัวเศษ โค้งอ้อมจุดยอด แล้วพุ่งทะลุด้านที่เป็นตัวส่วน */
-    var ptOn = function (side, f) {
-      return side === 'hyp' ? [W * f, H * f] : side === 'base' ? [W * f, 0] : [W, H * f];
-    };
-    var ctrl = {
-      A:     [0.42 * cos(th / 2), 0.42 * sin(th / 2)],
-      top:   [W + 0.42 * cos(PI * 1.25 + th / 2), H + 0.42 * sin(PI * 1.25 + th / 2)],
-      right: [W + 0.42 * cos(PI * 0.75), 0.42 * sin(PI * 0.75)]
+    /* ลูกศรหกตัว — เส้นตรงพาดตัดมุม เริ่มบนด้านตัวตั้ง ทะลุออกที่ด้านตัวหาร
+       จุดเริ่มและจุดทะลุอยู่ที่สัดส่วน 0.16 กับ 0.34 ของด้าน วัดจากจุดยอด จึงเกาะอยู่ชิดมุม */
+    var ptOn = function (side, t) {
+      return side === 'hyp' ? [W * t, H * t] : side === 'base' ? [W * t, 0] : [W, H * t];
     };
     MN_ITEMS.forEach(function (it) {
-      var S = ptOn(it.from[0], it.from[1]);
-      var P = ptOn(it.to[0], it.to[1]);
-      var n = nrm[it.to[0]], c = col(it.grp, it.col), Q = ctrl[it.grp];
-      p.curveArrow(S[0], S[1], Q[0], Q[1],
-                   P[0] + n[0] * 0.62, P[1] + n[1] * 0.62, { color: c, w: 2.2, head: 9.5 });
-      /* จุดกลมกำกับต้นทาง = ด้านที่เป็นตัวเศษ */
-      p.dot(S[0], S[1], { fill: c, r: 4, w: 2, ring: '#ffffff' });
-      p.text(P[0] + n[0] * 0.88, P[1] + n[1] * 0.88, it.key + o.suffix, {
-        dx: it.to[0] === 'vert' ? 9 : 0,
-        dy: it.to[0] === 'base' ? 13 : (it.to[0] === 'hyp' ? -9 : 0),
-        align: it.to[0] === 'vert' ? 'left' : 'center',
+      var f = it.band === 'in' ? F_IN : F_OUT;
+      var S = ptOn(it.from, MN_TFROM[it.grp][it.from](f));
+      var P = ptOn(it.to, MN_TFROM[it.grp][it.to](f));
+      var ux = P[0] - S[0], uy = P[1] - S[1], m = Math.hypot(ux, uy) || 1;
+      ux /= m; uy /= m;
+      var c = col(it.grp, it.col);
+      p.arrow(S[0], S[1], P[0] + ux * 0.52, P[1] + uy * 0.52, { color: c, w: 2.2, head: 9.5 });
+      /* จุดกลมกำกับต้นทาง = ด้านที่เป็นตัวตั้ง */
+      p.dot(S[0], S[1], { fill: c, r: 4.5, w: 2, ring: '#ffffff' });
+      /* ป้ายวางตามแนวตั้งฉากของด้านที่ถูกทะลุ และเหลื่อมระยะตามจุดยอด
+         ป้ายสองอันบนด้านเดียวกันจึงอยู่คนละแถวเสมอ แม้สามเหลี่ยมจะแคบ */
+      var n = nrm[it.to], d = it.grp === 'right' ? 1.24 : 0.86;
+      p.text(P[0] + n[0] * d, P[1] + n[1] * d, it.key + o.suffix, {
         color: c, size: 13, bg: 'rgba(255,255,255,.9)'
       });
     });
@@ -233,7 +250,7 @@
   TV.widget('#w-mnemonic', {
     title: 'แผนภาพช่วยจำทั้งหกฟังก์ชัน',
     badge: 'เลือกมุมดูได้',
-    desc: 'อ่านลูกศรเป็นสูตรได้ทั้งเส้น — จุดกลมอยู่บนด้านที่เป็น “ตัวเศษ” แล้วลูกศรโค้งอ้อมจุดยอดไปพุ่งทะลุด้านที่เป็น “ตัวส่วน”',
+    desc: 'อ่านลูกศรเป็นสูตรได้ทั้งเส้น — เริ่มที่จุดกลมบนด้านที่เป็น “ตัวเศษ” แล้วพาดตัดมุมไปทะลุออกที่ด้านที่เป็น “ตัวส่วน”',
     plot: { equal: true, ratio: 0.56, minH: 300, maxH: 430, pad: 14 },
     controls: [
       {
@@ -242,7 +259,7 @@
       },
       { type: 'range', key: 'th', label: 'มุม A', min: 15, max: 60, step: 1, value: 30, fmt: degFmt }
     ],
-    hint: 'ลูกศรสองเส้นที่จุดยอดเดียวกันวิ่งสวนทางกัน จึงเป็นคู่ส่วนกลับกันเสมอ: cos ↔ sec · sin ↔ cosec · tan ↔ cot',
+    hint: 'ที่มุมเดียวกันจะมีลูกศรสองเส้นขนานกันแต่ชี้สวนทาง นั่นคือคู่ส่วนกลับกันเสมอ: cos ↔ sec · sin ↔ cosec · tan ↔ cot',
     draw: function (p, s, api) {
       var th = d2r(s.th), Lh = 3.5;
       drawMnemonic(p, {
@@ -283,7 +300,7 @@
   TV.widget('#w-mnemonic-special', {
     title: 'ใช้แผนภาพกับมุม 30°, 45°, 60°',
     badge: 'สลับมุมได้',
-    desc: 'เติมความยาวด้านที่แน่นอนลงในรูปเดิม แล้วอ่านค่าทั้งหกตามลูกศรได้ทันที — ความยาวที่จุดกลมคือตัวเศษ ความยาวที่ลูกศรทะลุออกคือตัวส่วน',
+    desc: 'เติมความยาวด้านที่แน่นอนลงในรูปเดิม แล้วอ่านค่าทั้งหกตามลูกศรได้ทันที — ความยาวตรงจุดกลมคือตัวเศษ ความยาวตรงด้านที่ลูกศรทะลุออกคือตัวส่วน',
     plot: { equal: true, ratio: 0.58, minH: 310, maxH: 440, pad: 14 },
     controls: [
       {
